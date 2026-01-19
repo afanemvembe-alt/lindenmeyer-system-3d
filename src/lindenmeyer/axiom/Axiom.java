@@ -24,6 +24,7 @@ public class Axiom{
 			if(!(Symbol.includes(med))){
 				return false;
 			}
+		}
 		return true;
 	}
 }
