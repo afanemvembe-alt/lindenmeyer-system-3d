@@ -1,5 +1,6 @@
 package lindenmeyer.axiom;
 
+import lindenmeyer.symbols.*;
 import java.util.*;
 
 public class Axiom{
@@ -18,10 +19,10 @@ public class Axiom{
 		this.axiom= new_axiom;
 	}
 	
-	public boolean isInSymbol(){
-		for(int i=0; i<this.axiom.length; i++){
-			String med= this.axiom.charAt(i);
-			if(!(Symbol.includes(med))){
+	public boolean isInAlphabet(Alphabet alphabet){
+		for(int i=0; i<this.axiom.length(); i++){
+			char med= this.axiom.charAt(i);
+			if(!(alphabet.isInAlphabet(new Symbol(med)))){
 				return false;
 			}
 		}

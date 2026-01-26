@@ -1,19 +1,14 @@
-package symbols;
+package lindenmeyer.symbols;
 
 import turtle.Turtle;
 
-public class Constante {
+public class Constante extends Symbol {
 
     private char symbole;
 
     // Constructeur
     public Constante(char symbole) {
-        this.symbole = symbole;
-    }
-
-    // Getter pour le symbole
-    public char getSymbole() {
-        return symbole;
+        super(symbole);
     }
 
     // Action par défaut : ne fait rien
