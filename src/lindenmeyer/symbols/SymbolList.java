@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class SymbolList {
     private SymbolFactory factory;
-    private ArrayList<Symbol> symbols;
+    private List<Symbol> symbols;
 
     public SymbolList() {
         this.factory = new SymbolFactory();
@@ -13,6 +13,18 @@ public class SymbolList {
 
     public SymbolList(SymbolFactory factory) {
         this.factory = factory;
+    }
+
+    public SymbolList(SymbolList s, SymbolFactory f) {
+        this.symbols = new ArrayList<>(s.getSymbols());
+        this.factory = f;
+    }
+
+    public static SymbolList of(Symbol s) {
+        SymbolList res = new SymbolList(null);
+        res.symbols = List.of(s);
+
+        return res;
     }
 
     public void add(Symbol symbol) {

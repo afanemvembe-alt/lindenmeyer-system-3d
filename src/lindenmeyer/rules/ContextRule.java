@@ -1,19 +1,18 @@
 package lindenmeyer.rules;
 
-import java.util.ArrayList;
-import java.util.List;
+import lindenmeyer.symbols.SymbolList;
 
-public class ContextRule<T> extends GenericRule<T> {
+public class ContextRule extends GenericRule {
 
-    List<T> predecessor;
+    SymbolList predecessor;
 
     @Override
-    public List<T> getPredecessor() {
+    public SymbolList getPredecessor() {
         return this.predecessor;
     }
 
-    public ContextRule(List<T> predecessor, List<T> successor) {
+    public ContextRule(SymbolList predecessor, SymbolList successor) {
         super(successor);
-        this.predecessor = new ArrayList<>(predecessor);
+        this.predecessor = predecessor;
     }
 }

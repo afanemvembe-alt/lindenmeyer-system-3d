@@ -1,19 +1,20 @@
 package lindenmeyer.rules;
 
-import java.util.List;
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolList;
 
-public class SimpleRule<T> extends GenericRule<T> {
+public class SimpleRule extends GenericRule {
 
-    private T predecessor;
+    private Symbol predecessor;
 
-    public SimpleRule(T predecessor, List<T> successor) {
+    public SimpleRule(Symbol predecessor, SymbolList successor) {
         super(successor);
         this.predecessor = predecessor;
     }
 
     @Override
-    public List<T> getPredecessor() {
-        return List.of(this.predecessor);
+    public SymbolList getPredecessor() {
+        return SymbolList.of(this.predecessor);
     }
 
     
