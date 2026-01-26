@@ -1,6 +1,5 @@
 package lindenmeyer.rules;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleRule<T> extends GenericRule<T> {
