@@ -32,4 +32,8 @@ public class SymbolList {
 
         return res;
     }
+
+    public List<Symbol> getSymbols() {
+        return this.symbols;
+    }
 }
