@@ -15,4 +15,6 @@ public class SimpleRule<T> extends GenericRule<T> {
     public List<T> getPredecessor() {
         return List.of(this.predecessor);
     }
+
+    
 }

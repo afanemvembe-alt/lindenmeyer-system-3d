@@ -2,8 +2,11 @@ package lindenmeyer.rules;
 
 import java.util.List;
 
-public interface Applicable<T> {
-    boolean isApplicable(List<T> generation);
-    List<T> getPredecessor();
-    List<T> getSuccessor();
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolList;
+
+public interface Applicable {
+    boolean isApplicable(SymbolList generation);
+    SymbolList getPredecessor();
+    SymbolList getSuccessor();
 }
