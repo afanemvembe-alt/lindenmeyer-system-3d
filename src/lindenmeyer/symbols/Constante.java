@@ -1,6 +1,6 @@
 package lindenmeyer.symbols;
 
-import turtle.Turtle;
+// import turtle.Turtle;
 
 public class Constante extends Symbol {
 
@@ -12,7 +12,7 @@ public class Constante extends Symbol {
     }
 
     // Action par défaut : ne fait rien
-    public void action(Turtle turtle) {
+    // public void action(Turtle turtle) {
         // Les constantes spécifiques vont redéfinir cette méthode
-    }
+    // }
 }

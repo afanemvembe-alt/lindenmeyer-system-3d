@@ -25,4 +25,8 @@
   <target name="run" depends="build" description="Run project">
     <java classname="lindenmeyer.Cli" classpath="${build}" />
   </target>
+
+  <target name="doc" depends="init" description="Build project documentation">
+    <javadoc sourcepath="${src}" destdir="${docs}" />
+  </target>
 </project>

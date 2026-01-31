@@ -1,7 +1,10 @@
-package lsystem;
+package lindenmeyer.lsystem;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import lindenmeyer.rules.Applicable;
+import lindenmeyer.rules.RuleSet;
 
 /**
  * Classe représentant un système L.
@@ -9,7 +12,7 @@ import java.util.List;
 public class LSystem {
 
     private String axiome;               // La chaîne de départ
-    private List<Regle> regles;          // Liste des règles de réécriture
+    private RuleSet regles;          // Liste des règles de réécriture
 
     /**
      * Constructeur
@@ -17,14 +20,14 @@ public class LSystem {
      */
     public LSystem(String axiome) {
         this.axiome = axiome;
-        this.regles = new ArrayList<>();
+        this.regles = new RuleSet();
     }
 
     /**
      * Ajoute une règle au système
      * @param regle La règle à ajouter
      */
-    public void ajouterRegle(Regle regle) {
+    public void ajouterRegle(Applicable regle) {
         regles.add(regle);
     }
 
@@ -43,13 +46,13 @@ public class LSystem {
                 boolean remplace = false;
 
                 // Applique chaque règle si applicable
-                for (Regle r : regles) {
-                    if (r.getPredecesseur() == c) {
-                        prochain.append(r.getSuccesseur());
-                        remplace = true;
-                        break;
-                    }
-                }
+                // for (Applicable r : regles) {
+                //     if (r.getPredecessor() == c) {
+                //         prochain.append(r.getSuccessor());
+                //         remplace = true;
+                //         break;
+                //     }
+                // }
 
                 // Si aucune règle ne s'applique, on garde le symbole
                 if (!remplace) {

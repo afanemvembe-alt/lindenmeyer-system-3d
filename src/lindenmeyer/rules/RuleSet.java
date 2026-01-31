@@ -6,6 +6,9 @@ import lindenmeyer.symbols.SymbolList;
 
 import java.util.HashSet;
 
+/**
+ * Un ensemble de regles.
+ */
 public class RuleSet {
     private HashSet<Applicable> rules;
 

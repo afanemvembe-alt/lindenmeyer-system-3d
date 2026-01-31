@@ -1,11 +1,14 @@
 package lindenmeyer.symbols;
 
+import java.util.Set;
+import java.util.HashSet;
+
 public class Symbols{
 	
 	private Set<Symbol> symbols;
 	
 	public Symbols(){
-		this.symbols= new Set<Symbol>();
+		this.symbols= new HashSet<Symbol>();
 	}
 	
 	public void addSymbol(Symbol symbol){
