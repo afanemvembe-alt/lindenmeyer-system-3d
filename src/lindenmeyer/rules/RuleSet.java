@@ -10,13 +10,13 @@ import java.util.HashSet;
  * Un ensemble de regles.
  */
 public class RuleSet {
-    private HashSet<Applicable> rules;
+    private HashSet<GenericRule> rules;
 
-    public Set<Applicable> getRules() {
+    public Set<GenericRule> getRules() {
         return this.rules;
     }
 
-    public RuleSet(Set<Applicable> rules) {
+    public RuleSet(Set<GenericRule> rules) {
         this.rules = new HashSet<>(rules);
     }
 
@@ -24,11 +24,11 @@ public class RuleSet {
         this(new HashSet<>());
     }
 
-    public void add(Applicable e) {
+    public void add(GenericRule e) {
         this.rules.add(e);
     }
 
-    public SymbolList apply(SymbolList s) {
+    public SymbolList successorOf(SymbolList s) {
         return null;
     }
 }

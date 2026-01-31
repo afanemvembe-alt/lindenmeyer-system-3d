@@ -29,4 +29,18 @@ public abstract class GenericRule implements Applicable {
     public boolean isApplicable(SymbolList generation) {
         return generation.equals(this.getPredecessor());
     }
+
+    @Override
+    public String toString() {
+        String res = "Rule : ";
+        for (Symbol s : getPredecessor().getSymbols()) {
+            res += s.getSymbol();
+        }
+        res += "->";
+        for (Symbol s : getSuccessor().getSymbols()) {
+            res += s.getSymbol();
+        }
+
+        return res;
+    }
 }

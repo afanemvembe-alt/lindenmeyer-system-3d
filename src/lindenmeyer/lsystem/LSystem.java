@@ -3,7 +3,7 @@ package lindenmeyer.lsystem;
 import java.util.ArrayList;
 import java.util.List;
 
-import lindenmeyer.rules.Applicable;
+import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSet;
 
 /**
@@ -27,7 +27,7 @@ public class LSystem {
      * Ajoute une règle au système
      * @param regle La règle à ajouter
      */
-    public void ajouterRegle(Applicable regle) {
+    public void ajouterRegle(GenericRule regle) {
         regles.add(regle);
     }
 

@@ -8,16 +8,20 @@ public class SymbolList {
     private List<Symbol> symbols;
 
     public SymbolList() {
-        this.factory = new SymbolFactory();
+        this(new SymbolFactory());
     }
 
     public SymbolList(SymbolFactory factory) {
-        this.factory = factory;
+        this(new ArrayList<>(), factory);
+    }
+
+    public SymbolList(List<Symbol> s, SymbolFactory f) {
+        this.factory = f;
+        this.symbols = new ArrayList<>(s);
     }
 
     public SymbolList(SymbolList s, SymbolFactory f) {
-        this.symbols = new ArrayList<>(s.getSymbols());
-        this.factory = f;
+        this(s.getSymbols(), f);
     }
 
     public static SymbolList of(Symbol s) {
@@ -47,5 +51,15 @@ public class SymbolList {
 
     public List<Symbol> getSymbols() {
         return this.symbols;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode() && obj instanceof SymbolList;
+    }
+
+    @Override
+    public int hashCode() {
+        return symbols.hashCode();
     }
 }
