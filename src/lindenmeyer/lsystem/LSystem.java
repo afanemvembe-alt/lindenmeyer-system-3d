@@ -5,6 +5,8 @@ import java.util.List;
 
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSet;
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolList;
 
 /**
  * Classe représentant un système L.
@@ -36,35 +38,41 @@ public class LSystem {
      * @param n Nombre d'itérations
      * @return La chaîne résultante
      */
-    public String generer(int n) {
-        String resultat = axiome;
+   public String generer(int n) {
+    String resultat = axiome;
 
-        for (int i = 0; i < n; i++) {
-            StringBuilder prochain = new StringBuilder();
+    for (int i = 0; i < n; i++) {
+        StringBuilder prochain = new StringBuilder();
 
-            for (char c : resultat.toCharArray()) {
-                boolean remplace = false;
+        for (char c : resultat.toCharArray()) {
+            Symbol s = new Symbol(c);
+            SymbolList current = SymbolList.of(s);
+            boolean applied = false;
 
-                // Applique chaque règle si applicable
-                // for (Applicable r : regles) {
-                //     if (r.getPredecessor() == c) {
-                //         prochain.append(r.getSuccessor());
-                //         remplace = true;
-                //         break;
-                //     }
-                // }
-
-                // Si aucune règle ne s'applique, on garde le symbole
-                if (!remplace) {
-                    prochain.append(c);
+            // Parcours des règles
+            for (GenericRule r : regles.getRules()) {
+                if (r.isApplicable(current)) {
+                    for (Symbol sym : r.getSuccessor().getSymbols()) {
+                        prochain.append(sym.getSymbol());
+                    }
+                    applied = true;
+                    break;
                 }
             }
 
-            resultat = prochain.toString();
+            // Si aucune règle ne s'applique, on garde le symbole
+            if (!applied) {
+                prochain.append(c);
+            }
         }
 
-        return resultat;
+        resultat = prochain.toString();
     }
+
+    return resultat;
+}
+
+
 
     /**
      * Retourne l'axiome
