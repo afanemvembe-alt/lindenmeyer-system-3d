@@ -3,6 +3,7 @@ package lindenmeyer.symbols;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class SymbolFactory {
     // Le dictionnaire pour stocker les symboles déjà créés
     private final Map<Character, Symbol> inventory = new HashMap<>();

@@ -24,12 +24,11 @@ public class SymbolList {
         this(s.getSymbols(), f);
     }
 
-    public static SymbolList of(Symbol s) {
-        SymbolList res = new SymbolList(null);
-        res.symbols = List.of(s);
-
-        return res;
-    }
+  public static SymbolList of(Symbol s) {
+    SymbolList res = new SymbolList();
+    res.add(s);
+    return res;
+}
 
     public void add(Symbol symbol) {
         this.symbols.add(symbol);
