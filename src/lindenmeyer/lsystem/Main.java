@@ -5,25 +5,30 @@ import lindenmeyer.symbols.*;
 
 public class Main {
     public static void main(String[] args) {
-        // Création des symboles
+        // Création de la factory de symboles
         SymbolFactory factory = new SymbolFactory();
+
+        // Symboles utilisés
         Symbol F = factory.getSymbol('F');
         Symbol plus = factory.getSymbol('+');
         Symbol minus = factory.getSymbol('-');
 
-        // Axiome
+        // Axiome de départ (flocon de Koch)
         LSystem koch = new LSystem("F+F--F+F");
 
-        // Règles : Exemple simple pour le flocon de Koch
+        // Définition du successeur pour F : F -> F+F--F+F
         SymbolList successor = new SymbolList(factory);
-        String rule = "F+F--F+F";
-        for (char c : rule.toCharArray()) {
-            successor.add(c); // Ajoute chaque symbole un par un
+        String succStr = "F+F--F+F";
+        for (char c : succStr.toCharArray()) {
+            successor.add(c); // on ajoute chaque symbole à SymbolList
         }
+
+        // Création de la règle et ajout au L-System
         koch.ajouterRegle(new SimpleRule(F, successor));
 
-        // Générer 1, 2, 3 itérations
-        for (int i = 1; i <= 3; i++) {
+        // Générer plusieurs itérations
+        int iterations = 5;
+        for (int i = 1; i <= iterations; i++) {
             String result = koch.generer(i);
             System.out.println("Itération " + i + ": " + result);
         }
