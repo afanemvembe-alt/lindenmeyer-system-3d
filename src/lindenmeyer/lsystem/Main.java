@@ -15,8 +15,11 @@ public class Main {
         LSystem koch = new LSystem("F+F--F+F");
 
         // Règles : Exemple simple pour le flocon de Koch
-        // Utilisation de fromString pour transformer la chaîne en SymbolList
-        SymbolList successor = SymbolList.fromString("F+F--F+F", factory);
+        SymbolList successor = new SymbolList(factory);
+        String rule = "F+F--F+F";
+        for (char c : rule.toCharArray()) {
+            successor.add(c); // Ajoute chaque symbole un par un
+        }
         koch.ajouterRegle(new SimpleRule(F, successor));
 
         // Générer 1, 2, 3 itérations
