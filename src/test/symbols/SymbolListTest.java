@@ -13,7 +13,7 @@ public class SymbolListTest {
         res &= addCharacter();
         res &= listsEqual();
 
-        System.out.println(res);
+        System.out.println(SymbolListTest.class + " : " + (res ? "All tests for OK" : "Test failed"));
     }
 
     public static boolean newList() {
