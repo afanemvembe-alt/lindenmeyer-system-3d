@@ -10,6 +10,8 @@ public class SymbolListTest {
 
         res &= newList();
         res &= addItem();
+        res &= addCharacter();
+        res &= listsEqual();
 
         System.out.println(res);
     }
