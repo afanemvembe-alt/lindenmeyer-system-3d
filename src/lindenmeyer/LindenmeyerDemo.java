@@ -11,32 +11,33 @@ public class LindenmeyerDemo{
 		
 		Axiom axiom = new Axiom("F");
 		Alphabet alphabet= new Alphabet();
+		System.out.println(axiom.isInAlphabet(alphabet));
 		
 		SymbolFactory factory= new SymbolFactory();
 		Symbol pred= factory.getSymbol('F');
 		SymbolList succ= SymbolList.fromString("F+F+F", factory);
 		SymbolList liste = SymbolList.fromString(axiom.getContent(), factory);
 		
-		GenericRule generic= new SimpleRule(pred, succ);
 		RuleFactory rulefactory= new RuleFactory(',', '>', factory);
 		RuleSet ruleset= rulefactory.parseString("F>F+F+F");
 		
-		for(int i=0; i<3; i++){
-			String actu="";
-			System.out.println("Iteration " + i + " : " + axiom);
-			for(int j=0; j<axiom.getContent().length(); j++){
-				char m= axiom.getContent().charAt(j);
-				if(m=='F'){
-					actu+= "F+F+F";
-				}
-				else {
-					actu+=m;
+		for (GenericRule rule : ruleset.getRules()) {
+            System.out.println(rule);
+        }
+        
+		for(int i=0; i<5; i++){
+			System.out.println(liste.getSymbols());
+			SymbolList neww= new SymbolList();
+			for(Symbol s: liste.getSymbols()){
+				SymbolList l= SymbolList.fromString(""+s.getSymbol(), factory);
+				SymbolList list= ruleset.successorOf(l);
+				for(Symbol li: list.getSymbols()){
+					neww.add(li);
 				}
 			}
-			//SymbolList liste+(String)i= ruleset.successorOf(liste);
-			axiom= new Axiom(actu);
+			liste= neww;
 		}
-		
+			
 	}
 }
 		
