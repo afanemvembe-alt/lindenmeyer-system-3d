@@ -4,6 +4,7 @@ import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.Alphabet;
 import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.rules.SimpleRule;
+import lindenmeyer.symbols.SymbolList;
 import java.util.List;
 
 public class Demo {
@@ -16,7 +17,7 @@ public class Demo {
         LSystem lsys = new LSystem(axiome);
         lsys.ajouterRegle(new SimpleRule(
             new Symbol('F'),
-            List.of(new Symbol('F'), new Symbol('+'), new Symbol('F'))
+            new SymbolList(List.of(new Symbol('F'), new Symbol('+'), new Symbol('F')), null)
         ));
 
         System.out.println("Résultat après 2 itérations : " + lsys.generer(2));
