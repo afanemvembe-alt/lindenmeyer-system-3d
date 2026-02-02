@@ -30,4 +30,9 @@ public class Symbol{
     public int hashCode() {
         return Character.hashCode(this.symbol);
     }
+    
+    @Override
+    public String toString(){
+		return ""+this.symbol;
+	}
 }
