@@ -15,6 +15,7 @@ public class Demo {
     public static void main(String[] args) {
         SymbolFactory symbolFactory = new SymbolFactory();
 
+        // créer les symboles A, B, +
         Symbol a = symbolFactory.getSymbol('A');
         Symbol b = symbolFactory.getSymbol('B');
         Symbol plus = symbolFactory.getSymbol('+');
@@ -22,6 +23,7 @@ public class Demo {
         SymbolList a_predList = new SymbolList();
         SymbolList a_succList = new SymbolList();
 
+        // rules: (B->A), (A->B+B)
         a_predList.add(a);
         a_succList.add(b);
         a_succList.add(plus);
@@ -44,7 +46,7 @@ public class Demo {
             System.out.println(rule);
         }
 
-        System.out.println("Rule A>B is applicable to A : " + rule_a_to_b.isApplicable(a_predList));
-        System.out.println("Rule A>B is applicable to B+B : " + rule_a_to_b.isApplicable(a_succList));
+        // System.out.println("Rule A>B is applicable to A : " + rule_a_to_b.isApplicable(a_predList));
+        // System.out.println("Rule A>B is applicable to B+B : " + rule_a_to_b.isApplicable(a_succList));
     }
 }
