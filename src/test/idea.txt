@@ -1,0 +1,30 @@
+create a test class for the project
+
+- follows given-when-then structure
+- compatible with JUnit
+- AssertEquals
+
+structure:
+- main package test
+    - a test package and class for corresponding package and class
+    - Rules:
+        - RunAllTests
+        - classes:
+            - GenericRule (abstract class)
+                - SimpleRule
+                - ContextRule
+            - RuleSet
+            - RuleFactory
+    - Symboles:
+        - RunAllTests
+        - classes: 
+            - Alphabet
+            - Symbol
+            - Constant
+            - SymbolFactory
+            - SymbolList
+
+- resources
+    - https://www.baeldung.com/java-unit-testing-best-practices
+    - https://junit.org/
+    
