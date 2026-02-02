@@ -50,7 +50,7 @@ public class RuleSet {
      * Retourne le successeur de la liste de symboles donnée.
      * 
      * @param s une liste de symboles
-     * @return le successeur s'il existe, sinon null
+     * @return le successeur s'il existe, sinon la liste donnee en entree
      */
     public SymbolList successorOf(SymbolList s) {
         for (GenericRule rule : getRules()) {
@@ -59,6 +59,6 @@ public class RuleSet {
             }
         }
 
-        return null;
+        return s;
     }
 }
