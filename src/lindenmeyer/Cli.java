@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 
 public class Cli {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Options options = new Options(args);
 
         if (options.isDemo()) {
@@ -14,30 +14,26 @@ public class Cli {
             System.out.println("Mode demo actif !");
         } else {
             BufferedReader stdin = new BufferedReader(
-                new InputStreamReader(System.in)
-            );
+                    new InputStreamReader(System.in));
 
             // sinon, on demande des infos a l'utilisateur:
             System.out.println(
-                "Bienvenue dans notre simulateur de L-Systemes !\n"
-            );
+                    "Bienvenue dans notre simulateur de L-Systemes !\n");
             System.out.println(
-                "Veuillez entrer quelques info sur votre simulation...\n"
-            );
-            System.out.println(
-                "Quelles regles voulez-vous utiliser? Entrer des regles sous forme A->B-B, separees par une virgule (,): "
-            );
+                    "Veuillez entrer quelques info sur votre simulation...\n");
 
-            String rules = "";
+            String rulesString = prompt("Quelles regles voulez-vous utiliser? Entrer des regles sous forme A->B-B, separees par une virgule (,): ");
+            String axiomString = prompt("Quel sera le point de départ du LSystème? ");
 
-            try {
-                rules = stdin.readLine();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-            System.out.println(rules);
+            System.out.println(rulesString + axiomString);
         }
+    }
+
+    private static String prompt(String message) throws Exception {
+        System.out.println(message);
+        BufferedReader stdin = new BufferedReader(
+                new InputStreamReader(System.in));
+        return stdin.readLine();
     }
 
     private static class Options {
@@ -53,6 +49,7 @@ public class Cli {
 
         /**
          * Definit les options a partir de chaines de caracteres fournies.
+         * 
          * @param args arguments a examiner
          */
         public Options(String[] args) {
