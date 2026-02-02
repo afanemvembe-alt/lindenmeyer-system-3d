@@ -53,6 +53,12 @@ public class RuleSet {
      * @return le successeur s'il existe, sinon null
      */
     public SymbolList successorOf(SymbolList s) {
+        for (GenericRule rule : getRules()) {
+            if (rule.isApplicable(s)) {
+                return rule.getSuccessor();
+            }
+        }
+
         return null;
     }
 }
