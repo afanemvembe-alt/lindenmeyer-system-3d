@@ -25,7 +25,7 @@ public class SymbolDemo {
         String texte = "F+X-F";
         SymbolList maListe = SymbolList.fromString(texte, factory);
         
-        // Note : On passe par getSymbols() car c'est le nom dans ton fichier
+        // Note : On passe par getSymbols() 
         int taille = maListe.getSymbols().size(); 
         System.out.println("Texte: " + texte);
         System.out.println("Nombre de symboles : " + taille);
