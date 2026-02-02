@@ -13,6 +13,6 @@ public class Constante extends Symbol {
 
     // Action par défaut : ne fait rien
     // public void action(Turtle turtle) {
-        // Les constantes spécifiques vont redéfinir cette méthode
+        // Les constantes spécifiques vont redéfinir cette methode 
     // }
 }
