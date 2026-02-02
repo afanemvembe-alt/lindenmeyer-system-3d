@@ -4,7 +4,7 @@ import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
 
 /**
- * Permet de contruire un `RuleSet` a partir d'une chaine de caractere donnee.
+ * Permet de contruire un `RuleSet` a partir d'une chaîne de character donnee.
  */
 public class RuleFactory {
     private char rule_separator;
@@ -12,9 +12,9 @@ public class RuleFactory {
     private SymbolFactory factory;
 
     /**
-     * Cree `RuleFactory` avec les separateurs et la `SymbolFactory` donnes.
-     * @param rule_separator separe chaque regle dans les chaines donnees
-     * @param part_separator separe le predecesseur du successeur dans une chaine
+     * Cree `RuleFactory` avec les séparateurs et la `SymbolFactory` donnes.
+     * @param rule_separator sépare chaque règle dans les chaines donnees
+     * @param part_separator sépare le prédécesseur du successeur dans une chaîne
      * @param f une source de `Symbol`
      */
     public RuleFactory(char rule_separator, char part_separator, SymbolFactory f) {
@@ -24,7 +24,7 @@ public class RuleFactory {
     }
 
     /**
-     * Cree `RuleFactory` avec ',' comme separateur de regles, et '>' comme separateur de partie de regle.
+     * Cree `RuleFactory` avec ',' comme séparateur de règles, et '>' comme séparateur de partie de règle.
      * @param f
      */
     public RuleFactory(SymbolFactory f) {
@@ -32,16 +32,16 @@ public class RuleFactory {
     }
 
     /**
-     * Retourne le separateur de regles.
-     * @return un caractere
+     * Retourne le séparateur de règles.
+     * @return un character
      */
     public char getRuleSeparator() {
         return this.rule_separator;
     }
 
     /**
-     * Retourne le separateur de predecesseur et successeur.
-     * @return un caractere
+     * Retourne le séparateur de prédécesseur et successeur.
+     * @return un character
      */
     public char getPartSeparator() {
         return this.part_separator;
@@ -56,10 +56,10 @@ public class RuleFactory {
     }
 
     /**
-     * Cree un `RuleSet` a partir d'une chaine de caracteres s donnee en entree. Cette chaine sera
-     * sous la forme de [predecesseur][part_separator][successeur][rule_separator][regle suivante].
-     * @param s une chaine de caracteres
-     * @return un ensemble de regles
+     * Cree un `RuleSet` a partir d'une chaîne de caractères s donnee en entree. Cette chaîne sera
+     * sous la forme de [prédécesseur][part_separator][successeur][rule_separator][règle suivante].
+     * @param s une chaîne de caractères
+     * @return un ensemble de règles
      */
     public RuleSet parseString(String s) {
         RuleSet res = new RuleSet();

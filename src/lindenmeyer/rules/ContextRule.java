@@ -3,12 +3,12 @@ package lindenmeyer.rules;
 import lindenmeyer.symbols.SymbolList;
 
 /**
- * Regle contenant une `SymbolList` comme predecesseur.
+ * Règle contenant une `SymbolList` comme prédécesseur.
  */
 public class ContextRule extends GenericRule {
 
     /**
-     * Le predecesseur de la regle.
+     * Le prédécesseur de la règle.
      */
     SymbolList predecessor;
 
@@ -18,7 +18,7 @@ public class ContextRule extends GenericRule {
     }
 
     /**
-     * Construit une regle a partir de deux `SymbolList`, un predecesseur et un successeur.
+     * Construit une règle a partir de deux `SymbolList`, un prédécesseur et un successeur.
      * @param predecessor une liste de symboles
      * @param successor une autre liste de symboles
      */

@@ -7,27 +7,51 @@ import lindenmeyer.symbols.SymbolList;
 import java.util.HashSet;
 
 /**
- * Un ensemble de regles.
+ * Un ensemble de règles.
  */
 public class RuleSet {
     private HashSet<GenericRule> rules;
 
+    /**
+     * Retourne l'ensemble des règles.
+     * 
+     * @return
+     */
     public Set<GenericRule> getRules() {
         return this.rules;
     }
 
+    /**
+     * Construit un ensemble de règles à partir de l'ensemble donné.
+     * 
+     * @param rules
+     */
     public RuleSet(Set<GenericRule> rules) {
         this.rules = new HashSet<>(rules);
     }
 
+    /**
+     * Construit un ensemble de règles vide.
+     */
     public RuleSet() {
         this(new HashSet<>());
     }
 
+    /**
+     * Ajoute une règle à l'ensemble.
+     * 
+     * @param e règle à ajouter
+     */
     public void add(GenericRule e) {
         this.rules.add(e);
     }
 
+    /**
+     * Retourne le successeur de la liste de symboles donnée.
+     * 
+     * @param s une liste de symboles
+     * @return le successeur s'il existe, sinon null
+     */
     public SymbolList successorOf(SymbolList s) {
         return null;
     }

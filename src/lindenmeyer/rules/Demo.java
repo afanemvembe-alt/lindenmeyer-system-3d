@@ -8,6 +8,10 @@ import lindenmeyer.symbols.SymbolList;
  * Demonstration de l'utilisation du package lindenmeyer.rules.
  */
 public class Demo {
+    /**
+     * Execute la demo
+     * @param args non utilisé
+     */
     public static void main(String[] args) {
         SymbolFactory symbolFactory = new SymbolFactory();
 

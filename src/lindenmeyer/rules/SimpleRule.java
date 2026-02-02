@@ -4,17 +4,17 @@ import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolList;
 
 /**
- * Une regle ayant comme predecesseur un unique symbole.
+ * Une règle ayant comme prédécesseur un unique symbole.
  */
 public class SimpleRule extends GenericRule {
 
     /**
-     * Le symbole du predecesseur.
+     * Le symbole du prédécesseur.
      */
     private Symbol predecessor;
 
     /**
-     * Cree une nouvelle regle a partir du symbole donne en predecesseur et de la liste de symboles
+     * Cree une nouvelle règle a partir du symbole donne en prédécesseur et de la liste de symboles
      * donnee en successeur.
      * @param predecessor un symbole
      * @param successor une liste de symboles
