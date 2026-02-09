@@ -1,6 +1,5 @@
 package lindenmeyer.lsystem;
 
-import lindenmeyer.rules.*;
 import lindenmeyer.symbols.*;
 
 public class Main {
@@ -24,7 +23,7 @@ public class Main {
         }
 
         // Création de la règle et ajout au L-System
-        koch.ajouterRegle(new SimpleRule(F, successor));
+        //koch.ajouterRegle(new SimpleRule(F, successor));
 
         // Générer plusieurs itérations
         int iterations = 5;
