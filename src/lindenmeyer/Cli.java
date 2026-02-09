@@ -42,7 +42,7 @@ public class Cli {
             LSystem ls = new LSystem(axiomString);
 
             for (GenericRule rule : rules.getRules()) {
-                ls.ajouterRegle(rule.getPredecessor().getSymbols().getFirst().getSymbol(), rule.getSuccessor().toString());
+                ls.ajouterRegle(rule.getPredecessor().getFirst().getSymbol(), rule.getSuccessor().toString());
             }
 
             System.out.println(ls.generer(10));

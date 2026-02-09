@@ -14,6 +14,7 @@ public abstract class GenericRule implements Applicable {
 
     /**
      * Construit une règle contenant le successeur donne.
+     * 
      * @param successor une liste de symboles
      */
     public GenericRule(SymbolList successor) {
@@ -32,12 +33,12 @@ public abstract class GenericRule implements Applicable {
 
     @Override
     public String toString() {
-        String res = "Rule : ";
-        for (Symbol s : getPredecessor().getSymbols()) {
+        String res = "";
+        for (Symbol s : getPredecessor()) {
             res += s.getSymbol();
         }
         res += "->";
-        for (Symbol s : getSuccessor().getSymbols()) {
+        for (Symbol s : getSuccessor()) {
             res += s.getSymbol();
         }
 

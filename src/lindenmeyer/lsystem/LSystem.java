@@ -20,7 +20,7 @@ public class LSystem {
     }
 
     public void ajouterRegle(GenericRule regle) {
-        ajouterRegle(regle.getPredecessor().getSymbols().getFirst().getSymbol(), regle.getSuccessor().toString());
+        ajouterRegle(regle.getPredecessor().getFirst().getSymbol(), regle.getSuccessor().toString());
     }
 
     public String generer(int n) {
