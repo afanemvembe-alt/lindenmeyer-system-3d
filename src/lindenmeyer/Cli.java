@@ -4,6 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import lindenmeyer.lsystem.LSystem;
+import lindenmeyer.rules.GenericRule;
+import lindenmeyer.rules.RuleFactory;
+import lindenmeyer.rules.RuleSet;
+import lindenmeyer.symbols.SymbolFactory;
+
 public class Cli {
 
     public static void main(String[] args) throws Exception {
@@ -24,8 +30,22 @@ public class Cli {
 
             String rulesString = prompt("Quelles regles voulez-vous utiliser? Entrer des regles sous forme A->B-B, separees par une virgule (,): ");
             String axiomString = prompt("Quel sera le point de départ du LSystème? ");
+            String toRun = prompt("Combien de generations ? ");
 
             System.out.println(rulesString + axiomString);
+
+            SymbolFactory symbolFactory = new SymbolFactory();
+            RuleFactory ruleFactory = new RuleFactory(',', '>', symbolFactory);
+
+            RuleSet rules = ruleFactory.parseString(rulesString);
+
+            LSystem ls = new LSystem(axiomString);
+
+            for (GenericRule rule : rules.getRules()) {
+                ls.ajouterRegle(rule.getPredecessor().getSymbols().getFirst().getSymbol(), rule.getSuccessor().toString());
+            }
+
+            System.out.println(ls.generer(10));
         }
     }
 

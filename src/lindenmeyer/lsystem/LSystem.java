@@ -3,6 +3,8 @@ package lindenmeyer.lsystem;
 import java.util.HashMap;
 import java.util.Map;
 
+import lindenmeyer.rules.GenericRule;
+
 public class LSystem {
 
     private String axiome;
@@ -15,6 +17,10 @@ public class LSystem {
 
     public void ajouterRegle(char symbole, String remplacement) {
         regles.put(symbole, remplacement);
+    }
+
+    public void ajouterRegle(GenericRule regle) {
+        ajouterRegle(regle.getPredecessor().getSymbols().getFirst().getSymbol(), regle.getSuccessor().toString());
     }
 
     public String generer(int n) {

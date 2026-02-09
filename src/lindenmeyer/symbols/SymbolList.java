@@ -130,4 +130,15 @@ public class SymbolList {
     public int hashCode() {
         return symbols.hashCode();
     }
+
+    @Override
+    public String toString() {
+        String res = "";
+
+        for (Symbol s : getSymbols()) {
+            res += s.getSymbol();
+        }
+
+        return res;
+    }
 }
