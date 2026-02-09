@@ -26,12 +26,12 @@ public class LindenmeyerDemo{
         }
         
 		for(int i=0; i<5; i++){
-			System.out.println(liste.getSymbols());
+			System.out.println(liste);
 			SymbolList neww= new SymbolList();
-			for(Symbol s: liste.getSymbols()){
+			for(Symbol s: liste){
 				SymbolList l= SymbolList.fromString(""+s.getSymbol(), factory);
 				SymbolList list= ruleset.successorOf(l);
-				for(Symbol li: list.getSymbols()){
+				for(Symbol li: list){
 					neww.add(li);
 				}
 			}
