@@ -8,9 +8,9 @@ import java.util.ArrayList;
  * symboles. Aucune déduplication n'est faite sur les opération prenant en argument
  * un type {@link Symbol}.
  */
-public class SymbolList {
+public class SymbolList extends ArrayList<Symbol> {
     private SymbolFactory factory;
-    private List<Symbol> symbols;
+    // private List<Symbol> symbols;
 
     /**
      * Construit une nouvelle liste de symboles vide, contenant sa propre source de symboles.
@@ -36,21 +36,22 @@ public class SymbolList {
      * @param f une source de symboles
      */
     public SymbolList(List<Symbol> s, SymbolFactory f) {
+        super(s);
         this.factory = f;
-        this.symbols = new ArrayList<>(s);
+        // this.symbols = new ArrayList<>(s);
     }
 
-    /**
-     * Initialise une liste de symboles à partir d'une autre en la copiant, avec la
-     * source de symboles donnée.
-     * Cette operation ne fait pas de déduplication de symboles.
-     * 
-     * @param s une liste de symboles
-     * @param f une source de symboles
-     */
-    public SymbolList(SymbolList s, SymbolFactory f) {
-        this(s.getSymbols(), f);
-    }
+    // /**
+    //  * Initialise une liste de symboles à partir d'une autre en la copiant, avec la
+    //  * source de symboles donnée.
+    //  * Cette operation ne fait pas de déduplication de symboles.
+    //  * 
+    //  * @param s une liste de symboles
+    //  * @param f une source de symboles
+    //  */
+    // public SymbolList(SymbolList s, SymbolFactory f) {
+    //     this(s.getSymbols(), f);
+    // }
 
     /**
      * Crée une liste de symboles avec le symbole donné.
@@ -63,22 +64,22 @@ public class SymbolList {
         return res;
     }
 
-    /**
-     * Ajoute un symbole à la liste de symboles.
-     * @param symbol symbole à ajouter
-     */
-    public void add(Symbol symbol) {
-        this.symbols.add(symbol);
-    }
+    // /**
+    //  * Ajoute un symbole à la liste de symboles.
+    //  * @param symbol symbole à ajouter
+    //  */
+    // public void add(Symbol symbol) {
+    //     this.symbols.add(symbol);
+    // }
 
-    /**
-     * Ajoute un symbole à la liste de symboles à l'indexe donné.
-     * @param index l'index auquel insérer l'élément
-     * @param symbol le symbole à ajouter
-     */
-    public void add(int index, Symbol symbol) {
-        this.symbols.add(index, symbol);
-    }
+    // /**
+    //  * Ajoute un symbole à la liste de symboles à l'indexe donné.
+    //  * @param index l'index auquel insérer l'élément
+    //  * @param symbol le symbole à ajouter
+    //  */
+    // public void add(int index, Symbol symbol) {
+    //     this.symbols.add(index, symbol);
+    // }
 
     /**
      * Ajoute le caractère donné à la fin de la liste.
@@ -113,29 +114,29 @@ public class SymbolList {
         return res;
     }
 
-    /**
-     * Retourne la liste de symboles contenue par la liste.
-     * @return une liste de symboles
-     */
-    public List<Symbol> getSymbols() {
-        return this.symbols;
-    }
+    // /**
+    //  * Retourne la liste de symboles contenue par la liste.
+    //  * @return une liste de symboles
+    //  */
+    // public List<Symbol> getSymbols() {
+    //     return this.symbols;
+    // }
 
     @Override
     public boolean equals(Object obj) {
         return this.hashCode() == obj.hashCode() && obj instanceof SymbolList;
     }
 
-    @Override
-    public int hashCode() {
-        return symbols.hashCode();
-    }
+    // @Override
+    // public int hashCode() {
+    //     return symbols.hashCode();
+    // }
 
     @Override
     public String toString() {
         String res = "";
 
-        for (Symbol s : getSymbols()) {
+        for (Symbol s : this) {
             res += s.getSymbol();
         }
 

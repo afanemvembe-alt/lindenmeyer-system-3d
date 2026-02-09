@@ -22,8 +22,8 @@ public class SymbolListTest {
         SymbolList s = new SymbolList();
 
         res &= s instanceof SymbolList;
-        res &= s.getSymbols() instanceof List;
-        res &= s.getSymbols().isEmpty();
+        res &= s instanceof List;
+        res &= s.isEmpty();
 
         return res;
     }
@@ -36,7 +36,7 @@ public class SymbolListTest {
         Symbol a = new Symbol('A');
         s.add(a);
 
-        res &= s.getSymbols().contains(a);
+        res &= s.contains(a);
 
         return res;
     }
@@ -51,7 +51,7 @@ public class SymbolListTest {
 
         s.add('A');
 
-        res &= s.getSymbols().contains(a);
+        res &= s.contains(a);
 
         return res;
     }

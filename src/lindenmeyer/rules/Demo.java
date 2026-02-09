@@ -34,7 +34,7 @@ public class Demo {
         System.out.println(rule_a_to_b.getPredecessor().hashCode() + " " + a_predList.hashCode());
         System.out.println(rule_a_to_b.getPredecessor().equals(a_predList));
         System.out.println(a_predList.equals(a_predList));
-        System.out.println(a_predList.getSymbols().equals(a_predList.getSymbols()));
+        System.out.println(a_predList.equals(a_predList));
         System.out.println(a.equals(a));
 
         System.out.println(rule_a_to_b);

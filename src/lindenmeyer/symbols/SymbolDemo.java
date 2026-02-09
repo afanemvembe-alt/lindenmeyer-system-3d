@@ -26,12 +26,12 @@ public class SymbolDemo {
         SymbolList maListe = SymbolList.fromString(texte, factory);
         
         // Note : On passe par getSymbols() 
-        int taille = maListe.getSymbols().size(); 
+        int taille = maListe.size(); 
         System.out.println("Texte: " + texte);
         System.out.println("Nombre de symboles : " + taille);
         
         // Vérification de l'unicité dans la liste
-        if (maListe.getSymbols().get(0) == maListe.getSymbols().get(4)) {
+        if (maListe.get(0) == maListe.get(4)) {
             System.out.println("SUCCES : Le premier et le dernier 'F' sont le meme objet.");
         }
 
