@@ -6,7 +6,7 @@ import lindenmeyer.symbols.SymbolList;
 /**
  * Permet de contruire un `RuleSet` a partir d'une chaîne de character donnee.
  */
-public class RuleFactory {
+public class RuleSetFactory {
     private char rule_separator;
     private char part_separator;
     private SymbolFactory factory;
@@ -17,7 +17,7 @@ public class RuleFactory {
      * @param part_separator sépare le prédécesseur du successeur dans une chaîne
      * @param f une source de `Symbol`
      */
-    public RuleFactory(char rule_separator, char part_separator, SymbolFactory f) {
+    public RuleSetFactory(char rule_separator, char part_separator, SymbolFactory f) {
         this.rule_separator = rule_separator;
         this.part_separator = part_separator;
         this.factory = f;
@@ -27,7 +27,7 @@ public class RuleFactory {
      * Cree `RuleFactory` avec ',' comme séparateur de règles, et '>' comme séparateur de partie de règle.
      * @param f
      */
-    public RuleFactory(SymbolFactory f) {
+    public RuleSetFactory(SymbolFactory f) {
         this(',', '>', f);
     }
 

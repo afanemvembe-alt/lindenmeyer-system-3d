@@ -4,9 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.rules.GenericRule;
-import lindenmeyer.rules.RuleFactory;
+import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.rules.RuleSet;
 import lindenmeyer.symbols.SymbolFactory;
 
@@ -35,17 +36,15 @@ public class Cli {
             System.out.println(rulesString + axiomString);
 
             SymbolFactory symbolFactory = new SymbolFactory();
-            RuleFactory ruleFactory = new RuleFactory(',', '>', symbolFactory);
+            RuleSetFactory ruleFactory = new RuleSetFactory(',', '>', symbolFactory);
 
             RuleSet rules = ruleFactory.parseString(rulesString);
 
-            LSystem ls = new LSystem(axiomString);
+            LSystem ls = new LSystem(new Axiom(axiomString), rules, symbolFactory);
 
-            for (GenericRule rule : rules.getRules()) {
-                ls.ajouterRegle(rule.getPredecessor().getFirst().getSymbol(), rule.getSuccessor().toString());
-            }
+            System.out.println(ls);
 
-            System.out.println(ls.generer(10));
+            System.out.println(ls.generer(Integer.valueOf(toRun)));
         }
     }
 

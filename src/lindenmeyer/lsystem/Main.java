@@ -1,5 +1,7 @@
 package lindenmeyer.lsystem;
 
+import lindenmeyer.axiom.Axiom;
+import lindenmeyer.rules.*;
 import lindenmeyer.symbols.*;
 
 public class Main {
@@ -13,7 +15,7 @@ public class Main {
         Symbol minus = factory.getSymbol('-');
 
         // Axiome de départ (flocon de Koch)
-        LSystem koch = new LSystem("F+F--F+F");
+        LSystem koch = new LSystem(new Axiom("F+F--F+F"), new RuleSet(), factory);
 
         // Définition du successeur pour F : F -> F+F--F+F
         SymbolList successor = new SymbolList(factory);

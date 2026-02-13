@@ -1,8 +1,11 @@
-package lindenmeyer.lsystem;
+package lindenmeyer.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+
+import lindenmeyer.axiom.Axiom;
+import lindenmeyer.lsystem.LSystem;
 
 public class FenetreLSystem extends JFrame {
 
@@ -33,7 +36,7 @@ public class FenetreLSystem extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String axiome = ChampDeLaxiome.getText();
 
-                LSystem lsys = new LSystem(axiome);
+                LSystem lsys = new LSystem(new Axiom(axiome));
                 lsys.ajouterRegle('F', "F--F+F");
 
                 String result = lsys.generer(1);

@@ -39,7 +39,7 @@ public class Demo {
 
         System.out.println(rule_a_to_b);
 
-        RuleFactory factory = new RuleFactory(',', '>', symbolFactory);
+        RuleSetFactory factory = new RuleSetFactory(',', '>', symbolFactory);
         RuleSet ruleSet = factory.parseString("A>B+B,B>A");
 
         for (GenericRule rule : ruleSet.getRules()) {
