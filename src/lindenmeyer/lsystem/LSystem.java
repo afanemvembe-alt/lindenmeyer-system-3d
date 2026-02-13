@@ -3,53 +3,106 @@ package lindenmeyer.lsystem;
 import java.util.HashMap;
 import java.util.Map;
 
+import lindenmeyer.axiom.Axiom;
 import lindenmeyer.rules.GenericRule;
+import lindenmeyer.rules.RuleSet;
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolFactory;
+import lindenmeyer.symbols.SymbolList;
 
 public class LSystem {
 
-    private String axiome;
-    private Map<Character, String> regles;
+    private Axiom axiome;
+    // private Map<Character, String> regles;
+    private RuleSet regles;
+    private SymbolList currentGeneration;
+    private SymbolFactory symbolFactory;
 
-    public LSystem(String axiome) {
+    // public LSystem(String axiome) {
+    //     this.axiome = axiome;
+    //     this.regles = new HashMap<>();
+    // }
+
+    public LSystem(Axiom axiome, RuleSet regles, SymbolList currentGeneration, SymbolFactory symbolFactory) {
         this.axiome = axiome;
-        this.regles = new HashMap<>();
+        this.regles = regles;
+        this.currentGeneration = currentGeneration;
+        this.symbolFactory = symbolFactory;
     }
 
-    public void ajouterRegle(char symbole, String remplacement) {
-        regles.put(symbole, remplacement);
+    public LSystem(Axiom axiome, RuleSet regles, SymbolFactory symbolFactory) {
+        this.axiome = axiome;
+        this.regles = regles;
+        this.symbolFactory = symbolFactory;
+        this.currentGeneration = new SymbolList(symbolFactory);
+
+        for (int i = 0; i < axiome.getContent().length(); i++) {
+            currentGeneration.add(axiome.getContent().charAt(i));
+        }
     }
+
+    // public void ajouterRegle(char symbole, String remplacement) {
+    //     regles.put(symbole, remplacement);
+    // }
 
     public void ajouterRegle(GenericRule regle) {
-        ajouterRegle(regle.getPredecessor().getFirst().getSymbol(), regle.getSuccessor().toString());
+        regles.add(regle);
+    }
+
+    public void step() {
+        SymbolList res = new SymbolList(symbolFactory);
+
+        for (Symbol s : currentGeneration) {
+            res.addAll(regles.successorOf(SymbolList.of(s)));
+        }
+
+        currentGeneration = res;
     }
 
     public String generer(int n) {
-        String resultat = axiome;
-
         for (int i = 0; i < n; i++) {
-            String nouveau = "";
-
-            for (int j = 0; j < resultat.length(); j++) {
-                char c = resultat.charAt(j);
-
-                if (regles.containsKey(c)) {
-                    nouveau = nouveau + regles.get(c);
-                } else {
-                    nouveau = nouveau + c;
-                }
-            }
-
-            resultat = nouveau;
+            step();
         }
 
-        return resultat;
+        return currentGeneration.toString();
     }
 
-    public String getAxiome() {
+    public SymbolList getCurrentGeneration() {
+        return currentGeneration;
+    }
+
+    // public String generer(int n) {
+    //     String resultat = axiome;
+
+    //     for (int i = 0; i < n; i++) {
+    //         String nouveau = "";
+
+    //         for (int j = 0; j < resultat.length(); j++) {
+    //             char c = resultat.charAt(j);
+
+    //             if (regles.containsKey(c)) {
+    //                 nouveau = nouveau + regles.get(c);
+    //             } else {
+    //                 nouveau = nouveau + c;
+    //             }
+    //         }
+
+    //         resultat = nouveau;
+    //     }
+
+    //     return resultat;
+    // }
+
+    public Axiom getAxiome() {
         return axiome;
     }
 
-    public void setAxiome(String axiome) {
+    public void setAxiome(Axiom axiome) {
         this.axiome = axiome;
+    }
+
+    @Override
+    public String toString() {
+        return axiome + " " + regles + " " + currentGeneration;
     }
 }
