@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.rules.GenericRule;
-import lindenmeyer.rules.RuleFactory;
+import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.rules.RuleSet;
 import lindenmeyer.symbols.SymbolFactory;
 
@@ -36,7 +36,7 @@ public class Cli {
             System.out.println(rulesString + axiomString);
 
             SymbolFactory symbolFactory = new SymbolFactory();
-            RuleFactory ruleFactory = new RuleFactory(',', '>', symbolFactory);
+            RuleSetFactory ruleFactory = new RuleSetFactory(',', '>', symbolFactory);
 
             RuleSet rules = ruleFactory.parseString(rulesString);
 

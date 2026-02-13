@@ -18,7 +18,7 @@ public class LindenmeyerDemo{
 		SymbolList succ= SymbolList.fromString("F+F+F", factory);
 		SymbolList liste = SymbolList.fromString(axiom.getContent(), factory);
 		
-		RuleFactory rulefactory= new RuleFactory(',', '>', factory);
+		RuleSetFactory rulefactory= new RuleSetFactory(',', '>', factory);
 		RuleSet ruleset= rulefactory.parseString("F>F+F+F");
 		
 		for (GenericRule rule : ruleset.getRules()) {
