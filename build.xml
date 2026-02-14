@@ -1,41 +1,50 @@
-<project name="Lindenmeyer" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="Lindenmeyer" xmlns:ivy="antlib:org.apache.ivy.ant" default="run">
   <description>
     Buildfile pour le project Lindenmeyer.
   </description>
 
   <property name="src" location="src" />
+  <property name="dir.src.lindenmeyer" location="${src}/lindenmeyer" />
+  <property name="dir.src.tests" location="${src}/test" />
   <property name="build" location="build" />
   <property name="docs" location="docs" />
   <property name="lib" location="lib" />
 
-  <property name="ivy.install.version" value="2.5.0"/>
-    <condition property="ivy.home" value="${env.IVY_HOME}">
-      <isset property="env.IVY_HOME"/>
-    </condition>
-    <property name="ivy.home" value="${user.home}/.ant"/>
-    <property name="ivy.jar.dir" value="${ivy.home}/lib"/>
-    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
+  <path id="jar.lib">
+    <fileset dir="${lib}">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
 
-    <target name="download-ivy" unless="offline">
+  <property name="ivy.install.version" value="2.5.0" />
+  <condition property="ivy.home" value="${env.IVY_HOME}">
+    <isset property="env.IVY_HOME" />
+  </condition>
+  <property name="ivy.home" value="${user.home}/.ant" />
+  <property name="ivy.jar.dir" value="${ivy.home}/lib" />
+  <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
 
-        <mkdir dir="${ivy.jar.dir}"/>
-        <!-- download Ivy from web site so that it can be used even without any special installation -->
-        <get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
-             dest="${ivy.jar.file}" usetimestamp="true"/>
-    </target>
+  <target name="download-ivy" unless="offline">
 
-    <target name="init-ivy" depends="download-ivy">
-      <!-- try to load Ivy here from Ivy home, in case the user has not already dropped
+    <mkdir dir="${ivy.jar.dir}" />
+    <!-- download Ivy from web site so that it can be used even without any special installation -->
+    <get
+      src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+      dest="${ivy.jar.file}" usetimestamp="true" />
+  </target>
+
+  <target name="init-ivy" depends="download-ivy">
+    <!-- try to load Ivy here from Ivy home, in case the user has not already dropped
               it into Ant's lib dir (note that the latter copy will always take precedence).
               We will not fail as long as local lib dir exists (it may be empty) and
               Ivy is in at least one of Ant's lib dir or the local lib dir. -->
-        <path id="ivy.lib.path">
-            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    <path id="ivy.lib.path">
+      <fileset dir="${ivy.jar.dir}" includes="*.jar" />
 
-        </path>
-        <taskdef resource="org/apache/ivy/ant/antlib.xml"
-                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
-    </target>
+    </path>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml"
+      uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
+  </target>
 
   <target name="init" description="Initialise project directories" depends="init-ivy">
     <tstamp />
@@ -50,9 +59,26 @@
     <delete dir="${lib}" />
   </target>
 
-  <target name="build" depends="init" description="Compile project files">
+  <target name="deps" depends="init" description="Pull projects dependencies">
     <ivy:retrieve />
-    <javac srcdir="${src}" destdir="${build}" includeAntRuntime="false" />
+  </target>
+
+  <target name="build" depends="init,deps" description="Compile project files">
+    <javac srcdir="${src}" classpathref="jar.lib" destdir="${build}" includeAntRuntime="false" />
+  </target>
+
+  <target name="test.compile" depends="init,deps" description="Compile tests">
+    <javac srcdir="${src}" classpathref="jar.lib" includeAntRuntime="false" destdir="${build}" />
+  </target>
+
+  <target name="test" depends="deps" description="Run tests">
+    <junitlauncher>
+      <classpath path="${build}" />
+      <classpath refid="jar.lib" />
+      <testclasses>
+        <fileset dir="${build}" />
+      </testclasses>
+    </junitlauncher>
   </target>
 
   <target name="run" depends="build" description="Run project">

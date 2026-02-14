@@ -6,19 +6,20 @@ import lindenmeyer.rules.RuleSet;
 import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.symbols.SymbolFactory;
 
-public class LSystemTest {
-    public static void main(String[] args) {
-        boolean res = true;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
-        res &= n_generations();
+class LSystemTest {
+    // public static void main(String[] args) {
+    //     boolean res = true;
 
-        System.out.println(LSystemTest.class + (res ? "Tests OK" : "KO"));
-    }
+    //     res &= n_generations();
 
+    //     System.out.println(LSystemTest.class + (res ? "Tests OK" : "KO"));
+    // }
 
-    public static boolean n_generations() {
-        boolean res = true;
-
+    @Test
+    void n_generations() {
         SymbolFactory sf = new SymbolFactory();
         RuleSetFactory rf = new RuleSetFactory(sf);
 
@@ -26,6 +27,6 @@ public class LSystemTest {
 
         LSystem ls = new LSystem(new Axiom("A"), rs, sf);
 
-        return ls.generer(7).equals("ABAABABAABAABABAABABAABAABABAABAAB");
+        assertEquals(ls.generer(7), "ABAABABAABAABABAABABAABAABABAABAAB");
     }
 }
