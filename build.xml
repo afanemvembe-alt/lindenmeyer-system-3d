@@ -51,12 +51,16 @@
     <mkdir dir="${build}" />
     <mkdir dir="${docs}" />
     <mkdir dir="${lib}" />
+    <mkdir dir="report" />
+    <mkdir dir="reports" />
   </target>
 
   <target name="clean" description="Clean target directories">
     <delete dir="${build}" />
     <delete dir="${docs}" />
     <delete dir="${lib}" />
+    <delete dir="report" />
+    <delete dir="reports" />
   </target>
 
   <target name="deps" depends="init" description="Pull projects dependencies">
@@ -67,23 +71,35 @@
     <javac srcdir="${src}" classpathref="jar.lib" destdir="${build}" includeAntRuntime="false" />
   </target>
 
-  <target name="test.compile" depends="init,deps" description="Compile tests">
+  <target name="compile-test" depends="init,deps" description="Compile tests">
     <javac srcdir="${src}" classpathref="jar.lib" includeAntRuntime="false" destdir="${build}" />
   </target>
 
-  <target name="test" depends="deps" description="Run tests">
-    <junitlauncher>
+  <target name="test" depends="compile-test" description="Run tests">
+    <junitlauncher printSummary="true">
       <classpath path="${build}" />
       <classpath refid="jar.lib" />
-      <testclasses>
-        <fileset dir="${build}" />
+      <testclasses outputdir="${build}">
+        <fileset dir="${build}">
+          <include name="test/**" />
+        </fileset>
+        <listener type="legacy-plain" sendSysOut="true" />
+        <listener type="legacy-brief" sendSysOut="true" />
+        <listener type="legacy-xml" sendSysErr="true" sendSysOut="true" />
       </testclasses>
     </junitlauncher>
+    <junitreport todir="./reports">
+      <fileset dir="${build}">
+        <include name="TEST-*.xml" />
+      </fileset>
+      <report format="frames" todir="./report/html" />
+    </junitreport>
   </target>
 
   <target name="run" depends="build" description="Run project">
     <java classname="lindenmeyer.Cli" classpath="${build}" />
   </target>
+
 
   <target name="doc" depends="init" description="Build project documentation">
     <javadoc sourcepath="${src}" destdir="${docs}" />
