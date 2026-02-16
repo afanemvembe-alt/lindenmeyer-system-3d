@@ -4,7 +4,7 @@ import lindenmeyer.rules.ContextRule;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.SimpleRule;
 
-import lindenmeyer.symbols.Symbol;
+// import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
 
