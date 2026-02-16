@@ -21,4 +21,16 @@ public class SymbolFactory {
     public int size() {
         return inventory.size();
     }
+
+    public static SymbolFactory fromString(String str)
+    {
+        SymbolFactory res = new SymbolFactory();
+
+        for (int i = 0; i < str.length(); i++)
+        {
+            res.getSymbol(str.charAt(i)); // duplicate values are checked in getSymbol
+        }
+
+        return res;
+    }
 }
