@@ -1,7 +1,6 @@
-package lindenmeyer.symbols;
+package test.symbols;
 
 import java.util.*;
-import test.symbols.*;
 
 public class Tests{
 	public static void main(String[] args){
