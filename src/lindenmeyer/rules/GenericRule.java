@@ -14,8 +14,7 @@ public abstract class GenericRule implements Applicable {
 
     /**
      * Construit une règle contenant le successeur donne.
-     * 
-     * @param successor une liste de symboles
+     * @param successor une SymbolList des successeurs
      */
     public GenericRule(SymbolList successor) {
         this.successor = successor;
