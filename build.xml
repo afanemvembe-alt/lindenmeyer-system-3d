@@ -67,11 +67,11 @@
     <ivy:retrieve />
   </target>
 
-  <target name="build" depends="init,deps" description="Compile project files">
+  <target name="build" depends="clean,init,deps" description="Compile project files">
     <javac srcdir="${src}" classpathref="jar.lib" destdir="${build}" includeAntRuntime="false" />
   </target>
 
-  <target name="compile-test" depends="init,deps" description="Compile tests">
+  <target name="compile-test" depends="clean,init,deps" description="Compile tests">
     <javac srcdir="${src}" classpathref="jar.lib" includeAntRuntime="false" destdir="${build}" />
   </target>
 

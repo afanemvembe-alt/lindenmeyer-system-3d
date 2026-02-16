@@ -5,7 +5,7 @@ import java.util.ArrayList;
 // import lindenmeyer.rules.ContextRule;
 import lindenmeyer.rules.GenericRule;
 // import lindenmeyer.rules.SimpleRule;
-import lindenmeyer.rules.RuleFactory;
+import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.rules.RuleSet;
 
 // import lindenmeyer.symbols.Symbol;
@@ -46,9 +46,9 @@ public class RuleFactoryTest
     public static boolean RuleFactory_constructDefault_Test()
     {
         boolean res = true;
-        RuleFactory rf = new RuleFactory(sf);
+        RuleSetFactory rf = new RuleSetFactory(sf);
 
-        res &= rf instanceof RuleFactory;
+        res &= rf instanceof RuleSetFactory;
         res &= rf.getPartSeparator() == '>';
         res &= rf.getRuleSeparator() == ',';
         res &= rf.getFactory().equals(sf);
@@ -59,9 +59,9 @@ public class RuleFactoryTest
     public static boolean RuleFactory_constructParam_Test()
     {
         boolean res = true;
-        RuleFactory rf = new RuleFactory(ruleSep, partSep, sf);
+        RuleSetFactory rf = new RuleSetFactory(ruleSep, partSep, sf);
 
-        res &= rf instanceof RuleFactory;
+        res &= rf instanceof RuleSetFactory;
         res &= rf.getPartSeparator() == ruleSep;
         res &= rf.getRuleSeparator() == partSep;
         res &= rf.getFactory().equals(sf);
@@ -71,25 +71,25 @@ public class RuleFactoryTest
 
     public static boolean RuleFactory_getRuleSeparator_Test()
     {
-        RuleFactory rf = new RuleFactory(ruleSep, partSep, sf);
+        RuleSetFactory rf = new RuleSetFactory(ruleSep, partSep, sf);
         return rf.getRuleSeparator() == ruleSep;
     }
 
     public static boolean RuleFactory_getPartSeparator_Test()
     {
-        RuleFactory rf = new RuleFactory(ruleSep, partSep, sf);
+        RuleSetFactory rf = new RuleSetFactory(ruleSep, partSep, sf);
         return rf.getPartSeparator() == partSep;
     }
 
     public static boolean RuleFactory_getFactory_Test()
     {
-        RuleFactory rf = new RuleFactory(ruleSep, partSep, sf);
+        RuleSetFactory rf = new RuleSetFactory(ruleSep, partSep, sf);
         return rf.getFactory().equals(sf);
     }
 
     public static boolean RuleFactory_parseString_Test()
     {
-        RuleFactory rf = new RuleFactory(ruleSep, partSep, sf);
+        RuleSetFactory rf = new RuleSetFactory(ruleSep, partSep, sf);
         RuleSet rs = rf.parseString(strRuleSet);
         // strRuleSet = A>B+B,B>A;
         ArrayList<String> rs_Strings = new ArrayList<>();
