@@ -119,6 +119,6 @@ public class RuleSetTest
         rs.add(rule_a_to_b);
 
         SymbolList res_SuccList = rs.successorOf(a_predList);
-        return res_SuccList.getSymbols().containsAll(a_succList.getSymbols());
+        return res_SuccList.containsAll(a_succList);
     }
 }

@@ -33,7 +33,7 @@ public class SimpleRuleTest {
     public static boolean SimpleRule_construct_Test()
     {
         boolean res = true;
-        GenericRule simpleRule = new SimpleRule(aPredList.getSymbols().get(0), aSuccList);
+        GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
 
         res &= simpleRule instanceof SimpleRule;
         return res;
@@ -42,7 +42,7 @@ public class SimpleRuleTest {
     public static boolean SimpleRule_getPredecessor_Test()
     {
         boolean res = true;
-        GenericRule simpleRule = new SimpleRule(aPredList.getSymbols().get(0), aSuccList);
+        GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
 
         res &= simpleRule.getPredecessor() instanceof SymbolList;
         res &= simpleRule.getPredecessor().equals(aPredList);
