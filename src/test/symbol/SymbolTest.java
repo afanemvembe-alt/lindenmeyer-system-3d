@@ -63,13 +63,13 @@ public class SymbolTest {
         SymbolList list = SymbolList.fromString(input, factory);
 
         // 1. Vérifier la taille
-        if (list.getSymbols().size() != 3) {
+        if (list.size() != 3) {
             throw new RuntimeException("ÉCHEC : La liste devrait avoir 3 symboles");
         }
 
         // 2. Vérifier que le 1er et le 3ème 'F' sont identiques (Flyweight au sein de la liste)
-        Symbol firstF = list.getSymbols().get(0);
-        Symbol lastF = list.getSymbols().get(2);
+        Symbol firstF = list.get(0);
+        Symbol lastF = list.get(2);
         
         if (firstF != lastF) {
             throw new RuntimeException("ÉCHEC : Les symboles identiques dans la liste ne partagent pas la même instance");
