@@ -1,5 +1,6 @@
 package lindenmeyer.rules;
 
+import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolList;
 
 /**
@@ -10,11 +11,14 @@ public class ContextRule extends GenericRule {
     /**
      * Le prédécesseur de la règle.
      */
-    SymbolList predecessor;
+    Symbol predecessor;
+
+    SymbolList leftContext;
+    SymbolList rightContext;
 
     @Override
     public SymbolList getPredecessor() {
-        return this.predecessor;
+        return null;
     }
 
     /**
@@ -22,8 +26,10 @@ public class ContextRule extends GenericRule {
      * @param predecessor une liste de symboles
      * @param successor une autre liste de symboles
      */
-    public ContextRule(SymbolList predecessor, SymbolList successor) {
+    public ContextRule(Symbol predecessor, SymbolList successor, SymbolList leftContext, SymbolList rightContext) {
         super(successor);
         this.predecessor = predecessor;
+        this.leftContext = leftContext;
+        this.rightContext = rightContext;
     }
 }

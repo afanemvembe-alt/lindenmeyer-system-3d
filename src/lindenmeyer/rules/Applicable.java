@@ -8,10 +8,10 @@ import lindenmeyer.symbols.SymbolList;
 public interface Applicable {
     /**
      * Determine si cette objet est applicable.
-     * @param generation symbole a tester
+     * @param mot symboles a tester
      * @return true si la règle est applicable, false sinon
      */
-    boolean isApplicable(SymbolList generation);
+    boolean isApplicable(SymbolList mot);
     /**
      * Retourne la liste de symboles avant transformation.
      * @return une liste de symboles
