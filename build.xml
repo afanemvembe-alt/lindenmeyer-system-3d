@@ -1,30 +1,105 @@
-<project name="Lindenmeyer">
+<project name="Lindenmeyer" xmlns:ivy="antlib:org.apache.ivy.ant" default="run">
   <description>
-  Buildfile pour le project Lindenmeyer.
+    Buildfile pour le project Lindenmeyer.
   </description>
 
   <property name="src" location="src" />
+  <property name="dir.src.lindenmeyer" location="${src}/lindenmeyer" />
+  <property name="dir.src.tests" location="${src}/test" />
   <property name="build" location="build" />
   <property name="docs" location="docs" />
+  <property name="lib" location="lib" />
 
-  <target name="init" description="Initialise project directories">
+  <path id="jar.lib">
+    <fileset dir="${lib}">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+
+  <property name="ivy.install.version" value="2.5.0" />
+  <condition property="ivy.home" value="${env.IVY_HOME}">
+    <isset property="env.IVY_HOME" />
+  </condition>
+  <property name="ivy.home" value="${user.home}/.ant" />
+  <property name="ivy.jar.dir" value="${ivy.home}/lib" />
+  <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+
+  <target name="download-ivy" unless="offline">
+
+    <mkdir dir="${ivy.jar.dir}" />
+    <!-- download Ivy from web site so that it can be used even without any special installation -->
+    <get
+      src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+      dest="${ivy.jar.file}" usetimestamp="true" />
+  </target>
+
+  <target name="init-ivy" depends="download-ivy">
+    <!-- try to load Ivy here from Ivy home, in case the user has not already dropped
+              it into Ant's lib dir (note that the latter copy will always take precedence).
+              We will not fail as long as local lib dir exists (it may be empty) and
+              Ivy is in at least one of Ant's lib dir or the local lib dir. -->
+    <path id="ivy.lib.path">
+      <fileset dir="${ivy.jar.dir}" includes="*.jar" />
+
+    </path>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml"
+      uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
+  </target>
+
+  <target name="init" description="Initialise project directories" depends="init-ivy">
     <tstamp />
     <mkdir dir="${build}" />
     <mkdir dir="${docs}" />
+    <mkdir dir="${lib}" />
+    <mkdir dir="report" />
+    <mkdir dir="reports" />
   </target>
 
   <target name="clean" description="Clean target directories">
     <delete dir="${build}" />
     <delete dir="${docs}" />
+    <delete dir="${lib}" />
+    <delete dir="report" />
+    <delete dir="reports" />
   </target>
 
-  <target name="build" depends="init" description="Compile project files">
-    <javac srcdir="${src}" destdir="${build}" includeAntRuntime="false" />
+  <target name="deps" depends="init" description="Pull projects dependencies">
+    <ivy:retrieve />
+  </target>
+
+  <target name="build" depends="init,deps" description="Compile project files">
+    <javac srcdir="${src}" classpathref="jar.lib" destdir="${build}" includeAntRuntime="false" />
+  </target>
+
+  <target name="compile-test" depends="init,deps" description="Compile tests">
+    <javac srcdir="${src}" classpathref="jar.lib" includeAntRuntime="false" destdir="${build}" />
+  </target>
+
+  <target name="test" depends="compile-test" description="Run tests">
+    <junitlauncher printSummary="true">
+      <classpath path="${build}" />
+      <classpath refid="jar.lib" />
+      <testclasses outputdir="${build}">
+        <fileset dir="${build}">
+          <include name="test/**" />
+        </fileset>
+        <listener type="legacy-plain" sendSysOut="true" />
+        <listener type="legacy-brief" sendSysOut="true" />
+        <listener type="legacy-xml" sendSysErr="true" sendSysOut="true" />
+      </testclasses>
+    </junitlauncher>
+    <junitreport todir="./reports">
+      <fileset dir="${build}">
+        <include name="TEST-*.xml" />
+      </fileset>
+      <report format="frames" todir="./report/html" />
+    </junitreport>
   </target>
 
   <target name="run" depends="build" description="Run project">
     <java classname="lindenmeyer.Cli" classpath="${build}" />
   </target>
+
 
   <target name="doc" depends="init" description="Build project documentation">
     <javadoc sourcepath="${src}" destdir="${docs}" />
