@@ -1,21 +1,22 @@
 package test.rules;
 
-// import lindenmeyer.rules.ContextRule;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.SimpleRule;
-
 // import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Une classe qui fournit les tests pour une `{@link GenericRule}`
  */
- public class GenericRuleTest 
- {
+public class GenericRuleTest {
     /** Un tableau des caratères pour les tests */
     public final static String sampleSucc = "sdfg";
     public final static String samplePred = "g";
@@ -25,23 +26,22 @@ import static org.junit.jupiter.api.Assertions.*;
     public final static SymbolList aSuccList = SymbolList.fromString(sampleSucc, sf);
     public final static SymbolList aPredList = SymbolList.fromString(samplePred, sf);
 
-    // maybe factor out simpleRule and contextRule vars later. 
+    // maybe factor out simpleRule and contextRule vars later.
 
     // public static void main(String[] args)
     // {
-    //     boolean res = true;
+    // boolean res = true;
 
-    //     // res &= GenericRule_construct_Test();
-    //     // res &= GenericRule_getSuccessor_Test();
-    //     // res &= GenericRule_isApplicable_Test();
-    //     // res &= GenericRule_toString_Test();
+    // // res &= GenericRule_construct_Test();
+    // // res &= GenericRule_getSuccessor_Test();
+    // // res &= GenericRule_isApplicable_Test();
+    // // res &= GenericRule_toString_Test();
 
-    //     System.out.println(res);
+    // System.out.println(res);
     // }
 
     @Test
-    public static void GenericRule_construct_Test()
-    {
+    void GenericRule_construct_Test() {
         // boolean res = true;
         GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
         // GenericRule contextRule = new ContextRule(aSuccList, aPredList);
@@ -59,8 +59,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
-    public static void GenericRule_getSuccessor_Test()
-    {
+    void GenericRule_getSuccessor_Test() {
         // boolean res = true;
         GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
         // GenericRule contextRule = new ContextRule(aPredList, aSuccList);
@@ -79,8 +78,7 @@ import static org.junit.jupiter.api.Assertions.*;
     // rule is applicable to SymbolList s when s is
     // equal to predecessor of rule
     @Test
-    public static void GenericRule_isApplicable_Test()
-    {
+    void GenericRule_isApplicable_Test() {
         // boolean res = true;
         SymbolList applicGeneration = SymbolList.fromString(samplePred, sf);
         SymbolList nonApplicGeneration = SymbolList.fromString("c", sf);
@@ -95,13 +93,12 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
     @Test
-    public static void GenericRule_toString_Test()
-    {
-        String str = "Rule : " + samplePred + "->" + sampleSucc;
+    void GenericRule_toString_Test() {
+        String str = samplePred + "->" + sampleSucc;
 
         GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
 
         // return str.equals(simpleRule.toString());
         assertEquals(str, simpleRule.toString());
     }
- }
+}

@@ -63,8 +63,10 @@ public class RuleSetFactory {
      */
     public RuleSet parseString(String s) {
         RuleSet res = new RuleSet();
-        for (String part : s.split("" + this.rule_separator)) {
-            String[] parts = part.split("" + this.part_separator);
+        // Separates one rule from another
+        for (String part : s.split(String.valueOf(rule_separator))) {
+            // Separates each rule into (hopefully) two parts, predecessor and successor
+            String[] parts = part.split(String.valueOf(part_separator));
 
             SymbolList successor = new SymbolList(this.factory);
 

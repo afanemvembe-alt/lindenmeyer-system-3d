@@ -1,11 +1,16 @@
 package test.symbols;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 
-import lindenmeyer.symbols.*;
-
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolFactory;
+import lindenmeyer.symbols.SymbolList;
 
 public class SymbolListTest {
     // public static void main(String[] args) {
@@ -92,26 +97,26 @@ public class SymbolListTest {
     }
 
     // public static boolean listsEqual() {
-    //     boolean res = true;
+    // boolean res = true;
 
-    //     SymbolFactory f = new SymbolFactory();
+    // SymbolFactory f = new SymbolFactory();
 
-    //     SymbolList la = new SymbolList(f);
-    //     SymbolList lb = new SymbolList(f);
-    //     SymbolList lc = new SymbolList(f);
+    // SymbolList la = new SymbolList(f);
+    // SymbolList lb = new SymbolList(f);
+    // SymbolList lc = new SymbolList(f);
 
-    //     la.add('A');
-    //     lb.add('A');
-    //     lc.add('A');
+    // la.add('A');
+    // lb.add('A');
+    // lc.add('A');
 
-    //     la.add('B');
-    //     lb.add('B');
-    //     lc.add('C');
+    // la.add('B');
+    // lb.add('B');
+    // lc.add('C');
 
-    //     res &= la.equals(lb);
-    //     res &= !la.equals(lc);
+    // res &= la.equals(lb);
+    // res &= !la.equals(lc);
 
-    //     return res;
+    // return res;
     // }
 
     @Test

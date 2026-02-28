@@ -1,17 +1,17 @@
 package test.lindenmeyer;
 
-import lindenmeyer.axiom.Axiom;
-import lindenmeyer.lsystem.LSystem;
-import lindenmeyer.rules.RuleSet;
-import lindenmeyer.rules.RuleSetFactory;
-import lindenmeyer.symbols.SymbolFactory;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+
+import lindenmeyer.axiom.Axiom;
+import lindenmeyer.lsystem.LSystem;
+import lindenmeyer.rules.RuleSet;
+import lindenmeyer.rules.RuleSetFactory;
+import lindenmeyer.symbols.SymbolFactory;
 
 class LSystemTest {
     // public static void main(String[] args) {

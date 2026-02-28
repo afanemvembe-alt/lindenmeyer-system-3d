@@ -81,9 +81,8 @@
       <classpath refid="jar.lib" />
       <testclasses outputdir="${build}">
         <fileset dir="${build}">
-          <include name="test/**" />
+          <include name="test/**/*" />
         </fileset>
-        <listener type="legacy-plain" sendSysOut="true" />
         <listener type="legacy-brief" sendSysOut="true" />
         <listener type="legacy-xml" sendSysErr="true" sendSysOut="true" />
       </testclasses>

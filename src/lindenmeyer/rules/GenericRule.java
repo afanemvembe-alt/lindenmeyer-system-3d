@@ -1,5 +1,7 @@
 package lindenmeyer.rules;
 
+import java.util.Objects;
+
 import lindenmeyer.symbols.*;
 
 /**
@@ -42,5 +44,20 @@ public abstract class GenericRule implements Applicable {
         }
 
         return res;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof GenericRule) {
+            GenericRule tmp = (GenericRule) obj;
+            return getPredecessor().equals(tmp.getPredecessor()) && getSuccessor().equals(tmp.getSuccessor());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPredecessor(), getSuccessor());
     }
 }
