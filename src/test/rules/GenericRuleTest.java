@@ -1,12 +1,15 @@
 package test.rules;
 
-import lindenmeyer.rules.ContextRule;
+// import lindenmeyer.rules.ContextRule;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.SimpleRule;
 
 // import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Une classe qui fournit les tests pour une `{@link GenericRule}`
@@ -24,70 +27,81 @@ import lindenmeyer.symbols.SymbolList;
 
     // maybe factor out simpleRule and contextRule vars later. 
 
-    public static void main(String[] args)
+    // public static void main(String[] args)
+    // {
+    //     boolean res = true;
+
+    //     // res &= GenericRule_construct_Test();
+    //     // res &= GenericRule_getSuccessor_Test();
+    //     // res &= GenericRule_isApplicable_Test();
+    //     // res &= GenericRule_toString_Test();
+
+    //     System.out.println(res);
+    // }
+
+    @Test
+    public static void GenericRule_construct_Test()
     {
-        boolean res = true;
-
-        res &= GenericRule_construct_Test();
-        res &= GenericRule_getSuccessor_Test();
-        res &= GenericRule_isApplicable_Test();
-        res &= GenericRule_toString_Test();
-
-        System.out.println(res);
-    }
-
-    public static boolean GenericRule_construct_Test()
-    {
-        boolean res = true;
+        // boolean res = true;
         GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
         // GenericRule contextRule = new ContextRule(aSuccList, aPredList);
 
-        res &= simpleRule instanceof GenericRule;
+        // res &= simpleRule instanceof GenericRule;
+        assertInstanceOf(GenericRule.class, simpleRule);
         // res &= contextRule instanceof GenericRule;
 
-        res &= simpleRule instanceof SimpleRule;
+        // res &= simpleRule instanceof SimpleRule;
+        assertInstanceOf(SimpleRule.class, simpleRule);
         // res &= contextRule instanceof ContextRule;
         // should getPredecessor return a Symbol instead of SymbolList?
         // res &= rule.getPredecessor() instanceof SymbolList;
-        return res;
+        // return res;
     }
 
-    public static boolean GenericRule_getSuccessor_Test()
+    @Test
+    public static void GenericRule_getSuccessor_Test()
     {
-        boolean res = true;
+        // boolean res = true;
         GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
         // GenericRule contextRule = new ContextRule(aPredList, aSuccList);
 
-        res &= simpleRule.getSuccessor() instanceof SymbolList;
-        res &= simpleRule.getSuccessor().equals(aSuccList);
+        // res &= simpleRule.getSuccessor() instanceof SymbolList;
+        assertInstanceOf(SymbolList.class, simpleRule.getSuccessor());
+        // res &= simpleRule.getSuccessor().equals(aSuccList);
+        assertEquals(aSuccList, simpleRule.getSuccessor());
 
         // res &= contextRule.getSuccessor() instanceof SymbolList;
         // res &= contextRule.getSuccessor().equals(aSuccList);
 
-        return res;
+        // return res;
     }
 
     // rule is applicable to SymbolList s when s is
     // equal to predecessor of rule
-    public static boolean GenericRule_isApplicable_Test()
+    @Test
+    public static void GenericRule_isApplicable_Test()
     {
-        boolean res = true;
+        // boolean res = true;
         SymbolList applicGeneration = SymbolList.fromString(samplePred, sf);
         SymbolList nonApplicGeneration = SymbolList.fromString("c", sf);
 
         GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
-        res &= simpleRule.isApplicable(applicGeneration);
-        res &= !simpleRule.isApplicable(nonApplicGeneration);
+        // res &= simpleRule.isApplicable(applicGeneration);
+        assertTrue(simpleRule.isApplicable(applicGeneration));
+        // res &= !simpleRule.isApplicable(nonApplicGeneration);
+        assertFalse(simpleRule.isApplicable(nonApplicGeneration));
 
-        return res;
+        // return res;
     }
 
-    public static boolean GenericRule_toString_Test()
+    @Test
+    public static void GenericRule_toString_Test()
     {
         String str = "Rule : " + samplePred + "->" + sampleSucc;
 
         GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
 
-        return str.equals(simpleRule.toString());
+        // return str.equals(simpleRule.toString());
+        assertEquals(str, simpleRule.toString());
     }
  }

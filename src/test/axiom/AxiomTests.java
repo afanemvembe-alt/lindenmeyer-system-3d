@@ -4,6 +4,9 @@ import lindenmeyer.axiom.*;
 import lindenmeyer.symbols.*;
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
 public class AxiomTests{
 	
 	public boolean getContentTest(){
