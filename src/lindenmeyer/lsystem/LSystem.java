@@ -20,8 +20,8 @@ public class LSystem {
     private SymbolFactory symbolFactory;
 
     // public LSystem(String axiome) {
-    //     this.axiome = axiome;
-    //     this.regles = new HashMap<>();
+    // this.axiome = axiome;
+    // this.regles = new HashMap<>();
     // }
 
     public LSystem(Axiom axiome, RuleSet regles, SymbolList currentGeneration, SymbolFactory symbolFactory) {
@@ -70,6 +70,12 @@ public class LSystem {
         currentGeneration = res;
     }
 
+    public void step(int n) {
+        for (int i = 0; i < n; i++) {
+            step();
+        }
+    }
+
     public String generer(int n) {
         for (int i = 0; i < n; i++) {
             step();
@@ -83,25 +89,25 @@ public class LSystem {
     }
 
     // public String generer(int n) {
-    //     String resultat = axiome;
+    // String resultat = axiome;
 
-    //     for (int i = 0; i < n; i++) {
-    //         String nouveau = "";
+    // for (int i = 0; i < n; i++) {
+    // String nouveau = "";
 
-    //         for (int j = 0; j < resultat.length(); j++) {
-    //             char c = resultat.charAt(j);
+    // for (int j = 0; j < resultat.length(); j++) {
+    // char c = resultat.charAt(j);
 
-    //             if (regles.containsKey(c)) {
-    //                 nouveau = nouveau + regles.get(c);
-    //             } else {
-    //                 nouveau = nouveau + c;
-    //             }
-    //         }
+    // if (regles.containsKey(c)) {
+    // nouveau = nouveau + regles.get(c);
+    // } else {
+    // nouveau = nouveau + c;
+    // }
+    // }
 
-    //         resultat = nouveau;
-    //     }
+    // resultat = nouveau;
+    // }
 
-    //     return resultat;
+    // return resultat;
     // }
 
     public Axiom getAxiome() {

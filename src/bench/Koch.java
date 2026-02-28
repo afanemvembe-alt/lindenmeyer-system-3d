@@ -14,7 +14,7 @@ public class Koch extends LSystemBench {
         SymbolFactory sf = new SymbolFactory();
         RuleSetFactory rf = new RuleSetFactory(sf);
         RuleSet rs = rf.parseString(ruleString);
-        super(8, new LSystem(new Axiom(axiomString), rs, sf));
+        super(13, new LSystem(new Axiom(axiomString), rs, sf));
     }
 
     public static void main(String[] args) {
