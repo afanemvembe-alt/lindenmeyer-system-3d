@@ -1,12 +1,10 @@
 package lindenmeyer;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
-import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.rules.RuleSet;
 import lindenmeyer.symbols.SymbolFactory;
@@ -20,16 +18,14 @@ public class Cli {
             // faire tourner une demo avec des options par defaut
             System.out.println("Mode demo actif !");
         } else {
-            BufferedReader stdin = new BufferedReader(
-                    new InputStreamReader(System.in));
-
             // sinon, on demande des infos a l'utilisateur:
             System.out.println(
                     "Bienvenue dans notre simulateur de L-Systemes !\n");
             System.out.println(
                     "Veuillez entrer quelques info sur votre simulation...\n");
 
-            String rulesString = prompt("Quelles regles voulez-vous utiliser? Entrer des regles sous forme A->B-B, separees par une virgule (,): ");
+            String rulesString = prompt(
+                    "Quelles regles voulez-vous utiliser? Entrer des regles sous forme A->B-B, separees par une virgule (,): ");
             String axiomString = prompt("Quel sera le point de départ du LSystème? ");
             String toRun = prompt("Combien de generations ? ");
 

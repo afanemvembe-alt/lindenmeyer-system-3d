@@ -3,12 +3,14 @@ package test.rules;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.SimpleRule;
+import lindenmeyer.symbols.Symbol;
 // import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
@@ -100,5 +102,38 @@ public class GenericRuleTest {
 
         // return str.equals(simpleRule.toString());
         assertEquals(str, simpleRule.toString());
+    }
+
+    @Test
+    void equals() {
+        Symbol a = sf.getSymbol('A');
+        Symbol b = sf.getSymbol('B');
+
+        SymbolFactory sf2 = new SymbolFactory();
+
+        Symbol a1 = sf2.getSymbol(a.getSymbol());
+        Symbol b1 = sf2.getSymbol(b.getSymbol());
+
+        GenericRule rule = new MockRule(a, b);
+        GenericRule otherRule = new MockRule(a1, b1);
+
+        assertEquals(rule, rule);
+        assertEquals(rule, otherRule);
+
+        assertNotEquals(new MockRule(a, b), new MockRule(b, a));
+    }
+
+    protected static class MockRule extends GenericRule {
+        Symbol pred;
+
+        @Override
+        public SymbolList getPredecessor() {
+            return SymbolList.of(pred);
+        }
+
+        public MockRule(Symbol pred, Symbol succ) {
+            super(SymbolList.of(succ));
+            this.pred = pred;
+        }
     }
 }

@@ -61,4 +61,28 @@ public class RuleSet {
 
         return s;
     }
+
+    public void addAll(Set<GenericRule> rules) {
+        this.rules.addAll(rules);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj instanceof RuleSet) {
+            RuleSet other = (RuleSet) obj;
+            return other.getRules().equals(getRules());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        // TODO Auto-generated method stub
+        return getRules().hashCode();
+    }
 }

@@ -1,8 +1,5 @@
 package lindenmeyer.lsystem;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import lindenmeyer.axiom.Axiom;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSet;
@@ -124,5 +121,17 @@ public class LSystem extends AbstractLsystemListenable {
 
     public String toString() {
         return axiome + " " + regles + " " + currentGeneration;
+    }
+
+    public RuleSet getRegles() {
+        return regles;
+    }
+
+    public Axiom getAxiom() {
+        return axiome;
+    }
+
+    public SymbolFactory getSymbolFactory() {
+        return symbolFactory;
     }
 }
