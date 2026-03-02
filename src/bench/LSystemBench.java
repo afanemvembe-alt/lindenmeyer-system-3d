@@ -15,8 +15,8 @@ public abstract class LSystemBench implements Runnable {
     public void run() {
         lSystem.step(generations);
         // for (int i = 0; i < generations; i++) {
-        //     System.err.println(lSystem.getCurrentGeneration().size());
-        //     lSystem.step();
+        // System.err.println(lSystem.getCurrentGeneration().size());
+        // lSystem.step();
         // }
     }
 }
