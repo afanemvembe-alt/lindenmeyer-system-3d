@@ -71,7 +71,7 @@ public class AxiomTests {
 
 		// boolean ok = axiom1.isInAlphabet(alphabet) && axiom2.isInAlphabet(alphabet);
 		// if (!ok) {
-		// 	System.out.println("Erreur : isInAlphabet() incorrect pour Axiome");
+		// System.out.println("Erreur : isInAlphabet() incorrect pour Axiome");
 		// }
 		// return ok;
 

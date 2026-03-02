@@ -1,8 +1,5 @@
 package lindenmeyer.lsystem;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import lindenmeyer.axiom.Axiom;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSet;

@@ -8,8 +8,6 @@ import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.*;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSetFactory;
-import lindenmeyer.rules.SimpleRule;
-import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 
 public class LSystemFactoryTest {
