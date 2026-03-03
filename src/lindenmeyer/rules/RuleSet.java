@@ -9,8 +9,8 @@ import java.util.HashSet;
 /**
  * Un ensemble de règles.
  */
-public class RuleSet {
-    private HashSet<GenericRule> rules;
+public class RuleSet extends HashSet<GenericRule> {
+    // private HashSet<GenericRule> rules;
 
     /**
      * Retourne l'ensemble des règles.
@@ -18,7 +18,7 @@ public class RuleSet {
      * @return
      */
     public Set<GenericRule> getRules() {
-        return this.rules;
+        return this;
     }
 
     /**
@@ -27,23 +27,15 @@ public class RuleSet {
      * @param rules
      */
     public RuleSet(Set<GenericRule> rules) {
-        this.rules = new HashSet<>(rules);
+        // this.rules = new HashSet<>(rules);
+        super(rules);
     }
 
     /**
      * Construit un ensemble de règles vide.
      */
     public RuleSet() {
-        this(new HashSet<>());
-    }
-
-    /**
-     * Ajoute une règle à l'ensemble.
-     * 
-     * @param e règle à ajouter
-     */
-    public void add(GenericRule e) {
-        this.rules.add(e);
+        super();
     }
 
     /**
@@ -60,29 +52,5 @@ public class RuleSet {
         }
 
         return s;
-    }
-
-    public void addAll(Set<GenericRule> rules) {
-        this.rules.addAll(rules);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj instanceof RuleSet) {
-            RuleSet other = (RuleSet) obj;
-            return other.getRules().equals(getRules());
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        // TODO Auto-generated method stub
-        return getRules().hashCode();
     }
 }
