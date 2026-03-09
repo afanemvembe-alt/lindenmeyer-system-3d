@@ -22,7 +22,7 @@ import lindenmeyer.symbols.SymbolList;
 /**
  * Une classe qui fournit les tests pour une `{@link RuleSetFactory}`
  */
-public class RuleFactoryTest {
+public class RuleSetFactoryTest {
     public final static String sampleSucc = "sdfg";
     public final static String samplePred = "g";
 

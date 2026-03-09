@@ -16,6 +16,7 @@ public abstract class GenericRule implements Applicable {
 
     /**
      * Construit une règle contenant le successeur donne.
+     * 
      * @param successor une SymbolList des successeurs
      */
     public GenericRule(SymbolList successor) {
@@ -48,6 +49,9 @@ public abstract class GenericRule implements Applicable {
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj instanceof GenericRule) {
             GenericRule tmp = (GenericRule) obj;
             return getPredecessor().equals(tmp.getPredecessor()) && getSuccessor().equals(tmp.getSuccessor());

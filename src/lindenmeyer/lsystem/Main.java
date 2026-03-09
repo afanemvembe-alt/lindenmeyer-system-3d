@@ -10,9 +10,9 @@ public class Main {
         SymbolFactory factory = new SymbolFactory();
 
         // Symboles utilisés
-        Symbol F = factory.getSymbol('F');
-        Symbol plus = factory.getSymbol('+');
-        Symbol minus = factory.getSymbol('-');
+        // Symbol F = factory.getSymbol('F');
+        // Symbol plus = factory.getSymbol('+');
+        // Symbol minus = factory.getSymbol('-');
 
         // Axiome de départ (flocon de Koch)
         LSystem koch = new LSystem(new Axiom("F+F--F+F"), new RuleSet(), factory);
@@ -25,7 +25,7 @@ public class Main {
         }
 
         // Création de la règle et ajout au L-System
-        //koch.ajouterRegle(new SimpleRule(F, successor));
+        // koch.ajouterRegle(new SimpleRule(F, successor));
 
         // Générer plusieurs itérations
         int iterations = 5;

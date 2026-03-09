@@ -1,5 +1,5 @@
 package lindenmeyer.lsystem;
 
-public interface LsystemListener{
+public interface LsystemListener {
 	void lsystemUpdated(Object source);
 }

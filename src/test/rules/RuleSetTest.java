@@ -1,6 +1,8 @@
 package test.rules;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // import java.util.ArrayList;
@@ -17,6 +19,7 @@ import lindenmeyer.rules.SimpleRule;
 import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
+import test.rules.GenericRuleTest.MockRule;
 
 /**
  * Une classe qui fournit les tests pour une `{@link RuleSet}`
@@ -132,5 +135,36 @@ public class RuleSetTest {
         // return res_SuccList.containsAll(a_succList);
 
         assertTrue(res_SuccList.containsAll(a_succList));
+    }
+
+    @Test
+    void equals() {
+        GenericRule ruleA = new MockRule(a, b);
+        GenericRule ruleB = new MockRule(b, a);
+        GenericRule ruleC = new MockRule(a, a);
+        GenericRule ruleD = new MockRule(b, b);
+
+        RuleSet ruleSet = new RuleSet();
+        ruleSet.add(ruleA);
+        ruleSet.add(ruleB);
+
+        RuleSet extraRuleSet = new RuleSet();
+        extraRuleSet.add(ruleA);
+        extraRuleSet.add(ruleB);
+        extraRuleSet.add(ruleC);
+
+        RuleSet lessRuleSet = new RuleSet();
+        lessRuleSet.add(ruleA);
+
+        RuleSet dRuleSet = new RuleSet();
+        dRuleSet.add(ruleD);
+
+        RuleSet emptyRuleSet = new RuleSet();
+
+        assertEquals(ruleSet, ruleSet);
+        assertNotEquals(ruleSet, extraRuleSet);
+        assertNotEquals(ruleSet, lessRuleSet);
+        assertNotEquals(lessRuleSet, dRuleSet);
+        assertEquals(emptyRuleSet, emptyRuleSet);
     }
 }

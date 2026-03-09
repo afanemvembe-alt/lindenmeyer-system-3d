@@ -1,6 +1,5 @@
 package lindenmeyer.axiom;
 
-import java.util.*;
 import lindenmeyer.symbols.*;
 
 public class AxiomDemo {
