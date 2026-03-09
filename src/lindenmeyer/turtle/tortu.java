@@ -25,7 +25,7 @@ public class Tortue {
           double deltaAngle = config.getAngleRotation();
 
 
-
+// changer premier paragraphe 
 
         for (char c : sequence.toCharArray()) {
             if (c == 'F') {
@@ -33,6 +33,8 @@ public class Tortue {
                 double nx = x + longueur * Math.cos(Math.toRadians(angle));
                 double ny = y + longueur * Math.sin(Math.toRadians(angle));
 
+
+// changer explication 2"me paragraphe 
     // on cree le segement en utilisant le constructeur 
                 segments.add(new Segment(x, y, nx, ny));
                 x = nx;
