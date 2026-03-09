@@ -1,8 +1,11 @@
 package lindenmeyer.turtle;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigTortue {
     private double pas; // remplace le "10"(la distance pour F)
     private double angleRotation; // remplace le "60"( l'angle pour + et -)
+    
 
 // Dictionnaire qui associe un caractère à une action
     private Map<Character, CommandeTortue> commandes = new HashMap<>();
