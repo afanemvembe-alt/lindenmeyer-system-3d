@@ -35,6 +35,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     public ArrayList<LSystem> preSet;
 
     // paramètres tortue
+    private ParamDialog paramDialog;
     private int longueur = 10;
     private int angleRotation = 60;
 
@@ -107,6 +108,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
 		this.preSet= new ArrayList<>();
 		this.addPreSet();
+		this.paramDialog= new ParamDialog(this);
         this.lsystem = new LSystem(new Axiom("F"));
         this.display = new VueLsystem(this.lsystem);
 
@@ -220,11 +222,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
         else if (e.getSource() == this.settings) {
 
-            ParamDialog dialog = new ParamDialog(this);
-            dialog.setVisible(true);
+            //ParamDialog dialog = new ParamDialog(this);
+            this.paramDialog.setVisible(true);
 
-            this.longueur = dialog.getLongueur();
-            this.angleRotation = dialog.getAngle();
+            this.longueur = this.paramDialog.getLongueur();
+            this.angleRotation = this.paramDialog.getAngle();
         }
 
         else if (e.getSource() == this.clear) {
@@ -248,7 +250,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			Tortue tortue = new Tortue(300, 400, 0, longueur, angleRotation);
 			List<Segment> allSegments = new ArrayList<>();
 			LSystem temp = new LSystem(new Axiom(chosen.getAxiome().getContent()), chosen.getRegles(), chosen.getSymbolFactory());
-
+			
+			this.modifAxiom.setText(chosen.getAxiome().getContent());
+			String regles= "";
+			for (GenericRule gen: chosen.getRegles()){
+				regles+=gen;
+			}
+			this.rule.setText(regles);
+			
 			int n = 3;
             try {
                 if (!step.isEmpty()){
