@@ -29,12 +29,21 @@ public class History {
     }
 
     /**
-     * Retourne l'état de la génération {@code index}
+     * Retourne l'état de la génération {@code index}.
      * 
      * @param index index de la génération à retourner
      * @return la génération à retourner
      */
     public Object getState(int index) {
         return inner.get(index);
+    }
+
+    /**
+     * Retourne la longueur de l'historique.
+     * 
+     * @return longueur de l'historique
+     */
+    public int size() {
+        return inner.size();
     }
 }
