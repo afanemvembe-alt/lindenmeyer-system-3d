@@ -5,10 +5,11 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
-import lindenmeyer.axiom.Axiom;
-import lindenmeyer.lsystem.LSystem;
-import lindenmeyer.turtle.Segment;
-import lindenmeyer.turtle.Tortue;
+import lindenmeyer.axiom.*;
+import lindenmeyer.symbols.*;
+import lindenmeyer.rules.*;
+import lindenmeyer.lsystem.*;
+import lindenmeyer.turtle.*;
 
 public class InterfaceLsystem extends JFrame implements ActionListener {
 
@@ -17,7 +18,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
     public JPanel commands;
     public JTextField modifAxiom;
-    public JTextField symbol;
     public JTextField rule;
     public JTextField nbStep;
 
@@ -32,6 +32,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     public JButton zoomP;
     public JButton zoomM;
     public JButton settings;
+    public ArrayList<LSystem> preSet;
 
     // paramètres tortue
     private int longueur = 10;
@@ -47,17 +48,12 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.commands.setPreferredSize(new Dimension(300, 200));
 
         this.modifAxiom = new JTextField();
-        this.symbol = new JTextField();
         this.rule = new JTextField();
         this.nbStep = new JTextField();
 
         JPanel ligneAxiom = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ligneAxiom.add(new JLabel("Axiome : "));
         ligneAxiom.add(this.modifAxiom);
-
-        JPanel ligneSymbole = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        ligneSymbole.add(new JLabel("Symbole : "));
-        ligneSymbole.add(this.symbol);
 
         JPanel ligneRegle = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ligneRegle.add(new JLabel("Regle : "));
@@ -85,7 +81,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
         Dimension taille = new Dimension(150, 25);
         this.modifAxiom.setPreferredSize(taille);
-        this.symbol.setPreferredSize(taille);
         this.rule.setPreferredSize(taille);
         this.nbStep.setPreferredSize(taille);
 
@@ -94,7 +89,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.panelZoom = new JPanel(new FlowLayout());
 
         this.panelLsystem.add(ligneAxiom);
-        this.panelLsystem.add(ligneSymbole);
         this.panelLsystem.add(ligneRegle);
         this.panelLsystem.add(this.defineLsystem);
 
@@ -111,6 +105,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.commands.add(this.panelGeneration);
         this.commands.add(this.panelZoom);
 
+		this.preSet= new ArrayList<>();
+		this.addPreSet();
         this.lsystem = new LSystem(new Axiom("F"));
         this.display = new VueLsystem(this.lsystem);
 
@@ -123,25 +119,82 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
+    
+    public void showError(JTextField field, String message) {
+		field.setBorder(BorderFactory.createLineBorder(Color.RED));
+		JOptionPane.showMessageDialog(
+				this,
+				message,
+				"Erreur de saisie",
+				JOptionPane.ERROR_MESSAGE
+		);
+	}
+	
+	public void resetField(JTextField field) {
+		field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+	}
+	
+	public void addPreSet(){
+		LSystem koch = new LSystem(new Axiom("F--F--F"));
+		koch.ajouterRegle('F', "F+F--F+F");
+		this.preSet.add(koch);
+
+		LSystem tree = new LSystem(new Axiom("X"));
+		tree.ajouterRegle('X', "F-[[X]+X]+F[+FX]-X");
+		tree.ajouterRegle('F', "FF");
+		this.preSet.add(tree);
+
+		LSystem dragon = new LSystem(new Axiom("FX"));
+		dragon.ajouterRegle('X', "X+YF+");
+		dragon.ajouterRegle('Y', "-FX-Y");
+		this.preSet.add(dragon);
+	}
 
     public void actionPerformed(ActionEvent e) {
 
         String text = this.modifAxiom.getText();
-        String symbole = this.symbol.getText();
         String regle = this.rule.getText();
         String step = this.nbStep.getText();
 
         if (e.getSource() == this.defineLsystem) {
+			if (!text.isEmpty()){ 
+				if (text.matches(".*\\d.*")){ 
+					showError(this.modifAxiom, "L'axiome ne peut pas contenir de chiffres");
+					return;
+				}
+				this.display.getLSystem().setAxiome(new Axiom(text));
+				resetField(modifAxiom);
+			} else {
+				resetField(modifAxiom);
+			}
 
-            this.display.getLSystem().setAxiome(new Axiom(text));
+			if (regle.isEmpty()) {
+				showError(this.rule, "Vous devez entrer au moins une regle");
+				return;
+			} else if(!regle.isEmpty()) {
+				String[] rules = regle.split(",");
+				for (String r : rules){
+					String[] parts = r.split(">");
+					if (parts.length != 2) {
+						showError(this.rule, "Regle invalide : \"" + r + "\". Format attendu : symbole>regle");
+						return;
+					}
+					if (parts[0].length() != 1) {
+						showError(this.rule, "Le symbole doit être un seul caractère : \"" + r + "\"");
+						return;
+					}
+				}
+			}
+			resetField(rule);
 
-            if (!symbole.equals("") && !regle.equals("")) {
-                this.display.getLSystem().ajouterRegle(symbole.charAt(0), regle);
-            }
+            RuleSetFactory rsf = new RuleSetFactory(new SymbolFactory());
+			RuleSet rules = rsf.parseString(rule.getText());
+			for (GenericRule r : rules) {
+				this.display.getLSystem().ajouterRegle(r);
+			}
         }
 
         else if (e.getSource() == this.generate) {
-
             int n = 2;
             try {
                 if (!step.isEmpty()) {
@@ -152,18 +205,12 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             }
 
             Tortue tortue = new Tortue(300, 400, 0, longueur, angleRotation);
-
-            LSystem temp = new LSystem(
-                    new Axiom(this.display.getLSystem().getAxiome().getContent())
-            );
-
+            LSystem temp = new LSystem(new Axiom(this.display.getLSystem().getAxiome().getContent()), this.display.getLSystem().getRegles(), this.display.getLSystem().getSymbolFactory());
             List<Segment> allSegments = new ArrayList<>();
 
             for (int i = 0; i < n; i++) {
                 temp.step();
-                List<Segment> segments =
-                        tortue.interpreter(temp.getCurrentGeneration().toString());
-
+                List<Segment> segments = tortue.interpreter(temp.getCurrentGeneration().toString());
                 allSegments.addAll(segments);
             }
 
@@ -194,9 +241,33 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         }
 
         else if (e.getSource() == this.random) {
-            // à faire
-        }
+			this.display.clearSegments();
+            int pos = (int)(Math.random()*this.preSet.size());
+			LSystem chosen = this.preSet.get(pos);
+
+			Tortue tortue = new Tortue(300, 400, 0, longueur, angleRotation);
+			List<Segment> allSegments = new ArrayList<>();
+			LSystem temp = new LSystem(new Axiom(chosen.getAxiome().getContent()), chosen.getRegles(), chosen.getSymbolFactory());
+
+			int n = 3;
+            try {
+                if (!step.isEmpty()){
+                    n = Integer.parseInt(step);
+                }
+            } catch (NumberFormatException ex){
+                n = 3;
+            }
+			for(int i=0; i<n; i++){
+				temp.step();
+				allSegments.addAll(tortue.interpreter(temp.getCurrentGeneration().toString()));
+			}
+
+			this.display.setSegments(allSegments);
+			this.display.getLSystem().setAxiome(new Axiom(chosen.getAxiome().getContent()));
+			this.display.repaint();
+		}
     }
+    
 	public static void main(String[] args) {
     SwingUtilities.invokeLater(new Runnable() {
         public void run() {
