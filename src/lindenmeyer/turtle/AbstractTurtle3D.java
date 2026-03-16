@@ -34,13 +34,17 @@ public abstract class AbstractTurtle3D {
 
     public abstract void restorePosition();
 
+    public abstract List<Segment3D> getSegments();
+
     public void interpret(Interpretable3D object) {
         object.interpret(this);
     }
 
-    public void interpretAll(List<? extends Interpretable3D> list) {
+    public List<Segment3D> interpretAll(List<? extends Interpretable3D> list) {
         for (Interpretable3D object : list) {
             interpret(object);
         }
+
+        return getSegments();
     }
 }
