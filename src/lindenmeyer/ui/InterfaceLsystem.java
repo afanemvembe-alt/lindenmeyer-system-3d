@@ -114,7 +114,10 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.display = new VueLsystem(this.lsystem);
 
         this.setLayout(new BorderLayout());
-        this.add(display, BorderLayout.CENTER);
+        // taille large pour scroll
+        display.setPreferredSize(new Dimension(2000, 2000));
+        JScrollPane scroll = new JScrollPane(display);
+        this.add(scroll, BorderLayout.CENTER);
         this.add(this.commands, BorderLayout.EAST);
 
         this.setSize(1000, 500);
