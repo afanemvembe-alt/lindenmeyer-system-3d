@@ -15,6 +15,10 @@ public abstract class AbstractTurtle3D {
         this.config = config;
     }
 
+    public ConfigTortue getConfig() {
+        return config;
+    }
+
     public AbstractTurtle3D(ConfigTortue config) {
         this(new Coord3D(), 0, 0, config);
     }
