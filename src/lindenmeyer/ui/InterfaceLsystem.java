@@ -41,6 +41,9 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     public InterfaceLsystem() {
         super("LSystem");
 
+        MenubarLsystem menuBar = new MenubarLsystem();
+        this.setJMenuBar(menuBar);
+
         this.commands = new JPanel();
         this.commands.setLayout(new GridLayout(3,1,5,5));
         this.commands.setBackground(Color.WHITE);
