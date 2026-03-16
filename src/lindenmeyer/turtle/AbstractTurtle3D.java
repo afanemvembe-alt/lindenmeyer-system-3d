@@ -1,5 +1,6 @@
 package lindenmeyer.turtle;
 
+import java.awt.Color;
 import java.util.*;
 
 public abstract class AbstractTurtle3D {
@@ -21,6 +22,8 @@ public abstract class AbstractTurtle3D {
     public Coord3D getPosition() {
         return position;
     }
+
+    public abstract void changeColor(Color c);
 
     public abstract void forward();
 
