@@ -121,7 +121,8 @@
 
   <target name="run" depends="build" description="Run project">
     <!-- <java classname="lindenmeyer.Cli" classpath="${build}" /> -->
-    <java classname="lindenmeyer.HelloFX" classpath="${build}" />
+    <!-- <java classname="lindenmeyer.HelloFX" classpath="${build}" /> -->
+    <java classname="lindenmeyer.App" classpath="${build}" fork="true" />
   </target>
 
 
