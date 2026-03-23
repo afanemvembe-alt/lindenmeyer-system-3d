@@ -16,6 +16,7 @@ public class Bencher {
     public static BenchResult bench(Runnable toRun) {
         Instant now = Instant.now();
         toRun.run();
-        return new BenchResult(now.until(Instant.now()), toRun);
+        // On utilise Duration.between pour obtenir un Duration au lieu d'un long
+        return new BenchResult(Duration.between(now, Instant.now()), toRun);
     }
 }

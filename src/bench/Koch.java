@@ -19,10 +19,14 @@ public class Koch extends LSystemBench {
      * générations.
      */
     public Koch() {
-        SymbolFactory sf = new SymbolFactory();
-        RuleSetFactory rf = new RuleSetFactory(sf);
-        RuleSet rs = rf.parseString(ruleString);
-        super(13, new LSystem(new Axiom(axiomString), rs, sf));
+        super(
+            13,
+            new LSystem(
+                new Axiom(axiomString),
+                new RuleSetFactory(new SymbolFactory()).parseString(ruleString),
+                new SymbolFactory()
+            )
+        );
     }
 
     /**
