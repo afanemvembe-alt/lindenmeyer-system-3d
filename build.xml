@@ -125,7 +125,7 @@
   </target>
 
 
-  <target name="doc" depends="init" description="Build project documentation">
+  <target name="doc" depends="init, deps" description="Build project documentation">
     <javadoc sourcepath="${src}" destdir="${docs}" classpathref="jar.lib" />
   </target>
 </project>
