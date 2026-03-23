@@ -11,7 +11,7 @@ public class VueLsystem extends JPanel implements LsystemListener {
 
     private LSystem lsystem;
     private List<Segment> segments = new ArrayList<>();
-    private double zoom = 0.6; // un peu plus gros qu'avant
+    private double zoom = 0.8; // un peu plus gros qu'avant
     private Color drawColor = null;
 
     // Padding autour du dessin
@@ -27,6 +27,10 @@ public class VueLsystem extends JPanel implements LsystemListener {
 
     public LSystem getLSystem() { return this.lsystem; }
     public List<Segment> getSegments() { return this.segments; }
+    
+    public void setLSystem(LSystem sys){
+		this.lsystem= sys;
+	}
 
     public void setSegments(List<Segment> segments) {
         this.segments = segments;
@@ -57,8 +61,8 @@ public class VueLsystem extends JPanel implements LsystemListener {
         }
 
         // Offset pour placer en haut à gauche
-        double offsetX = paddingX - minX * zoom;
-        double offsetY = paddingY - minY * zoom;
+        double offsetX = 0;
+        double offsetY = 0;
 
         // Dessin des segments
         g2.setStroke(new BasicStroke(1));
