@@ -69,6 +69,13 @@ public class ColorFactory {
         }
     }
 
+    /**
+     * Retourne la couleur associée à l'object donné, et y associe une couleur si
+     * cet objet n'en a pas déjà.
+     * 
+     * @param o un objet
+     * @return la couleur associée à l'objet
+     */
     public Color getColor(Object o) {
         Color c = colorMap.get(o);
 
