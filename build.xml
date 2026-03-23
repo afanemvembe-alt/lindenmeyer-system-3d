@@ -46,7 +46,31 @@
       uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
   </target>
 
-  <target name="init" description="Initialise project directories" depends="init-ivy">
+  <condition property="family" value="windows">
+    <os family="windows" />
+  </condition>
+
+  <condition property="family" value="linux">
+    <os family="unix" />
+  </condition>
+
+  <condition property="family" value="osx">
+    <os family="mac" />
+  </condition>
+
+  <condition property="arch" value="x64" else="aarch64">
+    <contains string="${os.arch}" substring="64" />
+  </condition>
+
+  <target name="javafx-deps">
+    <mkdir dir="tmp" />
+    <get src="https://download2.gluonhq.com/openjfx/26/openjfx-26_${family}-${arch}_bin-sdk.zip"
+      dest="tmp/" usetimestamp="true" />
+    <unzip src="tmp/openjfx-26_windows-x64_bin-sdk.zip" dest="${lib}">
+    </unzip>
+  </target>
+
+  <target name="init" description="Initialise project directories" depends="init-ivy, javafx-deps">
     <tstamp />
     <mkdir dir="${build}" />
     <mkdir dir="${docs}" />
@@ -96,7 +120,8 @@
   </target>
 
   <target name="run" depends="build" description="Run project">
-    <java classname="lindenmeyer.Cli" classpath="${build}" />
+    <!-- <java classname="lindenmeyer.Cli" classpath="${build}" /> -->
+    <java classname="lindenmeyer.HelloFX" classpath="${build}" />
   </target>
 
 
