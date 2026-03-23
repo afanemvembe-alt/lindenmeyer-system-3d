@@ -39,7 +39,7 @@ public abstract class GenericRule implements Applicable {
         for (Symbol s : getPredecessor()) {
             res += s.getSymbol();
         }
-        res += "->";
+        res += ">";
         for (Symbol s : getSuccessor()) {
             res += s.getSymbol();
         }

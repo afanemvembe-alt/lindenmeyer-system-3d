@@ -1,106 +1,85 @@
 package lindenmeyer.ui;
 
-import lindenmeyer.axiom.*;
-import lindenmeyer.symbols.*;
 import lindenmeyer.lsystem.*;
-import lindenmeyer.rules.*;
 import lindenmeyer.turtle.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class VueLsystem extends JPanel implements LsystemListener{
-	private LSystem lsystem;
-	private List<Segment> segments = new ArrayList<>();
-	private double zoom = 1.0;
+public class VueLsystem extends JPanel implements LsystemListener {
 
-	
+    private LSystem lsystem;
+    private List<Segment> segments = new ArrayList<>();
+    private double zoom = 0.6; // un peu plus gros qu'avant
+    private Color drawColor = null;
 
-	
-	public VueLsystem(LSystem lsystem){
-		super();
-		this.lsystem= lsystem;
-		this.setPreferredSize(new Dimension(700, 500));
-		this.lsystem.addListener(this);
-	}
-	
-	public LSystem getLSystem(){
-		return this.lsystem;
-	}
-	
-	public void setSegments(List<Segment> segments) {
-		this.segments = segments;
-	}
+    // Padding autour du dessin
+    private final int paddingX = 10;
+    private final int paddingY = 10;
 
-	public void clearSegments() {
-		if (segments != null) segments.clear();
-	}
-	
-	
-	@Override
+    public VueLsystem(LSystem lsystem) {
+        super();
+        this.lsystem = lsystem;
+        this.setPreferredSize(new Dimension(700, 500));
+        this.lsystem.addListener(this);
+    }
+
+    public LSystem getLSystem() { return this.lsystem; }
+    public List<Segment> getSegments() { return this.segments; }
+
+    public void setSegments(List<Segment> segments) {
+        this.segments = segments;
+        // Pas de centrage, juste le zoom par défaut
+        this.repaint();
+    }
+
+    public void clearSegments() {
+        if (segments != null) segments.clear();
+        this.repaint();
+    }
+
+    public void setDrawColor(Color c) { this.drawColor = c; this.repaint(); }
+    public void resetDrawColor() { this.drawColor = null; this.repaint(); }
+
+    @Override
     protected void paintComponent(Graphics g) {
-    super.paintComponent(g);
+        super.paintComponent(g);
+        if (segments == null || segments.isEmpty()) return;
 
-    if (segments == null || segments.isEmpty()) return;
+        Graphics2D g2 = (Graphics2D) g;
 
-    Graphics2D g2 = (Graphics2D) g;
+        // Limites du dessin
+        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
+        for (Segment s : segments) {
+            minX = Math.min(minX, Math.min(s.getX1(), s.getX2()));
+            minY = Math.min(minY, Math.min(s.getY1(), s.getY2()));
+        }
 
-    // 1. Calcul des limites
-    double minX = Double.MAX_VALUE;
-    double minY = Double.MAX_VALUE;
-    double maxX = Double.MIN_VALUE;
-    double maxY = Double.MIN_VALUE;
+        // Offset pour placer en haut à gauche
+        double offsetX = paddingX - minX * zoom;
+        double offsetY = paddingY - minY * zoom;
 
-    for (Segment s : segments) {
-        minX = Math.min(minX, Math.min(s.getX1(), s.getX2()));
-        minY = Math.min(minY, Math.min(s.getY1(), s.getY2()));
-        maxX = Math.max(maxX, Math.max(s.getX1(), s.getX2()));
-        maxY = Math.max(maxY, Math.max(s.getY1(), s.getY2()));
+        // Dessin des segments
+        g2.setStroke(new BasicStroke(1));
+        for (Segment s : segments) {
+            g2.setColor(drawColor != null ? drawColor : Color.BLACK);
+
+            int x1 = (int) (s.getX1() * zoom + offsetX);
+            int y1 = (int) (s.getY1() * zoom + offsetY);
+            int x2 = (int) (s.getX2() * zoom + offsetX);
+            int y2 = (int) (s.getY2() * zoom + offsetY);
+
+            g2.drawLine(x1, y1, x2, y2);
+        }
     }
 
-    double width = maxX - minX;
-    double height = maxY - minY;
+    // Zoom manuel
+    public void zoomIn() { zoom *= 1.2; this.repaint(); }
+    public void zoomOut() { zoom /= 1.2; this.repaint(); }
 
-    double offsetX = (getWidth() - width) / 2 - minX;
-    double offsetY = (getHeight() - height) / 2 - minY;
-
-    // 2. Dessin des segments
-    for (Segment s : segments) {
-        int x1 = (int)((s.getX1() + offsetX) * zoom);
-        int y1 = (int)((s.getY1() + offsetY) * zoom);
-        int x2 = (int)((s.getX2() + offsetX) * zoom);
-        int y2 = (int)((s.getY2() + offsetY) * zoom);
-
-        g2.drawLine(x1, y1, x2, y2);
+    @Override
+    public void lsystemUpdated(Object source) {
+        this.repaint();
     }
 }
-	
-
-        // Change le zoom en multipliant par un facteur
-        public void zoomIn() {
-            this.zoom *= 1.2; // zoom+ de 20%
-            this.revalidate();
-            this.repaint();
-        }
-
-        public void zoomOut() {
-            this.zoom /= 1.2; // zoom- de 20%
-            this.revalidate();
-            this.repaint();
-        }
-
-        // Optionnel : setter pour un zoom précis
-        public void setZoom(double zoom) {
-            this.zoom = zoom;
-            this.revalidate();
-            this.repaint();
-        }
-	@Override	
-	public void lsystemUpdated(Object source){
-		this.repaint();
-	}
-}
-
-		

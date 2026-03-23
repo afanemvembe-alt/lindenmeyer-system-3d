@@ -29,4 +29,8 @@ public class Segment {
     public double getY2() {
         return y2;
     }
+
+    public Color getCouleur() {
+        return color;
+    }
 }
