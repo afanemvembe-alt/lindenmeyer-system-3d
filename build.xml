@@ -66,7 +66,7 @@
     <mkdir dir="tmp" />
     <get src="https://download2.gluonhq.com/openjfx/26/openjfx-26_${family}-${arch}_bin-sdk.zip"
       dest="tmp/" usetimestamp="true" />
-    <unzip src="tmp/openjfx-26_windows-x64_bin-sdk.zip" dest="${lib}">
+    <unzip src="tmp/openjfx-26_${family}-${arch}_bin-sdk.zip" dest="${lib}">
     </unzip>
   </target>
 
