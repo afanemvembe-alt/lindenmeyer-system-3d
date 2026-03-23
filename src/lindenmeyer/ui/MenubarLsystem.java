@@ -8,38 +8,74 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 {
     // final JMenuBar menuBar = new JMenuBar();
 
+    // menus
     final JMenu fileMenu = new JMenu("Fichier");
     final JMenu editMenu = new JMenu("Config");
+    final JMenu viewMenu = new JMenu("Affichage");
     final JMenu aboutMenu = new JMenu("À propos");
 
+    // file menu items
     JMenuItem newMenuItem = new JMenuItem("New");
     JMenuItem openMenuItem = new JMenuItem("Ouvrir");
     JMenuItem saveMenuItem = new JMenuItem("Sauvegarder");
     JMenuItem exitMenuItem = new JMenuItem("Sortir");
+
+    // config menu items
     JMenuItem configMenuItem = new JMenuItem("Configurations");
+
+    // view menu items
+    JMenuItem coulourMenuItem = new JMenuItem("Couleur");
+    JMenuItem zoomInMenuItem = new JMenuItem("Zoom +");
+    JMenuItem zoomOutMenuItem = new JMenuItem("Zoom -");
+
+    // about menu items
     JMenuItem aboutMenuItem = new JMenuItem("Informations");
 
-    public MenubarLsystem()
+    // note: not sure about this
+    private ParamDialog paramDialog;
+
+    public MenubarLsystem(JFrame parent)
     {
+        // file menu items
         newMenuItem.addActionListener(this);
         openMenuItem.addActionListener(this);
         saveMenuItem.addActionListener(this);
         exitMenuItem.addActionListener(this);
+
+        // config menu items
+        this.paramDialog = new ParamDialog(parent);
         configMenuItem.addActionListener(this);
+
+        // affichage menu items
+        coulourMenuItem.addActionListener(this);
+        zoomInMenuItem.addActionListener(this); // add keyboard shortcut
+        zoomOutMenuItem.addActionListener(this);
+
+        // about menu items
         aboutMenuItem.addActionListener(this);
 
+        // add menu items to menu
+        // file menu
         fileMenu.add(newMenuItem);
         fileMenu.add(openMenuItem);
         fileMenu.add(saveMenuItem);
         fileMenu.addSeparator();
         fileMenu.add(exitMenuItem);
 
+        // config menu
         editMenu.add(configMenuItem);
 
+        // affichage menu
+        viewMenu.add(coulourMenuItem);
+        viewMenu.add(zoomInMenuItem);
+        viewMenu.add(zoomOutMenuItem);
+
+        // about menu
         aboutMenu.add(aboutMenuItem);
 
         this.add(fileMenu);
         this.add(editMenu);
+        this.add(viewMenu);
         this.add(aboutMenu);
     }
 /**
@@ -118,7 +154,8 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         }
         else if (source == configMenuItem)
         {
-            JOptionPane.showMessageDialog(this, "Ouvrir les configurations");
+            // JOptionPane.showMessageDialog(this, "Ouvrir les configurations");
+            this.paramDialog.setVisible(true);
         }
         else if (source == aboutMenuItem)
         {
@@ -133,6 +170,6 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
     public static void main(String[] args)
     {
-        new MenubarLsystem();
+        new MenubarLsystem(new JFrame());
     }
 }

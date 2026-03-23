@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+
 import lindenmeyer.axiom.*;
 import lindenmeyer.symbols.*;
 import lindenmeyer.rules.*;
@@ -64,7 +65,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     public InterfaceLsystem() {
         super("LSystem");
 
-        MenubarLsystem menuBar = new MenubarLsystem();
+        MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
 
         this.commands = new JPanel();
