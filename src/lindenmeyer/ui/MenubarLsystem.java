@@ -8,6 +8,9 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 {
     // final JMenuBar menuBar = new JMenuBar();
 
+    // idea: generator menu with premade models instead of random
+    // idea: explain about lsystem structures in about menu or sth
+
     // menus
     final JMenu fileMenu = new JMenu("Fichier");
     final JMenu editMenu = new JMenu("Config");
@@ -24,7 +27,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     JMenuItem configMenuItem = new JMenuItem("Configurations");
 
     // view menu items
-    JMenuItem coulourMenuItem = new JMenuItem("Couleur");
+    JMenuItem coulourMenuItem = new JMenuItem("Couleur"); // idea: colour wheel thing
     JMenuItem zoomInMenuItem = new JMenuItem("Zoom +");
     JMenuItem zoomOutMenuItem = new JMenuItem("Zoom -");
 
