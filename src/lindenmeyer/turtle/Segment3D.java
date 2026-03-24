@@ -2,6 +2,9 @@ package lindenmeyer.turtle;
 
 import java.awt.Color;
 
+/**
+ * 
+ */
 public class Segment3D {
     public Coord3D start;
     public Coord3D end;

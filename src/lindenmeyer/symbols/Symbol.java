@@ -1,6 +1,9 @@
 package lindenmeyer.symbols;
 
-public class Symbol{
+import lindenmeyer.turtle.AbstractTurtle3D;
+import lindenmeyer.turtle.Interpretable3D;
+
+public class Symbol implements Interpretable3D {
 	
 	private char symbol;
 	
@@ -34,5 +37,10 @@ public class Symbol{
     @Override
     public String toString(){
 		return ""+this.symbol;
+	}
+
+	@Override
+	public void interpret(AbstractTurtle3D turtle) {
+		turtle.forward();
 	}
 }
