@@ -9,6 +9,7 @@
   <property name="build" location="build" />
   <property name="docs" location="docs" />
   <property name="lib" location="lib" />
+  <!-- <property name="mod" location="mod" /> -->
 
   <property name="runclass" value="lindenmeyer.App" />
 
@@ -53,15 +54,20 @@
   </condition>
 
   <condition property="family" value="linux">
-    <os family="unix" />
+    <and>
+      <os family="unix" />
+      <not>
+        <os family="mac" />
+      </not>
+    </and>
   </condition>
 
   <condition property="family" value="osx">
     <os family="mac" />
   </condition>
 
-  <condition property="arch" value="x64" else="aarch64">
-    <contains string="${os.arch}" substring="64" />
+  <condition property="arch" value="aarch64" else="x64">
+    <contains string="${os.arch}" substring="aarch64" />
   </condition>
 
   <target name="javafx-deps">
@@ -79,6 +85,7 @@
     <mkdir dir="${docs}" />
     <mkdir dir="${lib}" />
     <mkdir dir="reports" />
+    <!-- <mkdir dir="${mod}" /> -->
   </target>
 
   <target name="clean" description="Clean target directories">
@@ -87,6 +94,7 @@
     <delete dir="${lib}" />
     <delete dir="reports" />
     <delete dir="tmp" />
+    <!-- <delete dir="${mod}" /> -->
   </target>
 
   <target name="deps" depends="init,init-ivy,javafx-deps" description="Pull projects dependencies">
@@ -97,13 +105,19 @@
     <delete dir="${build}" includes="**/*" />
   </target>
 
+  <path id="jfxmod" path="${lib}/javafx-sdk-26/lib" />
+
   <target name="build" depends="init,deps,build.clean" description="Compile project files">
-    <javac srcdir="${src}" classpathref="jar.lib" destdir="${build}" includeAntRuntime="false" />
+    <javac srcdir="${src}" classpathref="jar.lib" destdir="${build}" includeAntRuntime="false"
+      modulepathref="jfxmod">
+      <compilerarg line="--add-modules javafx.controls" />
+    </javac>
   </target>
 
   <target name="compile-test" depends="init,deps,build.clean" description="Compile tests">
     <javac srcdir="${src}" classpathref="jar.lib" includeAntRuntime="false" destdir="${build}"
-      debug="true" />
+      debug="true" modulepathref="jfxmod" />
+    <compilerarg line="--add-modules javafx.controls" />
   </target>
 
   <target name="test.junit.launcher" depends="compile-test" description="Run tests">
@@ -144,7 +158,12 @@
   <target name="run" depends="build" description="Run project">
     <!-- <java classname="lindenmeyer.Cli" classpath="${build}" /> -->
     <!-- <java classname="lindenmeyer.HelloFX" classpath="${build}" /> -->
-    <java classname="${runclass}" classpath="${build}" fork="true" />
+    <java classname="${runclass}" classpath="${build}" fork="true">
+      <modulepath>
+        <pathelement location="lib/javafx-sdk-26/lib" />
+      </modulepath>
+      <jvmarg line="--add-modules javafx.controls" />
+    </java>
   </target>
 
 
