@@ -96,7 +96,7 @@ public class GenericRuleTest {
 
     @Test
     void GenericRule_toString_Test() {
-        String str = samplePred + "->" + sampleSucc;
+        String str = samplePred + ">" + sampleSucc;
 
         GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
 

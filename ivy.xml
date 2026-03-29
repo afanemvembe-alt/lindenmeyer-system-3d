@@ -1,9 +1,10 @@
 <ivy-module version="2.0">
-    <info organisation="org.apache" module="lindenmeyer"/>
+    <info organisation="org.apache" module="lindenmeyer" />
     <dependencies>
         <dependency org="org.junit.platform" name="junit-platform-commons" rev="6.0.2" />
         <dependency org="org.junit.platform" name="junit-platform-launcher" rev="6.0.2" />
         <dependency org="org.junit.platform" name="junit-platform-engine" rev="6.0.2" />
+        <dependency org="org.junit.platform" name="junit-platform-console-standalone" rev="6.0.2" />
         <dependency org="org.junit.jupiter" name="junit-jupiter-api" rev="6.0.2" />
         <dependency org="org.junit.jupiter" name="junit-jupiter-engine" rev="6.0.2" />
     </dependencies>

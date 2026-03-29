@@ -67,4 +67,8 @@ public class Turtle3D extends AbstractTurtle3D {
     public void changeColor(Color c) {
         color = c;
     }
+
+    public List<Segment3D> getSegments() {
+        return segments;
+    }
 }

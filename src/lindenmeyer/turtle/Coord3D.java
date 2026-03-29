@@ -1,6 +1,7 @@
 package lindenmeyer.turtle;
 
 import static java.lang.Math.*;
+import java.util.Objects;
 
 /**
  * Une coordonnée 3-dimensionnelle.
@@ -35,6 +36,7 @@ public class Coord3D {
 
     /**
      * Crée un nouveau point à partir du point donné.
+     * 
      * @param coord
      */
     public Coord3D(Coord3D coord) {
@@ -65,7 +67,7 @@ public class Coord3D {
      * @param offset longueur de déplacement
      */
     public void moveZ(double offset) {
-        x += offset;
+        z += offset;
     }
 
     /**
@@ -90,11 +92,38 @@ public class Coord3D {
      * @param angle_z  angle sur le plan z du déplacement
      */
     public void translateAngle(double distance, double angle_x, double angle_z) {
+        angle_x = toRadians(angle_x);
+        angle_z = toRadians(angle_z);
 
         double dx = distance * sin(angle_z) * cos(angle_x);
-        double dy = distance * sin(angle_z) * cos(angle_x);
+        double dy = distance * sin(angle_z) * sin(angle_x);
         double dz = distance * cos(angle_z);
 
         translate(dx, dy, dz);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj instanceof Coord3D) {
+            Coord3D other = (Coord3D) obj;
+
+            return x == other.x && y == other.y && z == other.z;
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Coord3D { x: %f, y: %f, z: %f }", x, y, z);
     }
 }
