@@ -34,6 +34,14 @@ public class Coord3D {
     }
 
     /**
+     * Crée un nouveau point à partir du point donné.
+     * @param coord
+     */
+    public Coord3D(Coord3D coord) {
+        this(coord.x, coord.y, coord.z);
+    }
+
+    /**
      * Déplace le point sur l'axe x.
      * 
      * @param offset longueur de déplacement
