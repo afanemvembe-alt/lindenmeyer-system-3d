@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+
 import lindenmeyer.axiom.*;
 import lindenmeyer.symbols.*;
 import lindenmeyer.rules.*;
@@ -45,6 +46,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     //Listes de systemes predefinis et leur configuration
     public ArrayList<LSystem> preSet;
     private ArrayList<ConfigLsystem> preSetConfig;
+    //public JComboBox<ConfigLsystem> presetSelector;
     
     //Boite de dialogue
     private ParamDialog paramDialog;
@@ -59,10 +61,17 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     
     public JSlider historySlider;  
 	public History history;
-	public int maxStep=20;       
+	public int maxStep=20;  
+	
+	//Pour play/pause du Lsystem
+	private boolean playing = false;
+	private Timer playTimer;
 	
     public InterfaceLsystem() {
         super("LSystem");
+
+        MenubarLsystem menuBar = new MenubarLsystem(this);
+        this.setJMenuBar(menuBar);
 
         this.commands = new JPanel();
         Color bg = new Color(245,245,245);
@@ -99,7 +108,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.zoomM = new JButton("Zoom-");
         this.random = new JButton("Random");
         this.settings = new JButton("Parametres");
-        this.play = new JButton("Play-Lsystem");
+        this.play = new JButton("Play/Pause");
         
         //Definition de couleur de fond des boutons
         this.generate.setBackground(new Color(120,200,120));
@@ -170,6 +179,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		colorSelector.setSelectedIndex(0); 
 		colorSelector.addActionListener(this);
 		
+		//Selecteur LSystem
+		//String[] presetNames = preSetConfig.stream().map(cfg -> cfg.info.split("\n")[0]).toArray(String[]::new);
+		//presetSelector = new JComboBox<>(preSetConfig.toArray(new ConfigLsystem[0]));
+		//presetSelector.setSelectedIndex(-1);
+		//presetSelector.addActionListener(this);
+
+		
 		// Slider historique
 		this.historySlider = new JSlider(0, this.maxStep, 0);
 		this.historySlider.setMajorTickSpacing(1);
@@ -180,13 +196,16 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 				return;
 			}
 			int index = this.historySlider.getValue();
-			if (history.size() == 0) {
+			if (index == 0) {
+				this.display.clearSegments();
+				this.display.repaint();
 				return;
 			}
-			if (index >= history.size()) {
-				index = history.size() - 1;
+			index = index - 1;
+			if (index >= this.history.size()) {
+				index = this.history.size() - 1;
 			}
-			State s = (State) history.getState(index);
+			State s = (State) this.history.getState(index);
 			SymbolList symbols = s.getState();
 			ConfigTortue config = new ConfigTortue(this.longueur, this.angleRotation);
 			Tortue tortue = new Tortue(300, 400, -90, config);
@@ -199,6 +218,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		//Ajout de composants dans le sous Panel correspondant
         this.panelLsystem.add(ligneAxiom);
         this.panelLsystem.add(ligneRegle);
+        //this.panelLsystem.add(presetSelector);
         this.panelLsystem.add(this.defineLsystem);
 
         this.panelGeneration.add(ligneStep);
@@ -422,20 +442,22 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
 				// Mise à jour de l'UI sur le thread Swing
 				SwingUtilities.invokeLater(() -> {
+					//this.longueur = config.pas;
+					//this.angleRotation = config.angleRotation;
 					this.display.setSegments(finalSegments);
 					this.display.repaint();
+					this.historySlider.setMaximum(this.history.size());
+					this.historySlider.setValue(this.history.size());
 					loading.dispose();
 				});
 			}).start();
 			loading.setVisible(true);
         }
 
-        else if (e.getSource() == this.settings) {
-			
+        else if (e.getSource() == this.settings) {		
             this.paramDialog.setVisible(true);
             this.longueur = this.paramDialog.getLongueur();
             this.angleRotation = this.paramDialog.getAngle();
-            
         } 
         
         else if (e.getSource() == this.colorSelector) {
@@ -459,6 +481,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 				this.display.repaint();
 			}
 		}
+		
 
         else if (e.getSource() == this.clear) {
             this.display.clearSegments();
@@ -502,6 +525,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 					chosen.getRegles(),
 					chosen.getSymbolFactory()
 				);
+				this.display.setLSystem(temp);
 
 				int n = 3;
 				try {
@@ -522,9 +546,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 				List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
 
 				SwingUtilities.invokeLater(() -> {
+					this.longueur = cfg.pas;
+					this.angleRotation = cfg.angle;
 					this.display.setSegments(finalSegments);
 					this.display.getLSystem().setAxiome(new Axiom(chosen.getAxiome().getContent()));
 					this.display.repaint();
+					this.historySlider.setMaximum(this.history.size());
+					this.historySlider.setValue(this.history.size());
 					loading.dispose();
 				});
 			}).start();
@@ -532,36 +560,66 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		}
 		
 		else if(e.getSource() == this.play) {
-			//this.display.getLsystem()= new LSystem(new Axiome(text), new RuleSet(regles), new SymbolFactory());
-			int n= 3;
+			if (playing) {
+				if (playTimer != null && playTimer.isRunning()) {
+					playTimer.stop();
+				}
+				play.setText("Play");
+				playing = false;
+				return;
+			}
+
+			playing = true;
+			play.setText("Pause");
+
+			int n = 3;
 			try {
 				if (!step.isEmpty()) n = Integer.parseInt(step);
 			} catch (NumberFormatException ex) {
 				n = 3;
 			}
-			if(n>this.maxStep){
-				n=this.maxStep;
-			}
+			if (n > this.maxStep) n = this.maxStep;
+
 			LSystem temp = new LSystem(
 				new Axiom(this.display.getLSystem().getAxiome().getContent()),
 				this.display.getLSystem().getRegles(),
 				this.display.getLSystem().getSymbolFactory()
 			);
-			for (int i = 0; i < n; i++){ 
-				temp.step();
-			}
+			this.display.setLSystem(temp);
+			for (int i = 0; i < n; i++) temp.step();
+
 			ConfigTortue config = new ConfigTortue(longueur, angleRotation);
 			Tortue tortue = new Tortue(300, 400, -90, config);
 			List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
 			this.display.clearSegments();
-			int i=0;
-			while (i<finalSegments.size()) {
-				List<Segment> segmentActuel = new ArrayList<Segment>();
-				segmentActuel.add(finalSegments.get(i));
-				this.display.setSegments(segmentActuel);
+			final int[] index = {0};
+
+			if (playTimer != null && playTimer.isRunning()) {
+				playTimer.stop();
+			}
+			playTimer = new Timer(20, null);
+			playTimer.addActionListener(ev -> {
+				if (index[0] >= finalSegments.size()) {
+					playTimer.stop();
+					play.setText("Play");
+					playing = false;
+					return;
+				}
+
+				List<Segment> current = new ArrayList<>(this.display.getSegments());
+
+				// Ajouter plusieurs segments par tick pour accélérer
+				int speed = 10; 
+				for (int i = 0; i < speed && index[0] < finalSegments.size(); i++) {
+					current.add(finalSegments.get(index[0]));
+					index[0]++;
+				}
+
+				this.display.setSegments(current);
 				this.display.repaint();
-				i++;
-			}			
+			});
+
+			playTimer.start();			
 		}
     }
     
