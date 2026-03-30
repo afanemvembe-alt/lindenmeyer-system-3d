@@ -63,8 +63,10 @@ public class Vue3D extends Scene {
         // Group root = new Group();
         super(new Group(), 720, 480);
         root = (Group) getRoot();
-        root.setTranslateX(400);
-        root.setTranslateY(400);
+        root.setTranslateX(720.0 / 2);
+        root.setTranslateY(480.0 / 2);
+        // root.setScaleX(2);
+        // root.setScaleY(2);
         this.segments = segments;
         renderGrid();
 
