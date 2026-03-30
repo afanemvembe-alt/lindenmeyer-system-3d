@@ -162,7 +162,7 @@
     <!-- <java classname="lindenmeyer.HelloFX" classpath="${build}" /> -->
     <java classname="${runclass}" classpath="${build}" fork="true">
       <modulepath>
-        <pathelement location="lib/javafx-sdk-26/lib" />
+        <pathelement location="lib/javafx-sdk-21.0.10/lib" />
       </modulepath>
       <jvmarg line="--add-modules javafx.controls" />
     </java>
