@@ -80,6 +80,14 @@ public class Vue3D extends Scene {
 
     }
 
+    public void redraw() {
+        root.getChildren().clear();
+
+        for (Segment3D s : segments) {
+            root.getChildren().add(segmentToCylinder(s));
+        }
+    }
+
     /**
      * Crée un nouveau cylindre à partir d'un segment.
      * 

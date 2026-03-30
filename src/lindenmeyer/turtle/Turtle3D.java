@@ -24,7 +24,7 @@ public class Turtle3D extends AbstractTurtle3D {
         segments = new ArrayList<>();
         position = new Coord3D();
         angle_x = 0;
-        angle_z = 0;
+        angle_z = 90;
         color = Color.BLACK;
         colorFactory = new ColorFactory();
     }
@@ -90,9 +90,9 @@ public class Turtle3D extends AbstractTurtle3D {
         angle_x += getConfig().getAngleRotation() * mod;
 
         // if (angle_x > 360) {
-        //     angle_x -= 360;
+        // angle_x -= 360;
         // } else if (angle_x < 0) {
-        //     angle_x += 360;
+        // angle_x += 360;
         // }
     }
 
