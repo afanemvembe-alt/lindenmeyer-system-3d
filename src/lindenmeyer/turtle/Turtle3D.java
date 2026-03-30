@@ -88,6 +88,12 @@ public class Turtle3D extends AbstractTurtle3D {
         double mod = clockwise ? 1 : -1;
 
         angle_x += getConfig().getAngleRotation() * mod;
+
+        // if (angle_x > 360) {
+        //     angle_x -= 360;
+        // } else if (angle_x < 0) {
+        //     angle_x += 360;
+        // }
     }
 
     @Override
@@ -95,6 +101,12 @@ public class Turtle3D extends AbstractTurtle3D {
         double mod = clockwise ? 1 : -1;
 
         angle_z += getConfig().getAngleRotation() * mod;
+
+        if (angle_z > 360) {
+            angle_z -= 360;
+        } else if (angle_x < 0) {
+            angle_z += 360;
+        }
     }
 
     @Override

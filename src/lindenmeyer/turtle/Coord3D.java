@@ -92,6 +92,9 @@ public class Coord3D {
      * @param angle_z  angle sur le plan z du déplacement
      */
     public void translateAngle(double distance, double angle_x, double angle_z) {
+        // if (angle_z > 180 || angle_z < 0) {
+            
+        // }
         angle_x = toRadians(angle_x);
         angle_z = toRadians(angle_z);
 

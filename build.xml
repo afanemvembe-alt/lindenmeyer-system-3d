@@ -72,9 +72,10 @@
 
   <target name="javafx-deps">
     <mkdir dir="tmp" />
-    <get src="https://download2.gluonhq.com/openjfx/26/openjfx-26_${family}-${arch}_bin-sdk.zip"
+    <get
+      src="https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_${family}-${arch}_bin-sdk.zip"
       dest="tmp/" usetimestamp="true" />
-    <unzip src="tmp/openjfx-26_${family}-${arch}_bin-sdk.zip" dest="${lib}" overwrite="false">
+    <unzip src="tmp/openjfx-21.0.10_${family}-${arch}_bin-sdk.zip" dest="${lib}" overwrite="false">
     </unzip>
   </target>
 
@@ -105,7 +106,7 @@
     <delete dir="${build}" includes="**/*" />
   </target>
 
-  <path id="jfxmod" path="${lib}/javafx-sdk-26/lib" />
+  <path id="jfxmod" path="${lib}/javafx-sdk-21.0.10/lib" />
 
   <target name="build" depends="init,deps,build.clean" description="Compile project files">
     <javac srcdir="${src}" classpathref="jar.lib" destdir="${build}" includeAntRuntime="false"

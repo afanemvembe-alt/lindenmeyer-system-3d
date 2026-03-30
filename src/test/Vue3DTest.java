@@ -21,15 +21,15 @@ public class Vue3DTest extends Application {
     @Override
     public void start(Stage arg0) throws Exception {
         LSystemFactory lf = new LSystemFactory();
-        LSystem l = lf.parseString("A", "A>/-B+B*B+B-/,B>A");
+        LSystem l = lf.parseString("A", "A>A*A*A*A");
         Turtle3D t = new Turtle3D(new ConfigTortue(25, 60));
-        l.step(10);
+        l.step(2);
         t.interpretAll(l.getCurrentGeneration());
         List<Segment3D> segments = t.getSegments();
         System.err.println(segments.size());
-        for (Segment3D s : segments) {
-            System.err.println(s.start + "; " + s.end);
-        }
+        // for (Segment3D s : segments) {
+        // System.err.println(s.start + "; " + s.end);
+        // }
         Vue3D vue = new Vue3D(segments);
         vue.getRoot().getTransforms()
                 .addAll(new Rotate(45, 0, 0, 0, new Point3D(1, 0, 0)),
