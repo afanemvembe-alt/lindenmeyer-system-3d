@@ -2,6 +2,7 @@ package lindenmeyer.turtle;
 
 import java.awt.Color;
 import java.util.Objects;
+import static java.lang.Math.*;
 
 /**
  * Repésente un segment dans un espace 3D, composé de deux {@link Coord3D}.
@@ -65,5 +66,14 @@ public class Segment3D {
     @Override
     public int hashCode() {
         return Objects.hash(start, end, color);
+    }
+
+    public double length() {
+        double dx, dy, dz;
+        dx = start.x - end.x;
+        dy = start.y - end.y;
+        dz = start.z - end.z;
+
+        return sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
     }
 }

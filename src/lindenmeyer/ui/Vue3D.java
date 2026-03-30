@@ -1,10 +1,16 @@
 package lindenmeyer.ui;
 
+import static java.lang.Math.acos;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.toDegrees;
+
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Cylinder;
@@ -21,29 +27,25 @@ public class Vue3D extends Scene {
 
         setFill(Color.LIGHTGRAY);
 
-        Circle circle = new Circle(0, 0, 30, Color.GREEN);
-        g.getChildren().add(circle);
+        // let's try (200, 200, 0) (400, 400, 0)
+        // https://stackoverflow.com/questions/56259785/how-to-draw-a-3d-line-in-javafx
+        Point3D start = new Point3D(200, 200, 0);
+        Point3D end = new Point3D(400, 400, 0);
+        Point3D seg = end.subtract(start);
+        Point3D yAxis = new Point3D(0, 1, 0);
+        Point3D rotationAxis = seg.crossProduct(yAxis);
+        double angle = acos(seg.normalize().dotProduct(yAxis));
+        Point3D midpoint = start.midpoint(end);
 
-        Box box = new Box(50, 50, 50);
-        box.setTranslateX(200);
-        box.setTranslateY(200);
-        Rotate r = new Rotate(30, 20, 30, 20, new Point3D(1, 1, 1));
-        box.getTransforms().add(r);
+        double length = seg.magnitude();
 
-        Text text = new Text("This is a test");
-        text.setX(10);
-        text.setY(50);
-        text.setFont(new Font(20));
+        Translate moveToMidpoint = new Translate(midpoint.getX(), midpoint.getY(), midpoint.getZ());
+        Rotate rotateAroundCenter = new Rotate(-toDegrees(angle), rotationAxis);
 
-        text.getTransforms().add(new Rotate(30, 50, 30));
+        Cylinder c = new Cylinder(1, length);
+        c.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
 
-        g.getChildren().add(box);
-        g.getChildren().add(text);
-
-        Cylinder c = new Cylinder(10, 100);
-        c.setTranslateX(400);
-        c.setTranslateY(400);
-        c.getTransforms().add(r);
+        // g.getChildren().add(c);
 
         for (int i = 0; i < 1000; i += 100) {
             Line line_x = new Line(i, 0, i, 1000);
@@ -53,9 +55,26 @@ public class Vue3D extends Scene {
         }
 
         g.getChildren().add(c);
+        g.getChildren().add(segmentToCylinder(new Segment3D(0, 0, 0, 100, 300, 50, null)));
     }
 
-    protected void drawSegment(Segment3D segment) {
+    Cylinder segmentToCylinder(Segment3D s) {
+        Point3D start = new Point3D(s.start.x, s.start.y, s.start.z);
+        Point3D end = new Point3D(s.end.x, s.end.y, s.end.z);
+        Point3D seg = end.subtract(start);
+        Point3D yAxis = new Point3D(0, 1, 0);
+        Point3D rotationAxis = seg.crossProduct(yAxis);
+        double angle = acos(seg.normalize().dotProduct(yAxis));
+        Point3D midpoint = start.midpoint(end);
 
+        double length = seg.magnitude();
+
+        Translate moveToMidpoint = new Translate(midpoint.getX(), midpoint.getY(), midpoint.getZ());
+        Rotate rotateAroundCenter = new Rotate(-toDegrees(angle), rotationAxis);
+
+        Cylinder c = new Cylinder(1, length);
+        c.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
+
+        return c;
     }
 }
