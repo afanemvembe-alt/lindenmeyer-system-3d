@@ -70,6 +70,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     public InterfaceLsystem() {
         super("LSystem");
 
+		// not sure about this
         MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
 
@@ -266,6 +267,16 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
+
+	public void setLongeur(int l)
+	{
+		this.longueur = l;
+	}
+
+	public void setAngleRotation(int a)
+	{
+		this.angleRotation = a;
+	}
     
     public void showError(JTextField field, String message) {
 		field.setBorder(BorderFactory.createLineBorder(Color.RED));

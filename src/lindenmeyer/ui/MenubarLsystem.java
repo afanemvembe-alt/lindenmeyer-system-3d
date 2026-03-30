@@ -6,6 +6,8 @@ import javax.swing.*;
 
 public class MenubarLsystem extends JMenuBar implements ActionListener
 {
+    // show the config info somewhere
+    
     // final JMenuBar menuBar = new JMenuBar();
 
     // idea: generator menu with premade models instead of random
@@ -36,9 +38,11 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
     // note: not sure about this
     private ParamDialog paramDialog;
+    private InterfaceLsystem interfaceLsystem;
 
-    public MenubarLsystem(JFrame parent)
+    public MenubarLsystem(InterfaceLsystem interfaceLsystem)
     {
+        this.interfaceLsystem = interfaceLsystem;
         // file menu items
         newMenuItem.addActionListener(this);
         openMenuItem.addActionListener(this);
@@ -46,13 +50,15 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         exitMenuItem.addActionListener(this);
 
         // config menu items
-        this.paramDialog = new ParamDialog(parent);
+        this.paramDialog = new ParamDialog(interfaceLsystem);
         configMenuItem.addActionListener(this);
 
         // affichage menu items
+        // for this you need access to the VueLSystem and JFrame
         coulourMenuItem.addActionListener(this);
         zoomInMenuItem.addActionListener(this); // add keyboard shortcut
         zoomOutMenuItem.addActionListener(this);
+
 
         // about menu items
         aboutMenuItem.addActionListener(this);
@@ -159,6 +165,17 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         {
             // JOptionPane.showMessageDialog(this, "Ouvrir les configurations");
             this.paramDialog.setVisible(true);
+            this.interfaceLsystem.setLongeur(this.paramDialog.getLongueur());
+            this.interfaceLsystem.setAngleRotation(this.paramDialog.getAngle());
+        }
+        else if (source == zoomInMenuItem)
+        {
+            this.interfaceLsystem.display.zoomIn();
+        }
+        else if (source == zoomOutMenuItem)
+        {
+            // JOptionPane.showMessageDialog(this, "Ouvrir les configurations");
+            this.interfaceLsystem.display.zoomOut();
         }
         else if (source == aboutMenuItem)
         {
@@ -173,6 +190,6 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
     public static void main(String[] args)
     {
-        new MenubarLsystem(new JFrame());
+        new MenubarLsystem(new InterfaceLsystem());
     }
 }
