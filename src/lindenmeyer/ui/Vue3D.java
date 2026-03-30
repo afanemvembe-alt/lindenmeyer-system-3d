@@ -22,9 +22,16 @@ import javafx.scene.text.*;
 
 /**
  * Composant servant à effectuer le rendu 3D d'un L-Système.
+ * 
+ * <h2>Attention</h2>
+ * 
+ * Ceci est un composant JavaFX, il faut donc l'adapter pour l'utiliser dans un
+ * contexte Swing.
  */
 public class Vue3D extends Scene {
-    private double lineThickness;
+    private double lineThickness = 10;
+    private double tilt = 0;
+    private double rotation = 0;
 
     /**
      * Retourne l'épaisseur du trait de dessin.

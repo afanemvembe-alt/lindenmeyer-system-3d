@@ -1,6 +1,7 @@
 package lindenmeyer.turtle;
 
-import java.awt.Color;
+// import java.awt.Color;
+import javafx.scene.paint.Color;
 import java.util.*;
 
 public class Turtle3D extends AbstractTurtle3D {
@@ -9,6 +10,13 @@ public class Turtle3D extends AbstractTurtle3D {
     private Coord3D position;
     private double angle_x, angle_z;
     private Color color;
+    private double x_min, x_max, y_min, y_max;
+    private ColorFactory colorFactory;
+
+    @Override
+    public void setColorOf(Object o) {
+        color = colorFactory.getColor(o);
+    }
 
     public Turtle3D(ConfigTortue config) {
         super(config);
@@ -18,6 +26,35 @@ public class Turtle3D extends AbstractTurtle3D {
         angle_x = 0;
         angle_z = 0;
         color = Color.BLACK;
+    }
+
+    private void updateBounds() {
+        if (position.x < x_min) {
+            x_min = position.x;
+        } else if (position.x > x_max) {
+            x_max = position.x;
+        }
+
+        if (position.y < y_min) {
+            y_min = position.y;
+        } else if (position.y > y_max) {
+            y_max = position.y;
+        }
+    }
+
+    public class Bounds {
+        public double x_min, x_max, y_min, y_max;
+
+        public Bounds(double x_min, double x_max, double y_min, double y_max) {
+            this.x_min = x_min;
+            this.x_max = x_max;
+            this.y_min = y_min;
+            this.y_max = y_max;
+        }
+    }
+
+    public Bounds getBounds() {
+        return new Bounds(x_min, x_max, y_min, y_max);
     }
 
     private void move(boolean forwards) {

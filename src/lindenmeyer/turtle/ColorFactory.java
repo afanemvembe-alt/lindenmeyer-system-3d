@@ -1,9 +1,12 @@
 package lindenmeyer.turtle;
 
-import static java.awt.Color.*;
-import java.awt.Color;
-import java.awt.color.ColorSpace;
+// import static java.awt.Color.*;
+// import java.awt.Color;
+// import java.awt.color.ColorSpace;
 import java.util.*;
+
+import javafx.scene.paint.Color;
+import static javafx.scene.paint.Color.*;
 
 /**
  * Représente une source configurable de {@link Color}, associant des objects
@@ -57,7 +60,9 @@ public class ColorFactory {
     private Color randomColor() {
         float f = rng.nextFloat();
 
-        return new Color(ColorSpace.getInstance(ColorSpace.TYPE_HSV), new float[] { f, 0.5f, 0.5f }, 1.0f);
+        // return new Color(ColorSpace.getInstance(ColorSpace.TYPE_HSV), new float[] {
+        // f, 0.5f, 0.5f }, 1.0f);
+        return hsb(f, 0.5, 0.5, 1);
     }
 
     private Color getNextColor() {

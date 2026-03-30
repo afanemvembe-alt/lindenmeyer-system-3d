@@ -1,6 +1,7 @@
 package lindenmeyer.turtle;
 
-import java.awt.Color;
+// import java.awt.Color;
+import javafx.scene.paint.Color;
 import java.util.List;
 
 /**
@@ -35,6 +36,13 @@ public abstract class AbstractTurtle3D {
      * @param c nouvelle couleur
      */
     public abstract void changeColor(Color c);
+
+    /**
+     * Change la couleur en fonction de l'object donné.
+     * 
+     * @param o un objet
+     */
+    public abstract void setColorOf(Object o);
 
     /**
      * Avance la tortue du pas fourni dans la configuration.

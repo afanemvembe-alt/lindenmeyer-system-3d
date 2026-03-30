@@ -1,6 +1,7 @@
 package test.turtle;
 
-import static java.awt.Color.BLACK;
+// import static java.awt.Color.BLACK;
+import static javafx.scene.paint.Color.BLACK;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
