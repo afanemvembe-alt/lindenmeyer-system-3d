@@ -116,8 +116,9 @@
 
   <target name="compile-test" depends="init,deps,build.clean" description="Compile tests">
     <javac srcdir="${src}" classpathref="jar.lib" includeAntRuntime="false" destdir="${build}"
-      debug="true" modulepathref="jfxmod" />
-    <compilerarg line="--add-modules javafx.controls" />
+      debug="true" modulepathref="jfxmod">
+      <compilerarg line="--add-modules javafx.controls" />
+    </javac>
   </target>
 
   <target name="test.junit.launcher" depends="compile-test" description="Run tests">
