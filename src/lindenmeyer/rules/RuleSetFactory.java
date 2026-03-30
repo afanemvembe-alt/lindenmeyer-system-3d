@@ -1,5 +1,7 @@
 package lindenmeyer.rules;
 
+import lindenmeyer.symbols.Constante;
+import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
 
@@ -13,9 +15,10 @@ public class RuleSetFactory {
 
     /**
      * Cree `RuleFactory` avec les séparateurs et la `SymbolFactory` donnes.
+     * 
      * @param rule_separator sépare chaque règle dans les chaines donnees
      * @param part_separator sépare le prédécesseur du successeur dans une chaîne
-     * @param f une source de `Symbol`
+     * @param f              une source de `Symbol`
      */
     public RuleSetFactory(char rule_separator, char part_separator, SymbolFactory f) {
         this.rule_separator = rule_separator;
@@ -24,7 +27,9 @@ public class RuleSetFactory {
     }
 
     /**
-     * Cree `RuleFactory` avec ',' comme séparateur de règles, et '>' comme séparateur de partie de règle.
+     * Cree `RuleFactory` avec ',' comme séparateur de règles, et '>' comme
+     * séparateur de partie de règle.
+     * 
      * @param f
      */
     public RuleSetFactory(SymbolFactory f) {
@@ -33,6 +38,7 @@ public class RuleSetFactory {
 
     /**
      * Retourne le séparateur de règles.
+     * 
      * @return un character
      */
     public char getRuleSeparator() {
@@ -41,6 +47,7 @@ public class RuleSetFactory {
 
     /**
      * Retourne le séparateur de prédécesseur et successeur.
+     * 
      * @return un character
      */
     public char getPartSeparator() {
@@ -49,6 +56,7 @@ public class RuleSetFactory {
 
     /**
      * Retourne la source de symboles.
+     * 
      * @return une source de symboles
      */
     public SymbolFactory getFactory() {
@@ -56,8 +64,11 @@ public class RuleSetFactory {
     }
 
     /**
-     * Cree un `RuleSet` a partir d'une chaîne de caractères s donnee en entree. Cette chaîne sera
-     * sous la forme de [prédécesseur][part_separator][successeur][rule_separator][règle suivante].
+     * Cree un `RuleSet` a partir d'une chaîne de caractères s donnee en entree.
+     * Cette chaîne sera
+     * sous la forme de
+     * [prédécesseur][part_separator][successeur][rule_separator][règle suivante].
+     * 
      * @param s une chaîne de caractères
      * @return un ensemble de règles
      */

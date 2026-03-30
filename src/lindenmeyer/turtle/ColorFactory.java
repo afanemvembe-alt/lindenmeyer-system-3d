@@ -47,6 +47,7 @@ public class ColorFactory {
     public ColorFactory(List<Color> colors) {
         this.colors = new ArrayList<>(colors);
         this.rng = new Random();
+        this.colorMap = new HashMap<>();
     }
 
     /**
@@ -54,7 +55,7 @@ public class ColorFactory {
      * des couleurs aléatoires.
      */
     public ColorFactory() {
-        this(null);
+        this(new ArrayList<>());
     }
 
     private Color randomColor() {

@@ -5,6 +5,8 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 
+import java.util.*;
+
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Parent;
@@ -32,6 +34,8 @@ public class Vue3D extends Scene {
     private double lineThickness = 10;
     private double tilt = 0;
     private double rotation = 0;
+    private List<Segment3D> segments;
+    private Group root;
 
     /**
      * Retourne l'épaisseur du trait de dessin.
@@ -40,6 +44,10 @@ public class Vue3D extends Scene {
      */
     public double getLineThickness() {
         return lineThickness;
+    }
+
+    public void setSegments(List<Segment3D> segments) {
+        this.segments = segments;
     }
 
     /**
@@ -51,41 +59,23 @@ public class Vue3D extends Scene {
         this.lineThickness = lineThickness;
     }
 
-    public Vue3D() {
-        Group g = new Group();
-        super(g, 720, 480);
+    public Vue3D(List<Segment3D> segments) {
+        // Group root = new Group();
+        super(new Group(), 720, 480);
+        root = (Group) getRoot();
+        root.setTranslateX(400);
+        root.setTranslateY(400);
+        this.segments = segments;
+        renderGrid();
 
-        setFill(Color.LIGHTGRAY);
-
-        // let's try (200, 200, 0) (400, 400, 0)
-        // https://stackoverflow.com/questions/56259785/how-to-draw-a-3d-line-in-javafx
-        Point3D start = new Point3D(200, 200, 0);
-        Point3D end = new Point3D(400, 400, 0);
-        Point3D seg = end.subtract(start);
-        Point3D yAxis = new Point3D(0, 1, 0);
-        Point3D rotationAxis = seg.crossProduct(yAxis);
-        double angle = acos(seg.normalize().dotProduct(yAxis));
-        Point3D midpoint = start.midpoint(end);
-
-        double length = seg.magnitude();
-
-        Translate moveToMidpoint = new Translate(midpoint.getX(), midpoint.getY(), midpoint.getZ());
-        Rotate rotateAroundCenter = new Rotate(-toDegrees(angle), rotationAxis);
-
-        Cylinder c = new Cylinder(1, length);
-        c.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
-
-        // g.getChildren().add(c);
-
-        for (int i = 0; i < 1000; i += 100) {
-            Line line_x = new Line(i, 0, i, 1000);
-            Line line_y = new Line(0, i, 1000, i);
-
-            g.getChildren().addAll(line_x, line_y);
+        for (Segment3D s : segments) {
+            root.getChildren().add(segmentToCylinder(s));
         }
+    }
 
-        g.getChildren().add(c);
-        g.getChildren().add(segmentToCylinder(new Segment3D(0, 0, 0, 100, 300, 50, null)));
+    public void render() {
+        renderGrid();
+
     }
 
     /**
@@ -114,5 +104,14 @@ public class Vue3D extends Scene {
         c.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
 
         return c;
+    }
+
+    protected void renderGrid() {
+        for (int i = 0; i < 1000; i += 100) {
+            Line line_x = new Line(i, 0, i, 1000);
+            Line line_y = new Line(0, i, 1000, i);
+
+            root.getChildren().addAll(line_x, line_y);
+        }
     }
 }

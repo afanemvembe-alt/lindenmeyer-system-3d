@@ -10,7 +10,7 @@ public class Turtle3D extends AbstractTurtle3D {
     private Coord3D position;
     private double angle_x, angle_z;
     private Color color;
-    private double x_min, x_max, y_min, y_max;
+    private double x_min, x_max, y_min, y_max, z_min, z_max;
     private ColorFactory colorFactory;
 
     @Override
@@ -26,6 +26,7 @@ public class Turtle3D extends AbstractTurtle3D {
         angle_x = 0;
         angle_z = 0;
         color = Color.BLACK;
+        colorFactory = new ColorFactory();
     }
 
     private void updateBounds() {
@@ -39,6 +40,12 @@ public class Turtle3D extends AbstractTurtle3D {
             y_min = position.y;
         } else if (position.y > y_max) {
             y_max = position.y;
+        }
+
+        if (position.z < z_min) {
+            z_min = position.z;
+        } else if (position.z > z_max) {
+            z_max = position.z;
         }
     }
 
