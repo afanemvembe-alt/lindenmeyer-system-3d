@@ -20,7 +20,30 @@ import javafx.scene.transform.*;
 import lindenmeyer.turtle.Segment3D;
 import javafx.scene.text.*;
 
+/**
+ * Composant servant à effectuer le rendu 3D d'un L-Système.
+ */
 public class Vue3D extends Scene {
+    private double lineThickness;
+
+    /**
+     * Retourne l'épaisseur du trait de dessin.
+     * 
+     * @return un double
+     */
+    public double getLineThickness() {
+        return lineThickness;
+    }
+
+    /**
+     * Modifie l'épaisseur du trait de dessin
+     * 
+     * @param lineThickness épaisseur de la ligne
+     */
+    public void setLineThickness(double lineThickness) {
+        this.lineThickness = lineThickness;
+    }
+
     public Vue3D() {
         Group g = new Group();
         super(g, 720, 480);
@@ -58,7 +81,15 @@ public class Vue3D extends Scene {
         g.getChildren().add(segmentToCylinder(new Segment3D(0, 0, 0, 100, 300, 50, null)));
     }
 
+    /**
+     * Crée un nouveau cylindre à partir d'un segment.
+     * 
+     * @param s le segment de base
+     * @return cylindre résultant
+     */
     Cylinder segmentToCylinder(Segment3D s) {
+        // https://stackoverflow.com/questions/56259785/how-to-draw-a-3d-line-in-javafx
+        // pas le plus efficace, mais aucune dépendance rajoutée
         Point3D start = new Point3D(s.start.x, s.start.y, s.start.z);
         Point3D end = new Point3D(s.end.x, s.end.y, s.end.z);
         Point3D seg = end.subtract(start);
