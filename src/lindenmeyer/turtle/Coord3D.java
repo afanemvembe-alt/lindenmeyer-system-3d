@@ -92,9 +92,19 @@ public class Coord3D {
      * @param angle_z  angle sur le plan z du déplacement
      */
     public void translateAngle(double distance, double angle_x, double angle_z) {
-        // if (angle_z > 180 || angle_z < 0) {
-            
-        // }
+        System.err.println("angle x: " + angle_x + " angle z: " + angle_z);
+
+        if (angle_z > 180) {
+            angle_z = 180 - angle_z;
+            angle_x += 180;
+            // System.err.println("z superieur, on applique la transformation: " + angle_x);
+        } else if (angle_z < 0) {
+            angle_z += 180;
+            angle_x += 180;
+        }
+
+        System.err.println("after mod: angle x: " + angle_x + " angle z: " + angle_z);
+
         angle_x = toRadians(angle_x);
         angle_z = toRadians(angle_z);
 
