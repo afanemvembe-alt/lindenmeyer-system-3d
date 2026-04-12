@@ -10,7 +10,7 @@ public class Turtle3D extends AbstractTurtle3D {
     private Coord3D position;
     private double angle_x, angle_z;
     private Color color;
-    private double x_min, x_max, y_min, y_max, z_min, z_max;
+    private double x_min, x_max, y_min, y_max, z_min, z_max = 0;
     private ColorFactory colorFactory;
 
     @Override
@@ -24,7 +24,7 @@ public class Turtle3D extends AbstractTurtle3D {
         segments = new ArrayList<>();
         position = new Coord3D();
         angle_x = 0;
-        angle_z = 90;
+        angle_z = 0;
         color = Color.BLACK;
         colorFactory = new ColorFactory();
     }
@@ -50,18 +50,20 @@ public class Turtle3D extends AbstractTurtle3D {
     }
 
     public class Bounds {
-        public double x_min, x_max, y_min, y_max;
+        public double x_min, x_max, y_min, y_max, z_min, z_max;
 
-        public Bounds(double x_min, double x_max, double y_min, double y_max) {
+        public Bounds(double x_min, double x_max, double y_min, double y_max, double z_min, double z_max) {
             this.x_min = x_min;
             this.x_max = x_max;
             this.y_min = y_min;
             this.y_max = y_max;
+            this.z_min = z_min;
+            this.z_max = z_max;
         }
     }
 
     public Bounds getBounds() {
-        return new Bounds(x_min, x_max, y_min, y_max);
+        return new Bounds(x_min, x_max, y_min, y_max, z_min, z_max);
     }
 
     private void move(boolean forwards) {
@@ -89,11 +91,11 @@ public class Turtle3D extends AbstractTurtle3D {
 
         angle_x += getConfig().getAngleRotation() * mod;
 
-        // if (angle_x > 360) {
-        // angle_x -= 360;
-        // } else if (angle_x < 0) {
-        // angle_x += 360;
-        // }
+        if (angle_x >= 360) {
+            angle_x -= 360;
+        } else if (angle_x < 0) {
+            angle_x += 360;
+        }
     }
 
     @Override
@@ -102,7 +104,7 @@ public class Turtle3D extends AbstractTurtle3D {
 
         angle_z += getConfig().getAngleRotation() * mod;
 
-        if (angle_z > 360) {
+        if (angle_z >= 360) {
             angle_z -= 360;
         } else if (angle_x < 0) {
             angle_z += 360;

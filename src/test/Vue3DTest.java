@@ -21,7 +21,7 @@ public class Vue3DTest extends Application {
     @Override
     public void start(Stage arg0) throws Exception {
         LSystemFactory lf = new LSystemFactory();
-        LSystem l = lf.parseString("A", "A>A*A*A*A+A+A+A");
+        LSystem l = lf.parseString("A", "A>A+A+A+A");
         Turtle3D t = new Turtle3D(new ConfigTortue(25, 90));
         l.step(1);
         t.interpretAll(l.getCurrentGeneration());
