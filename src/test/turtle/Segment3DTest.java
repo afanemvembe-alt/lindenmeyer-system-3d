@@ -1,13 +1,14 @@
-package test.turtle;
+package turtle;
 
 // import static java.awt.Color.BLACK;
 import static javafx.scene.paint.Color.BLACK;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
 import lindenmeyer.turtle.*;
+import org.junit.jupiter.api.Test;
 
 public class Segment3DTest {
+
     static final Segment3D a = new Segment3D(0, 0, 0, 1, 1, 1, BLACK);
     static final Segment3D b = new Segment3D(0, 0, 0, 1, 1, 1, BLACK);
     static final Segment3D c = new Segment3D(0, 0, 0, -1, -1, -1, BLACK);

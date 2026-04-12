@@ -1,13 +1,12 @@
-package test.turtle;
+package turtle;
 
-import org.junit.jupiter.api.Test;
-
-import static java.lang.Math.sqrt;
 import static org.junit.jupiter.api.Assertions.*;
 
 import lindenmeyer.turtle.Coord3D;
+import org.junit.jupiter.api.Test;
 
 public class Coord3DTest {
+
     static final Coord3D a = new Coord3D(0, 0, 0);
     static final Coord3D b = new Coord3D(1, 0, 0);
     static final Coord3D c = new Coord3D(0, 1, 0);

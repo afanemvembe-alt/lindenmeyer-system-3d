@@ -1,19 +1,18 @@
-package test.lindenmeyer;
+package lindenmeyer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Test;
-
 import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.rules.RuleSet;
 import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.symbols.SymbolFactory;
+import org.junit.jupiter.api.Test;
 
 class LSystemTest {
+
     // public static void main(String[] args) {
     // boolean res = true;
 
@@ -23,14 +22,15 @@ class LSystemTest {
     // }
 
     // chaine prise de: https://en.wikipedia.org/wiki/L-system#Examples_of_L-systems
-    private static String inputString = "A\n" + //
-            "AB\n" + //
-            "ABA\n" + //
-            "ABAAB\n" + //
-            "ABAABABA\n" + //
-            "ABAABABAABAAB\n" + //
-            "ABAABABAABAABABAABABA\n" + //
-            "ABAABABAABAABABAABABAABAABABAABAAB";
+    private static String inputString =
+        "A\n" + //
+        "AB\n" + //
+        "ABA\n" + //
+        "ABAAB\n" + //
+        "ABAABABA\n" + //
+        "ABAABABAABAAB\n" + //
+        "ABAABABAABAABABAABABA\n" + //
+        "ABAABABAABAABABAABABAABAABABAABAAB";
 
     private static List<String> getExpectedStrings() {
         return inputString.lines().collect(Collectors.toList());
@@ -38,7 +38,6 @@ class LSystemTest {
 
     @Test
     void n_generations() {
-
         List<String> expected = getExpectedStrings();
 
         System.err.println(expected.get(2));

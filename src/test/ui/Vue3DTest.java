@@ -1,7 +1,6 @@
-package test;
+package ui;
 
 import java.util.*;
-
 import javafx.application.Application;
 import javafx.geometry.Point3D;
 import javafx.scene.transform.Rotate;
@@ -14,6 +13,7 @@ import lindenmeyer.turtle.Turtle3D;
 import lindenmeyer.ui.*;
 
 public class Vue3DTest extends Application {
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -31,9 +31,13 @@ public class Vue3DTest extends Application {
             System.err.println(s.start + "; " + s.end);
         }
         Vue3D vue = new Vue3D(segments);
-        vue.getRoot().getTransforms()
-                .addAll(new Rotate(45, 0, 0, 0, new Point3D(1, 0, 0)),
-                        new Rotate(45, 0, 0, 0, new Point3D(0, 1, 0)));
+        vue
+            .getRoot()
+            .getTransforms()
+            .addAll(
+                new Rotate(45, 0, 0, 0, new Point3D(1, 0, 0)),
+                new Rotate(45, 0, 0, 0, new Point3D(0, 1, 0))
+            );
         arg0.setScene(vue);
         arg0.show();
     }

@@ -1,25 +1,32 @@
-package test.rules;
+package rules;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.SimpleRule;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
-
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 /**
  * Une classe qui fournit les tests pour une `{@link SimpleRule}`
  */
 public class SimpleRuleTest {
+
     /** Un tableau des caratères pour les tests */
-    public final static String sampleSucc = "sdfg";
-    public final static String samplePred = "g";
+    public static final String sampleSucc = "sdfg";
+    public static final String samplePred = "g";
 
     // need a method to add symbols to the factory from a string
-    public final static SymbolFactory sf = new SymbolFactory();
-    public final static SymbolList aSuccList = SymbolList.fromString(sampleSucc, sf);
-    public final static SymbolList aPredList = SymbolList.fromString(samplePred, sf);
+    public static final SymbolFactory sf = new SymbolFactory();
+    public static final SymbolList aSuccList = SymbolList.fromString(
+        sampleSucc,
+        sf
+    );
+    public static final SymbolList aPredList = SymbolList.fromString(
+        samplePred,
+        sf
+    );
 
     // public static void main(String[] args) {
     // boolean res = true;

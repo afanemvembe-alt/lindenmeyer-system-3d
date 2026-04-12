@@ -1,4 +1,4 @@
-package test.rules;
+package rules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -6,27 +6,35 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
-
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.SimpleRule;
 import lindenmeyer.symbols.Symbol;
 // import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
+import org.junit.jupiter.api.Test;
 
 /**
  * Une classe qui fournit les tests pour une `{@link GenericRule}`
  */
 public class GenericRuleTest {
+
     /** Un tableau des caratères pour les tests */
-    public final static String sampleSucc = "sdfg";
-    public final static String samplePred = "g";
+    public static final String sampleSucc = "sdfg";
+    public static final String samplePred = "g";
 
     // need a method to add symbols to the factory from a string
-    public final static SymbolFactory sf = SymbolFactory.fromString(sampleSucc + samplePred);
-    public final static SymbolList aSuccList = SymbolList.fromString(sampleSucc, sf);
-    public final static SymbolList aPredList = SymbolList.fromString(samplePred, sf);
+    public static final SymbolFactory sf = SymbolFactory.fromString(
+        sampleSucc + samplePred
+    );
+    public static final SymbolList aSuccList = SymbolList.fromString(
+        sampleSucc,
+        sf
+    );
+    public static final SymbolList aPredList = SymbolList.fromString(
+        samplePred,
+        sf
+    );
 
     // maybe factor out simpleRule and contextRule vars later.
 
@@ -124,6 +132,7 @@ public class GenericRuleTest {
     }
 
     protected static class MockRule extends GenericRule {
+
         Symbol pred;
 
         @Override

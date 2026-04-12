@@ -1,13 +1,10 @@
-package test.rules;
+package rules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-
-import org.junit.jupiter.api.Test;
-
 // import lindenmeyer.rules.ContextRule;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSet;
@@ -18,21 +15,29 @@ import lindenmeyer.rules.SimpleRule;
 import lindenmeyer.symbols.SymbolFactory;
 // import lindenmeyer.symbols.SymbolList;
 import lindenmeyer.symbols.SymbolList;
+import org.junit.jupiter.api.Test;
 
 /**
  * Une classe qui fournit les tests pour une `{@link RuleSetFactory}`
  */
 public class RuleSetFactoryTest {
-    public final static String sampleSucc = "sdfg";
-    public final static String samplePred = "g";
 
-    public final static char ruleSep = ';';
-    public final static char partSep = '=';
+    public static final String sampleSucc = "sdfg";
+    public static final String samplePred = "g";
 
-    public final static SymbolFactory sf = SymbolFactory.fromString(sampleSucc + samplePred);
+    public static final char ruleSep = ';';
+    public static final char partSep = '=';
+
+    public static final SymbolFactory sf = SymbolFactory.fromString(
+        sampleSucc + samplePred
+    );
 
     // public final static String strRuleSet = "A>B+B,B>A";
-    public final static String strRuleSet = String.format("A%1$sB+B%2$sB%1$sA", partSep, ruleSep);
+    public static final String strRuleSet = String.format(
+        "A%1$sB+B%2$sB%1$sA",
+        partSep,
+        ruleSep
+    );
 
     // public static void main(String[] args) {
     // boolean res = true;
@@ -117,10 +122,16 @@ public class RuleSetFactoryTest {
 
         // rs_Strings.add("A=B+B");
         rs_Strings.add(String.format("A%sB+B", partSep));
-        SimpleRule abb = new SimpleRule(sf.getSymbol('A'), SymbolList.fromString("B+B", sf));
+        SimpleRule abb = new SimpleRule(
+            sf.getSymbol('A'),
+            SymbolList.fromString("B+B", sf)
+        );
         // rs_Strings.add("B=A");
         rs_Strings.add(String.format("B%sA", partSep));
-        SimpleRule ba = new SimpleRule(sf.getSymbol('B'), SymbolList.fromString("A", sf));
+        SimpleRule ba = new SimpleRule(
+            sf.getSymbol('B'),
+            SymbolList.fromString("A", sf)
+        );
 
         for (GenericRule r : rs.getRules()) {
             System.err.println(r);
