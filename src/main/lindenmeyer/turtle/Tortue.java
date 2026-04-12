@@ -1,13 +1,28 @@
 package lindenmeyer.turtle;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.HashMap;
-import java.util.Map;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
+/**
+ * Une tortue permettant de dessiner une {@link lindenmeyer.symbols.SymbolList} en se baladant sur le plan avec les commandes données.
+ *
+ * <h2>Conventions</h2>
+ *
+ * Un certain nombre de symboles ont des commandes prédéfinies :
+ * <ul>
+ *  <li>'+' : une rotation vers la droite de la tortue</li>
+ *  <li>'-' : une rotation vers la gauche de la tortue</li>
+ *  <li>'[' : un enregistrement de la position de la tortue sur une pile</li>
+ *  <li>']' : la restauration de la dernière position enrigistrée sur la pile</li>
+ * </ul>
+ *
+ */
 public class Tortue {
+
     private double x, y, angle;
     private ConfigTortue config;
     private Stack<double[]> pile = new Stack<>();
