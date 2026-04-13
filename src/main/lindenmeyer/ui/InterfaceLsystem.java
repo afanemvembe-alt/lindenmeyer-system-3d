@@ -1,4 +1,3 @@
-<<<<<<< HEAD:src/lindenmeyer/ui/InterfaceLsystem.java
 package lindenmeyer.ui;
 
 import java.awt.*;
