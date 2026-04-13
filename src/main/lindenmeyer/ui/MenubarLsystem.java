@@ -145,6 +145,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     {
         Object source = e.getSource();
 
+        // suggest converting this to switch statement
         if (source == newMenuItem)
         {
             JOptionPane.showMessageDialog(this, "Nouveau fichier");
@@ -160,6 +161,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         else if (source == exitMenuItem)
         {
             // dispose();
+            interfaceLsystem.dispose();
         }
         else if (source == configMenuItem)
         {
