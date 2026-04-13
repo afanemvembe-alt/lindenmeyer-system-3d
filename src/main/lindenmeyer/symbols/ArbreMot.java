@@ -16,7 +16,7 @@ public class ArbreMot implements Iterable<Mot> {
 
     private Mot value;
     private ArbreMot premierEnfant;
-    private List<ArbreMot> fratrie;
+    private ArbreMot prochaineFratrie;
     private Integer depth;
 
     public Mot getValue() {
@@ -27,24 +27,20 @@ public class ArbreMot implements Iterable<Mot> {
         return premierEnfant;
     }
 
-    public List<ArbreMot> getFratrie() {
-        return fratrie;
-    }
-
     public ArbreMot(
         Mot value,
         ArbreMot premierEnfant,
-        List<ArbreMot> fratrie,
+        ArbreMot prochaineFratrie,
         int profondeur
     ) {
         this.value = value;
         this.premierEnfant = premierEnfant;
-        this.fratrie = fratrie;
+        this.prochaineFratrie = prochaineFratrie;
         this.depth = profondeur;
     }
 
     public ArbreMot(Mot value) {
-        this(value, null, new ArrayList<>(), 0);
+        this(value, null, null, 0);
     }
 
     public void setValue(Mot value) {
@@ -55,12 +51,18 @@ public class ArbreMot implements Iterable<Mot> {
         this.premierEnfant = premierEnfant;
     }
 
-    public void setFratrie(List<ArbreMot> fratrie) {
-        this.fratrie = fratrie;
+    public void setProchaineFratrie(ArbreMot prochaineFratrie) {
+        this.prochaineFratrie = prochaineFratrie;
     }
 
-    public void addFratrie(ArbreMot fratrie) {
-        this.fratrie.add(fratrie);
+    public void addFratrie(ArbreMot prochaineFratrie) {
+        ArbreMot tmp = this;
+
+        while (tmp.getProchaineFratrie() != null) {
+            tmp = tmp.getProchaineFratrie();
+        }
+
+        tmp.setProchaineFratrie(prochaineFratrie);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class ArbreMot implements Iterable<Mot> {
                 value.equals(a.getValue()) && premierEnfant != null
                     ? premierEnfant.equals(a.getPremierEnfant())
                     : premierEnfant == a.getPremierEnfant() &&
-                      fratrie.equals(a.getFratrie())
+                      prochaineFratrie.equals(a.getProchaineFratrie())
             );
         }
 
@@ -82,14 +84,14 @@ public class ArbreMot implements Iterable<Mot> {
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<Mot> iterator() {
         return new ArbreMotIterator();
     }
 
     public class ArbreMotIterator implements Iterator<Mot> {
 
         private int current_depth = 0;
-        private List<ArbreMot> stack;
+        private Deque<ArbreMot> stack;
 
         @Override
         public boolean hasNext() {
@@ -101,5 +103,13 @@ public class ArbreMot implements Iterable<Mot> {
             // TODO Auto-generated method stub
             return null;
         }
+    }
+
+    public ArbreMot getProchaineFratrie() {
+        return prochaineFratrie;
+    }
+
+    public Integer getDepth() {
+        return depth;
     }
 }
