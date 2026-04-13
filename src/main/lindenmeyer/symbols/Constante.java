@@ -4,6 +4,9 @@ import lindenmeyer.turtle.AbstractTurtle3D;
 
 // import turtle.Turtle;
 
+/**
+ * Ensemble de constantes prédéfinies permettant des mouvements particuliers d'une {@link AbstractTurtle3D}.
+ */
 public class Constante extends Symbol {
 
     // private char symbole;

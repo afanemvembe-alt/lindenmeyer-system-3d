@@ -170,6 +170,6 @@
 
 
   <target name="doc" depends="init, deps" description="Build project documentation">
-    <javadoc sourcepath="${src}" destdir="${docs}" classpathref="jar.lib" />
+    <javadoc sourcepath="${src}/main" destdir="${docs}" classpathref="jar.lib" />
   </target>
 </project>
