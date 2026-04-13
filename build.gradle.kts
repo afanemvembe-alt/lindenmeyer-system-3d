@@ -12,7 +12,7 @@ plugins {
 }
 
 javafx {
-    modules("javafx.controls")
+    modules("javafx.controls", "javafx.swing")
 }
 
 repositories {

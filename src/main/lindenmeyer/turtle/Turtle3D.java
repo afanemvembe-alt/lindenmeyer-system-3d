@@ -1,17 +1,27 @@
 package lindenmeyer.turtle;
 
+import java.util.*;
+import javafx.geometry.*;
 // import java.awt.Color;
 import javafx.scene.paint.Color;
-import java.util.*;
 
 public class Turtle3D extends AbstractTurtle3D {
+
     private Deque<Coord3D> storedPositions;
     private List<Segment3D> segments;
     private Coord3D position;
     private double angle_x, angle_z;
     private Color color;
-    private double x_min, x_max, y_min, y_max, z_min, z_max = 0;
+    private double x_min,
+        x_max,
+        y_min,
+        y_max,
+        z_min,
+        z_max = 0;
     private ColorFactory colorFactory;
+    private Coord3D heading;
+    private Coord3D up;
+    private Coord3D left;
 
     @Override
     public void setColorOf(Object o) {
@@ -27,6 +37,9 @@ public class Turtle3D extends AbstractTurtle3D {
         angle_z = 0;
         color = Color.BLACK;
         colorFactory = new ColorFactory();
+        heading = new Coord3D(0, 0, 1);
+        up = new Coord3D(0, 1, 0);
+        left = new Coord3D(-1, 0, 0);
     }
 
     private void updateBounds() {
@@ -50,9 +63,17 @@ public class Turtle3D extends AbstractTurtle3D {
     }
 
     public class Bounds {
+
         public double x_min, x_max, y_min, y_max, z_min, z_max;
 
-        public Bounds(double x_min, double x_max, double y_min, double y_max, double z_min, double z_max) {
+        public Bounds(
+            double x_min,
+            double x_max,
+            double y_min,
+            double y_max,
+            double z_min,
+            double z_max
+        ) {
             this.x_min = x_min;
             this.x_max = x_max;
             this.y_min = y_min;
