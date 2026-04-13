@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 
+import javafx.embed.swing.JFXPanel;
+import javafx.application.Platform;
+//import javafx.geometry.Point3D;
+
 import lindenmeyer.axiom.*;
 import lindenmeyer.symbols.*;
 import lindenmeyer.rules.*;
@@ -67,6 +71,16 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 	private boolean playing = false;
 	private Timer playTimer;
 	
+	//Gestion des vues 2D et 3D
+	private JPanel dessin;
+	private JScrollPane scroll2D;
+	private boolean mode3D = false;
+	public JButton switch3D;
+	private Vue3D vue3D;
+	private JPanel centerPanel;
+	private CardLayout centerLayout;
+	private JFXPanel fxPanel;
+	
     public InterfaceLsystem() {
         super("LSystem");
 
@@ -80,7 +94,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         //this.commands.setLayout(new GridLayout(4,1,5,5));
         this.commands.setLayout(new BoxLayout(this.commands, BoxLayout.Y_AXIS));
         this.commands.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Commandes"),BorderFactory.createEmptyBorder(10,10,10,10)));
-        this.commands.setPreferredSize(new Dimension(300, 200));
+        this.commands.setPreferredSize(new Dimension(300, 800));
+        //this.commands.setPreferredSize(new Dimension(300, 200));
 
         this.modifAxiom = new JTextField();
         this.rule = new JTextField();
@@ -110,6 +125,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.random = new JButton("Random");
         this.settings = new JButton("Parametres");
         this.play = new JButton("Play/Pause");
+        this.switch3D = new JButton("Switch3D");
         
         //Definition de couleur de fond des boutons
         this.generate.setBackground(new Color(120,200,120));
@@ -126,6 +142,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.zoomM.setPreferredSize(boutonSize);
 		this.settings.setPreferredSize(boutonSize);
 		this.play.setPreferredSize(boutonSize);
+		this.switch3D.setPreferredSize(boutonSize);
 		
 		//Definition de la police des boutons
 		this.defineLsystem.setFont(uiFont);
@@ -136,6 +153,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.zoomM.setFont(uiFont);
 		this.settings.setFont(uiFont);
 		this.play.setFont(uiFont);
+		this.switch3D.setFont(uiFont);
 
 		//Action des boutons
         this.defineLsystem.addActionListener(this);
@@ -146,6 +164,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.random.addActionListener(this);
         this.settings.addActionListener(this);
         this.play.addActionListener(this);
+        this.switch3D.addActionListener(this);
 
 		//Taille des JTextField
         Dimension taille = new Dimension(180, 30);
@@ -157,10 +176,16 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.panelLsystem = new JPanel(new FlowLayout());
         this.panelGeneration = new JPanel(new FlowLayout());
         this.panelZoom = new JPanel(new FlowLayout());
+        this.panelInfo = new JPanel(new BorderLayout());
+        //
+        this.panelLsystem.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.panelGeneration.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.panelZoom.setAlignmentX(Component.LEFT_ALIGNMENT);
+		this.panelInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
+		//
         this.panelLsystem.setBorder(BorderFactory.createTitledBorder("Definition du LSystem"));
 		this.panelGeneration.setBorder(BorderFactory.createTitledBorder("Generation"));
 		this.panelZoom.setBorder(BorderFactory.createTitledBorder("Affichage"));
-		this.panelInfo = new JPanel(new BorderLayout());
 		this.panelInfo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 		this.panelInfo.setBorder(BorderFactory.createTitledBorder("Informations preset"));
 
@@ -200,6 +225,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			if (index == 0) {
 				this.display.clearSegments();
 				this.display.repaint();
+
+				Platform.runLater(() -> {
+					if (this.vue3D != null) {
+						this.vue3D.setSegments(new ArrayList<>());
+						this.vue3D.redraw();
+					}
+				});
 				return;
 			}
 			index = index - 1;
@@ -208,18 +240,33 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			}
 			State s = (State) this.history.getState(index);
 			SymbolList symbols = s.getState();
+
 			ConfigTortue config = new ConfigTortue(this.longueur, this.angleRotation);
+			// Pour la 2D
 			Tortue tortue = new Tortue(300, 400, -90, config);
-			List<Segment> segments = tortue.interpreter(symbols.toString());
-			this.display.setSegments(segments);
+			List<Segment> segments2D = tortue.interpreter(symbols.toString());
+			this.display.setSegments(segments2D);
 			this.display.repaint();
+			// Pour la 3D
+			Turtle3D tortue3D = new Turtle3D(config);
+			for (Symbol sym : symbols) {
+				sym.interpret(tortue3D);
+			}
+			List<Segment3D> segments3D = tortue3D.getSegments();
+
+			Platform.runLater(() -> {
+				if (this.vue3D != null) {
+					this.vue3D.setSegments(segments3D);
+					this.vue3D.redraw();
+				}
+			});
 		});
 		
 		
 		//Ajout de composants dans le sous Panel correspondant
         this.panelLsystem.add(ligneAxiom);
         this.panelLsystem.add(ligneRegle);
-        //this.panelLsystem.add(presetSelector);
+        this.panelLsystem.add(this.switch3D);
         this.panelLsystem.add(this.defineLsystem);
 
         this.panelGeneration.add(ligneStep);
@@ -235,9 +282,12 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.panelZoom.add(this.play);
         
         this.commands.add(this.panelLsystem);
-        this.commands.add(this.panelGeneration);
-        this.commands.add(this.panelZoom);
-        this.commands.add(this.panelInfo);
+		this.commands.add(Box.createVerticalStrut(8));
+		this.commands.add(this.panelGeneration);
+		this.commands.add(Box.createVerticalStrut(8));
+		this.commands.add(this.panelZoom);
+		this.commands.add(Box.createVerticalStrut(8));
+		this.commands.add(this.panelInfo);
         
 		//
 		this.preSet= new ArrayList<>();
@@ -246,23 +296,45 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.paramDialog= new ParamDialog(this);
         this.lsystem = new LSystem(new Axiom("F"));
         this.display = new VueLsystem(this.lsystem);
-
-		// Panel pour le slider
+        
+        //Gestion visuelle de la partie dessin+slider
+        // JavaFX instructions
+		this.fxPanel = new JFXPanel();
+		this.centerLayout = new CardLayout();
+		this.centerPanel = new JPanel(this.centerLayout);
 		this.setLayout(new BorderLayout());
-        this.display.setPreferredSize(new Dimension(2000, 2000));
-        JScrollPane scroll = new JScrollPane(display);
+		this.display.setPreferredSize(new Dimension(2000, 2000));
+		this.scroll2D = new JScrollPane(display);
+		// panneau commun pour la zone centrale + slider
+		this.dessin = new JPanel(new BorderLayout());
+		// slider commun aux deux modes
 		JPanel sliderPanel = new JPanel(new BorderLayout());
 		sliderPanel.setBorder(BorderFactory.createTitledBorder("Historique des generations"));
 		sliderPanel.add(this.historySlider, BorderLayout.CENTER);
-        JPanel dessin = new JPanel(new BorderLayout());
-		dessin.add(scroll, BorderLayout.CENTER);
-		dessin.add(sliderPanel, BorderLayout.SOUTH);
+		// cartes 2D / 3D
+		this.centerPanel.add(this.scroll2D, "2D");
+		this.centerPanel.add(this.fxPanel, "3D");
+		// panneau global : cartes au centre, slider en bas
+		this.dessin.add(this.centerPanel, BorderLayout.CENTER);
+		this.dessin.add(sliderPanel, BorderLayout.SOUTH);
+		Platform.runLater(() -> {
+			this.vue3D = new Vue3D(new ArrayList<>());
+			this.fxPanel.setScene(this.vue3D);
+		});
 		
-		//Gestion de la fenetre et ajouts des somposants
-        this.add(dessin, BorderLayout.CENTER);
-        this.add(this.commands, BorderLayout.EAST);
+		//Scroll vertical pour les commandes
+		JScrollPane scrollCommands = new JScrollPane(this.commands);
+		scrollCommands.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrollCommands.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollCommands.setBorder(null);
+		scrollCommands.setPreferredSize(new Dimension(320, 0));
+		this.add(this.dessin, BorderLayout.CENTER);
+		this.add(scrollCommands, BorderLayout.EAST);
+		//this.add(this.commands, BorderLayout.EAST);
         
-        this.setSize(1000, 600);
+        
+        this.setSize(1200, 750);
+		this.setMinimumSize(new Dimension(1100, 700));
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
@@ -413,6 +485,18 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 				this.display.getLSystem().ajouterRegle(r);
 			}
         }
+        
+        else if (e.getSource() == this.switch3D) {
+			if (mode3D) {
+				this.centerLayout.show(this.centerPanel, "2D");
+				mode3D = false;
+				this.switch3D.setText("Switch3D");
+			} else {
+				this.centerLayout.show(this.centerPanel, "3D");
+				mode3D = true;
+				this.switch3D.setText("Switch2D");
+			}
+		}
 
         else if (e.getSource() == this.generate) {
 			JDialog loading = new JDialog(this, "Chargement", true);
@@ -451,6 +535,22 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
 				List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
 
+				//Gestion 3D------------------------
+				Turtle3D tortue3D = new Turtle3D(config);
+				SymbolList generation3D = temp.getCurrentGeneration();
+				for (Symbol s : generation3D) {
+					s.interpret(tortue3D);
+				}
+				List<Segment3D> finalSegments3D = tortue3D.getSegments();
+				Platform.runLater(() -> {
+					if (this.vue3D != null) {
+						this.vue3D.setSegments(finalSegments3D);
+						this.vue3D.redraw();
+					}
+				});
+				//----------------------Fin gestion3D 
+				
+				
 				// Mise à jour de l'UI sur le thread Swing
 				SwingUtilities.invokeLater(() -> {
 					//this.longueur = config.pas;
@@ -497,6 +597,12 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         else if (e.getSource() == this.clear) {
             this.display.clearSegments();
             this.display.repaint();
+            Platform.runLater(() -> {
+				if (this.vue3D != null) {
+					this.vue3D.setSegments(new ArrayList<>());
+					this.vue3D.redraw();
+				}
+			});
         }
 
         else if (e.getSource() == this.zoomP) {
@@ -556,6 +662,24 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
 				List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
 
+				// --- Gestion3D pour random------------
+				Turtle3D tortue3D = new Turtle3D(configT);
+				SymbolList generation3D = temp.getCurrentGeneration();
+
+				for (Symbol s : generation3D) {
+					s.interpret(tortue3D);
+				}
+
+				List<Segment3D> finalSegments3D = tortue3D.getSegments();
+
+				Platform.runLater(() -> {
+					if (this.vue3D != null) {
+						this.vue3D.setSegments(finalSegments3D);
+						this.vue3D.redraw();
+					}
+				});
+				//-------------3D pour random------------
+
 				SwingUtilities.invokeLater(() -> {
 					this.longueur = cfg.pas;
 					this.angleRotation = cfg.angle;
@@ -602,6 +726,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			ConfigTortue config = new ConfigTortue(longueur, angleRotation);
 			Tortue tortue = new Tortue(300, 400, -90, config);
 			List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
+			
+			Turtle3D tortue3D = new Turtle3D(config);
+			SymbolList generation3D = temp.getCurrentGeneration();
+			for (Symbol s : generation3D) {
+				s.interpret(tortue3D);
+			}
+			List<Segment3D> finalSegments3D = tortue3D.getSegments();
+			
 			this.display.clearSegments();
 			final int[] index = {0};
 
@@ -619,8 +751,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
 				List<Segment> current = new ArrayList<>(this.display.getSegments());
 
-				// Ajouter plusieurs segments par tick pour accélérer
-				int speed = 10; 
+				int speed = 10;
 				for (int i = 0; i < speed && index[0] < finalSegments.size(); i++) {
 					current.add(finalSegments.get(index[0]));
 					index[0]++;
@@ -628,6 +759,15 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
 				this.display.setSegments(current);
 				this.display.repaint();
+
+				final int currentIndex = index[0];
+				Platform.runLater(() -> {
+					if (this.vue3D != null) {
+						List<Segment3D> current3D = new ArrayList<>(finalSegments3D.subList(0, Math.min(currentIndex, finalSegments3D.size())));
+						this.vue3D.setSegments(current3D);
+						this.vue3D.redraw();
+					}
+				});
 			});
 
 			playTimer.start();			
