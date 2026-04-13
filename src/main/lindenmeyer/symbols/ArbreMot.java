@@ -3,18 +3,21 @@ package lindenmeyer.symbols;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * Un L-Système, représenté sous la forme d'une foret.
  *
  * Cette structure facilite la création d'une structure récursive, moins couteuse en mémoire.
  */
-public class ArbreMot {
+public class ArbreMot implements Iterable<Mot> {
 
     private Mot value;
     private ArbreMot premierEnfant;
     private List<ArbreMot> fratrie;
+    private Integer depth;
 
     public Mot getValue() {
         return value;
@@ -28,14 +31,20 @@ public class ArbreMot {
         return fratrie;
     }
 
-    public ArbreMot(Mot value, ArbreMot premierEnfant, List<ArbreMot> fratrie) {
+    public ArbreMot(
+        Mot value,
+        ArbreMot premierEnfant,
+        List<ArbreMot> fratrie,
+        int profondeur
+    ) {
         this.value = value;
         this.premierEnfant = premierEnfant;
         this.fratrie = fratrie;
+        this.depth = profondeur;
     }
 
     public ArbreMot(Mot value) {
-        this(value, null, new ArrayList<>());
+        this(value, null, new ArrayList<>(), 0);
     }
 
     public void setValue(Mot value) {
@@ -70,5 +79,27 @@ public class ArbreMot {
         }
 
         return false;
+    }
+
+    @Override
+    public Iterator iterator() {
+        return new ArbreMotIterator();
+    }
+
+    public class ArbreMotIterator implements Iterator<Mot> {
+
+        private int current_depth = 0;
+        private List<ArbreMot> stack;
+
+        @Override
+        public boolean hasNext() {
+            return stack.isEmpty();
+        }
+
+        @Override
+        public Mot next() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 }
