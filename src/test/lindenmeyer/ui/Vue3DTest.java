@@ -1,4 +1,4 @@
-package ui;
+package lindenmeyer.ui;
 
 import java.util.*;
 import javafx.application.Application;

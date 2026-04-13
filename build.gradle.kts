@@ -45,9 +45,6 @@ application {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
-    addTestOutputListener { descriptor, event ->
-       logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
-    }
 }
 
 sourceSets {

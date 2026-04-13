@@ -1,4 +1,4 @@
-package lindenmeyer;
+package lindenmeyer.lsystem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

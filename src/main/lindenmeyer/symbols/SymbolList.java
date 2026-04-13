@@ -1,15 +1,17 @@
 package lindenmeyer.symbols;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Une liste ordonnée de symboles, auquel il est possible de rajouter des
  * symboles. Aucune déduplication n'est faite sur les opération prenant en argument
  * un type {@link Symbol}.
  */
-public class SymbolList extends ArrayList<Symbol> {
+public class SymbolList extends ArrayList<Symbol> implements Mot {
+
     private SymbolFactory factory;
+
     // private List<Symbol> symbols;
 
     /**
@@ -31,7 +33,7 @@ public class SymbolList extends ArrayList<Symbol> {
      * Initialise une liste de symboles à partir d'une autre en la copiant, avec la
      * source de symboles donnée.
      * Cette operation ne fait pas de déduplication de symboles.
-     * 
+     *
      * @param s une liste de symboles
      * @param f une source de symboles
      */
@@ -45,7 +47,7 @@ public class SymbolList extends ArrayList<Symbol> {
     //  * Initialise une liste de symboles à partir d'une autre en la copiant, avec la
     //  * source de symboles donnée.
     //  * Cette operation ne fait pas de déduplication de symboles.
-    //  * 
+    //  *
     //  * @param s une liste de symboles
     //  * @param f une source de symboles
     //  */
@@ -61,6 +63,16 @@ public class SymbolList extends ArrayList<Symbol> {
     public static SymbolList of(Symbol s) {
         SymbolList res = new SymbolList();
         res.add(s);
+        return res;
+    }
+
+    public static SymbolList of(Symbol... s) {
+        SymbolList res = new SymbolList();
+
+        for (Symbol symbol : s) {
+            res.add(symbol);
+        }
+
         return res;
     }
 
@@ -88,7 +100,7 @@ public class SymbolList extends ArrayList<Symbol> {
     public void add(char c) {
         this.add(factory.getSymbol(c));
     }
-    
+
     /**
      * Ajoute le caractère donné à la position donnée à la liste.
      * @param index l'index auquel insérer l'élément
@@ -141,5 +153,10 @@ public class SymbolList extends ArrayList<Symbol> {
         }
 
         return res;
+    }
+
+    @Override
+    public List<Symbol> affiche() {
+        return this;
     }
 }
