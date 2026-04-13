@@ -1,18 +1,17 @@
-package test.symbols;
+package symbols;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
 import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
+import org.junit.jupiter.api.Test;
 
 public class SymbolListTest {
+
     // public static void main(String[] args) {
     // boolean res = true;
 

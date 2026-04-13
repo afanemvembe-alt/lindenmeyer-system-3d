@@ -1,4 +1,4 @@
-package test.rules;
+package rules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -8,9 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 // import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.junit.jupiter.api.Test;
-
 // import lindenmeyer.rules.ContextRule;
 import lindenmeyer.rules.GenericRule;
 // import lindenmeyer.rules.RuleFactory;
@@ -19,12 +16,14 @@ import lindenmeyer.rules.SimpleRule;
 import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
-import test.rules.GenericRuleTest.MockRule;
+import org.junit.jupiter.api.Test;
+import rules.GenericRuleTest.MockRule;
 
 /**
  * Une classe qui fournit les tests pour une `{@link RuleSet}`
  */
 public class RuleSetTest {
+
     public static SymbolFactory symbolFactory = new SymbolFactory();
 
     // créer les symboles A, B, +
@@ -32,7 +31,7 @@ public class RuleSetTest {
     public static Symbol b = symbolFactory.getSymbol('B');
     public static Symbol plus = symbolFactory.getSymbol('+');
 
-    public final static String strRuleSet = "A>B+B,B>A";
+    public static final String strRuleSet = "A>B+B,B>A";
 
     // public static void main (String[] args)
     // {

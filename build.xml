@@ -128,7 +128,7 @@
       <classpath refid="jar.lib" />
       <testclasses outputdir="${build}/test-report">
         <fileset dir="${build}">
-          <include name="test/**/*" />
+          <!-- <include name="test/**/*" /> -->
         </fileset>
         <listener type="legacy-brief" sendSysOut="true" />
         <listener type="legacy-xml" sendSysErr="true" sendSysOut="true" />
@@ -170,6 +170,6 @@
 
 
   <target name="doc" depends="init, deps" description="Build project documentation">
-    <javadoc sourcepath="${src}" destdir="${docs}" classpathref="jar.lib" />
+    <javadoc sourcepath="${src}/main" destdir="${docs}" classpathref="jar.lib" />
   </target>
 </project>
