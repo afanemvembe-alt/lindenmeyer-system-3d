@@ -1,86 +1,31 @@
 package lindenmeyer.symbols;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * Un L-Système, représenté sous la forme d'une foret.
  *
  * Cette structure facilite la création d'une structure récursive, moins couteuse en mémoire.
  */
-public class ArbreMot implements Iterable<Mot> {
+public class ArbreMot implements Iterable<Mot>, Mot {
 
-    private Mot value;
-    private ArbreMot premierEnfant;
-    private ArbreMot prochaineFratrie;
-    private Integer depth;
-
-    public Mot getValue() {
-        return value;
-    }
-
-    public ArbreMot getPremierEnfant() {
-        return premierEnfant;
-    }
-
-    public ArbreMot(
-        Mot value,
-        ArbreMot premierEnfant,
-        ArbreMot prochaineFratrie,
-        int profondeur
-    ) {
-        this.value = value;
-        this.premierEnfant = premierEnfant;
-        this.prochaineFratrie = prochaineFratrie;
-        this.depth = profondeur;
-    }
-
-    public ArbreMot(Mot value) {
-        this(value, null, null, 0);
-    }
-
-    public void setValue(Mot value) {
-        this.value = value;
-    }
-
-    public void setPremierEnfant(ArbreMot premierEnfant) {
-        this.premierEnfant = premierEnfant;
-    }
-
-    public void setProchaineFratrie(ArbreMot prochaineFratrie) {
-        this.prochaineFratrie = prochaineFratrie;
-    }
-
-    public void addFratrie(ArbreMot prochaineFratrie) {
-        ArbreMot tmp = this;
-
-        while (tmp.getProchaineFratrie() != null) {
-            tmp = tmp.getProchaineFratrie();
-        }
-
-        tmp.setProchaineFratrie(prochaineFratrie);
-    }
+    private NoeudMot premierEnfant;
+    // necessary to prevent infinitely recursive trees
+    private Integer max_depth;
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        } else if (obj instanceof ArbreMot) {
-            ArbreMot a = (ArbreMot) obj;
+    public List<Symbol> affiche() {
+        ArrayList<Symbol> res = new ArrayList<>();
 
-            return (
-                value.equals(a.getValue()) && premierEnfant != null
-                    ? premierEnfant.equals(a.getPremierEnfant())
-                    : premierEnfant == a.getPremierEnfant() &&
-                      prochaineFratrie.equals(a.getProchaineFratrie())
-            );
+        Iterator<Mot> iter = iterator();
+
+        while (iter.hasNext()) {
+            res.addAll(iter.next().affiche());
         }
 
-        return false;
+        return res;
     }
 
     @Override
@@ -91,25 +36,55 @@ public class ArbreMot implements Iterable<Mot> {
     public class ArbreMotIterator implements Iterator<Mot> {
 
         private int current_depth = 0;
-        private Deque<ArbreMot> stack;
+        private NoeudMot current_node = premierEnfant;
+        private ArrayList<NoeudMot> stack;
+
+        public ArbreMotIterator() {
+            stack = new ArrayList<>(List.of(current_node));
+            current_depth = 0;
+
+            while (
+                current_node.getPremierEnfant() != null &&
+                current_depth < max_depth
+            ) {
+                stack.add(current_node);
+                current_node = current_node.getPremierEnfant();
+                current_depth += 1;
+            }
+
+            // current_node = a;
+        }
 
         @Override
         public boolean hasNext() {
-            return stack.isEmpty();
+            return current_node != null;
         }
 
         @Override
         public Mot next() {
-            // TODO Auto-generated method stub
-            return null;
+            Mot res = current_node.getValue();
+
+            while (current_node.getProchaineFratrie() != null) {
+                current_node = stack.removeLast();
+                current_depth--;
+            }
+
+            current_node = current_node.getProchaineFratrie();
+
+            if (current_node == null) {
+                return res;
+            }
+
+            while (
+                current_node.getPremierEnfant() != null &&
+                current_depth < max_depth
+            ) {
+                current_depth++;
+                stack.add(current_node);
+                current_node = current_node.getPremierEnfant();
+            }
+
+            return res;
         }
-    }
-
-    public ArbreMot getProchaineFratrie() {
-        return prochaineFratrie;
-    }
-
-    public Integer getDepth() {
-        return depth;
     }
 }
