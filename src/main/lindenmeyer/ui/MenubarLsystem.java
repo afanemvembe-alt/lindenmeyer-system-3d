@@ -54,6 +54,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     JMenuItem zoomOutMenuItem = new JMenuItem("Zoom -");
 
     final JMenu presetMenu = new JMenu("Presets");
+    JMenuItem addPresetMenuItem = new JMenuItem("Ajouter preset");
 
     final JMenu aboutMenu = new JMenu("À propos");
     // about menu items
@@ -124,6 +125,9 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         {
             presetMenu.add(crateMenuItem(preset));
         }
+        presetMenu.addSeparator();
+        presetMenu.add(addPresetMenuItem);
+
 
         // affichage menu
         viewMenu.add(coulourMenuItem);
