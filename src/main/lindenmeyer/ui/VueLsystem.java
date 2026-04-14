@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
-
+//ajouter un updateusize dans le constructeur de vuelystem
 public class VueLsystem extends JPanel implements LsystemListener {
 
     private LSystem lsystem;
@@ -19,11 +19,11 @@ public class VueLsystem extends JPanel implements LsystemListener {
     private final int paddingY = 10;
 
     public VueLsystem(LSystem lsystem) {
-        super();
-        this.lsystem = lsystem;
-        this.setPreferredSize(new Dimension(1000, 1000)); // grand espace scrollable
-        this.lsystem.addListener(this);
-    }
+    super();
+    this.lsystem = lsystem;
+    updateViewSize(); 
+    this.lsystem.addListener(this);
+}
 
     public LSystem getLSystem() { return this.lsystem; }
     public void setLSystem(LSystem lsystem) {
