@@ -291,6 +291,17 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 	public void resetField(JTextField field) {
 		field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 	}
+
+	public void setLSystem(LSystem lSystem)
+	{
+		this.lsystem = lSystem;
+	}
+
+	public void setConfig(ConfigLsystem config)
+	{
+		this.longueur = config.pas;
+		this.angleRotation = config.angle;
+	}
 	
 	public void addPreSet(){
 		// Koch Flake

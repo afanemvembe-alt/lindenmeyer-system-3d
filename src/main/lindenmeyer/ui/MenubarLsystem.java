@@ -201,9 +201,8 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
     public void applyPreset(Preset preset)
     {
-        System.out.println(preset.getName());
-        System.out.println(preset.getConfig().toString());
-        System.out.println(preset.getLSys().toString());
+        this.interfaceLsystem.setLSystem(preset.getLSys());
+        this.interfaceLsystem.setConfig(preset.getConfig());
     }
 
     public static void main(String[] args)
