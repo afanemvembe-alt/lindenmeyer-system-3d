@@ -161,6 +161,7 @@
     <!-- <java classname="lindenmeyer.Cli" classpath="${build}" /> -->
     <!-- <java classname="lindenmeyer.HelloFX" classpath="${build}" /> -->
     <java classname="${runclass}" classpath="${build}" fork="true">
+      <classpath refid="jar.lib" />
       <modulepath>
         <pathelement location="lib/javafx-sdk-21.0.10/lib" />
       </modulepath>

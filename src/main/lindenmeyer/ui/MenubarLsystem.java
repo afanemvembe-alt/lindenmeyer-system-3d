@@ -2,7 +2,25 @@ package lindenmeyer.ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.nio.file.Path;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Map;
+
+
 import javax.swing.*;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import lindenmeyer.lsystem.LSystem;
+
+// import netscape.javascript.JSObject;
+
 
 public class MenubarLsystem extends JMenuBar implements ActionListener
 {
@@ -12,36 +30,63 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
     // idea: generator menu with premade models instead of random
     // idea: explain about lsystem structures in about menu or sth
+    // idea: what if the preset configs are read at launch
+
+    // JSONObject root = new JSONParser().parse(new FileReader("JSONExample.json"));
+    private ArrayList<Preset> presets = new ArrayList<>();
 
     // menus
     final JMenu fileMenu = new JMenu("Fichier");
-    final JMenu editMenu = new JMenu("Config");
-    final JMenu viewMenu = new JMenu("Affichage");
-    final JMenu aboutMenu = new JMenu("À propos");
-
     // file menu items
     JMenuItem newMenuItem = new JMenuItem("New");
     JMenuItem openMenuItem = new JMenuItem("Ouvrir");
     JMenuItem saveMenuItem = new JMenuItem("Sauvegarder");
     JMenuItem exitMenuItem = new JMenuItem("Sortir");
 
+    final JMenu configMenu = new JMenu("Config");
     // config menu items
     JMenuItem configMenuItem = new JMenuItem("Configurations");
 
+    final JMenu viewMenu = new JMenu("Affichage");
     // view menu items
     JMenuItem coulourMenuItem = new JMenuItem("Couleur"); // idea: colour wheel thing
     JMenuItem zoomInMenuItem = new JMenuItem("Zoom +");
     JMenuItem zoomOutMenuItem = new JMenuItem("Zoom -");
 
+    final JMenu presetMenu = new JMenu("Presets");
+
+    final JMenu aboutMenu = new JMenu("À propos");
     // about menu items
     JMenuItem aboutMenuItem = new JMenuItem("Informations");
 
-    // note: not sure about this
     private ParamDialog paramDialog;
     private InterfaceLsystem interfaceLsystem;
 
     public MenubarLsystem(InterfaceLsystem interfaceLsystem)
     {
+        try 
+        {
+            String fileString = Files.readString(Path.of("src/main/lindenmeyer/ui/presets.json"));
+
+            JSONObject root = new JSONObject(fileString);
+            JSONArray presetsArray = root.getJSONArray("presets");
+
+
+            for (int i=0; i<presetsArray.length(); i++)
+            {
+                JSONObject presetObj = presetsArray.getJSONObject(i);
+                LSystem lSyst = new LSystem(presetObj);
+                ConfigLsystem config = new ConfigLsystem(presetObj);
+
+                this.presets.add(new Preset(presetObj.getString("name"), config, lSyst));
+            }
+        } 
+        catch (IOException e) 
+        {
+            throw new RuntimeException("Failed to read presets.json", e);
+        }
+
+
         this.interfaceLsystem = interfaceLsystem;
         // file menu items
         newMenuItem.addActionListener(this);
@@ -72,7 +117,13 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         fileMenu.add(exitMenuItem);
 
         // config menu
-        editMenu.add(configMenuItem);
+        configMenu.add(configMenuItem);
+
+        // preset menu
+        for (Preset preset : this.presets)
+        {
+            presetMenu.add(crateMenuItem(preset));
+        }
 
         // affichage menu
         viewMenu.add(coulourMenuItem);
@@ -83,63 +134,12 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         aboutMenu.add(aboutMenuItem);
 
         this.add(fileMenu);
-        this.add(editMenu);
+        this.add(configMenu);
+        this.add(presetMenu);
         this.add(viewMenu);
         this.add(aboutMenu);
     }
-/**
-    private void buildMenuBar()
-    {
-        newMenuItem.addActionListener(this);
-        openMenuItem.addActionListener(this);
-        saveMenuItem.addActionListener(this);
-        exitMenuItem.addActionListener(this);
-        configMenuItem.addActionListener(this);
-        aboutMenuItem.addActionListener(this);
 
-        fileMenu.add(newMenuItem);
-        fileMenu.add(openMenuItem);
-        fileMenu.add(saveMenuItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitMenuItem);
-
-        editMenu.add(configMenuItem);
-
-        aboutMenu.add(aboutMenuItem);
-
-        this.add(fileMenu);
-        this.add(editMenu);
-        this.add(aboutMenu);
-
-        // setJMenuBar(menuBar);
-    }
-
-    public JMenuBar createMenuBar()
-    {
-        newMenuItem.addActionListener(this);
-        openMenuItem.addActionListener(this);
-        saveMenuItem.addActionListener(this);
-        exitMenuItem.addActionListener(this);
-        configMenuItem.addActionListener(this);
-        aboutMenuItem.addActionListener(this);
-
-        fileMenu.add(newMenuItem);
-        fileMenu.add(openMenuItem);
-        fileMenu.add(saveMenuItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitMenuItem);
-
-        editMenu.add(configMenuItem);
-
-        aboutMenu.add(aboutMenuItem);
-
-        this.add(fileMenu);
-        this.add(editMenu);
-        this.add(aboutMenu);
-
-        return menuBar;
-    }
-        */
 
     public void actionPerformed(ActionEvent e)
     {
@@ -188,6 +188,22 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
                 JOptionPane.INFORMATION_MESSAGE
             );
         }
+    }
+
+    public JMenuItem crateMenuItem(Preset preset)
+    {
+        JMenuItem item = new JMenuItem(preset.getName());
+        item.addActionListener(e -> {
+            applyPreset(preset);
+        });
+        return item;
+    }
+
+    public void applyPreset(Preset preset)
+    {
+        System.out.println(preset.getName());
+        System.out.println(preset.getConfig().toString());
+        System.out.println(preset.getLSys().toString());
     }
 
     public static void main(String[] args)
