@@ -26,10 +26,11 @@ public class VueLsystem extends JPanel implements LsystemListener {
     }
 
     public LSystem getLSystem() { return this.lsystem; }
-    public void setLSystem(LSystem lsystem) {
-    this.lsystem = lsystem;
-    this.repaint();
-}
+    public void setLSystem(LSystem lsystem)
+    {
+        this.lsystem = lsystem;
+        this.repaint();
+    }
 
     public List<Segment> getSegments() { return this.segments; }
 

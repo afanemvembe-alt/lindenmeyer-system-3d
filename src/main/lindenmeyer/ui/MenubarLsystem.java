@@ -203,6 +203,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     {
         this.interfaceLsystem.setLSystem(preset.getLSys());
         this.interfaceLsystem.setConfig(preset.getConfig());
+        this.interfaceLsystem.getVueLsystem().setLSystem(preset.getLSys());
     }
 
     public static void main(String[] args)

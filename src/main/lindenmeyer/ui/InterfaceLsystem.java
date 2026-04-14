@@ -302,6 +302,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.longueur = config.pas;
 		this.angleRotation = config.angle;
 	}
+
+	public VueLsystem getVueLsystem()
+	{
+		return this.display;
+	}
 	
 	public void addPreSet(){
 		// Koch Flake
@@ -426,6 +431,10 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         }
 
         else if (e.getSource() == this.generate) {
+			System.out.println(this.lsystem.toString());
+
+
+
 			JDialog loading = new JDialog(this, "Chargement", true);
 			loading.setLayout(new BorderLayout());
 			loading.add(new JLabel("Generation en cours...", SwingConstants.CENTER), BorderLayout.CENTER);
