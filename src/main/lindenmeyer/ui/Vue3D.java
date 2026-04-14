@@ -17,9 +17,11 @@ import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Line;
+import javafx.scene.image.*;
 import javafx.scene.text.Font;
 import javafx.scene.transform.*;
 import javafx.scene.text.*;
+import javafx.scene.paint.ImagePattern;
 
 import lindenmeyer.turtle.Segment3D;
 
@@ -37,6 +39,7 @@ public class Vue3D extends Scene {
     private double rotation = 0;
     private List<Segment3D> segments;
     private Group root;
+    private Image image;
 
     /**
      * Retourne l'épaisseur du trait de dessin.
@@ -69,8 +72,10 @@ public class Vue3D extends Scene {
         // root.setScaleX(2);
         // root.setScaleY(2);
         this.segments = segments;
-        renderGrid();
-
+        
+        image = new Image(getClass().getResourceAsStream("/lindenmeyer/ui/Mine.jpg"));
+        setFill(new ImagePattern(image, 0, 0, 1000, 1000, false));
+		renderGrid();
         for (Segment3D s : segments) {
             root.getChildren().add(segmentToCylinder(s));
         }
@@ -83,7 +88,6 @@ public class Vue3D extends Scene {
 
     public void redraw() {
         root.getChildren().clear();
-
         for (Segment3D s : segments) {
             root.getChildren().add(segmentToCylinder(s));
         }
