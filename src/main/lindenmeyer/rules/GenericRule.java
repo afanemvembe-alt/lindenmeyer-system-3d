@@ -2,25 +2,27 @@ package lindenmeyer.rules;
 
 import java.util.Objects;
 
-import lindenmeyer.symbols.*;
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolList;
 
-/**
- * Règle abstraite, contenant un prédécesseur et un successeur.
- */
 public abstract class GenericRule implements Applicable {
 
-    /**
-     * Le successeur de la règle.
-     */
     private SymbolList successor;
+    private double weight = 1.0;
 
-    /**
-     * Construit une règle contenant le successeur donne.
-     * 
-     * @param successor une SymbolList des successeurs
-     */
     public GenericRule(SymbolList successor) {
+        if (successor == null) {
+            throw new IllegalArgumentException("Le successeur ne peut pas être null");
+        }
         this.successor = successor;
+    }
+
+    public GenericRule(SymbolList successor, double weight) {
+        if (successor == null) {
+            throw new IllegalArgumentException("Le successeur ne peut pas être null");
+        }
+        this.successor = successor;
+        this.weight = weight;
     }
 
     @Override
@@ -28,40 +30,55 @@ public abstract class GenericRule implements Applicable {
         return this.successor;
     }
 
+    public double getWeight() {
+        return this.weight;
+    }
+
     @Override
     public boolean isApplicable(SymbolList generation) {
-        return generation.equals(this.getPredecessor());
+        return isApplicable(generation, null, null);
+    }
+
+    public boolean isApplicable(SymbolList symbol, SymbolList left, SymbolList right) {
+        if (symbol == null || getPredecessor() == null) return false;
+        return symbol.equals(getPredecessor());
     }
 
     @Override
     public String toString() {
-        String res = "";
-        for (Symbol s : getPredecessor()) {
-            res += s.getSymbol();
-        }
-        res += ">";
-        for (Symbol s : getSuccessor()) {
-            res += s.getSymbol();
+        StringBuilder res = new StringBuilder();
+
+        if (weight != 1.0) {
+            res.append("(").append(weight).append(") ");
         }
 
-        return res;
+        for (Symbol s : getPredecessor()) {
+            res.append(s.getSymbol());
+        }
+
+        res.append(" -> ");
+
+        for (Symbol s : getSuccessor()) {
+            res.append(s.getSymbol());
+        }
+
+        return res.toString();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof GenericRule) {
-            GenericRule tmp = (GenericRule) obj;
-            return getPredecessor().equals(tmp.getPredecessor()) && getSuccessor().equals(tmp.getSuccessor());
-        } else {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        GenericRule tmp = (GenericRule) obj;
+
+        return Double.compare(tmp.weight, weight) == 0 &&
+               getPredecessor().equals(tmp.getPredecessor()) &&
+               getSuccessor().equals(tmp.getSuccessor());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPredecessor(), getSuccessor());
+        return Objects.hash(getPredecessor(), getSuccessor(), weight);
     }
 }

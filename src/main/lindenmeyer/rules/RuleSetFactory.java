@@ -1,5 +1,6 @@
 package lindenmeyer.rules;
 
+import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
 
@@ -76,25 +77,71 @@ public class RuleSetFactory {
      * @return un ensemble de règles
      */
     public RuleSet parseString(String s) {
-        RuleSet res = new RuleSet();
-        // Separates one rule from another
-        for (String part : s.split(String.valueOf(rule_separator))) {
-            // Separates each rule into (hopefully) two parts, predecessor and successor
-            String[] parts = part.split(String.valueOf(part_separator));
+    RuleSet res = new RuleSet();
+    if (s == null || s.isEmpty()) return res;
 
-            SymbolList successor = new SymbolList(this.factory);
+    for (String ruleRaw : s.split(String.valueOf(rule_separator))) {
+        ruleRaw = ruleRaw.trim();
+        if (ruleRaw.isEmpty()) continue;
 
-            for (int i = 0; i < parts[1].length(); i += 1) {
-                successor.add(parts[1].charAt(i));
+        // séparation safe
+        String[] parts = ruleRaw.split(String.valueOf(part_separator), 2);
+        if (parts.length < 2) continue;
+
+        String leftPart = parts[0].trim();
+        String rightPart = parts[1].trim();
+
+        // --- POIDS ---
+        double weight = 1.0;
+        if (leftPart.startsWith("(")) {
+            int endBracket = leftPart.indexOf(")");
+            if (endBracket > 0) {
+                try {
+                    weight = Double.parseDouble(leftPart.substring(1, endBracket));
+                } catch (NumberFormatException e) {
+                    weight = 1.0;
+                }
+                leftPart = leftPart.substring(endBracket + 1).trim();
             }
-
-            res.add(
-                new SimpleRule(
-                    this.factory.getSymbol(parts[0].charAt(0)),
-                    successor
-                )
-            );
         }
-        return res;
+
+        // --- SUCCESSEUR ---
+        SymbolList successor = new SymbolList(this.factory);
+        for (char c : rightPart.toCharArray()) {
+            successor.add(c);
+        }
+
+        // --- CONTEXTE ---
+        if (leftPart.contains("<") && leftPart.contains(">")) {
+
+            String[] contextParts = leftPart.trim().split("\\s*[<>]\\s*");
+
+            if (contextParts.length != 3) continue;
+
+            Symbol l = factory.getSymbol(contextParts[0].charAt(0));
+            Symbol p = factory.getSymbol(contextParts[1].charAt(0));
+            Symbol r = factory.getSymbol(contextParts[2].charAt(0));
+
+            res.add(new ContextRule(
+                p,
+                successor,
+                SymbolList.of(factory, l),
+                SymbolList.of(factory, r),
+                weight
+            ));
+
+        } else {
+            // règle simple
+            if (leftPart.length() != 1) continue;
+
+            res.add(new SimpleRule(
+                factory.getSymbol(leftPart.charAt(0)),
+                successor,
+                weight
+            ));
+        }
     }
+
+    return res;
+}
 }

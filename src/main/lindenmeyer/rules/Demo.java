@@ -1,52 +1,51 @@
-package lindenmeyer.rules;
+public static void Demo(String[] args) {
+    SymbolFactory symbolFactory = new SymbolFactory();
 
-import lindenmeyer.symbols.Symbol;
-import lindenmeyer.symbols.SymbolFactory;
-import lindenmeyer.symbols.SymbolList;
+    // 1. Créer les symboles
+    Symbol a = symbolFactory.getSymbol('A');
+    Symbol b = symbolFactory.getSymbol('B');
+    Symbol c = symbolFactory.getSymbol('C');
+    Symbol d = symbolFactory.getSymbol('D');
 
-/**
- * Demonstration de l'utilisation du package lindenmeyer.rules.
- */
-public class Demo {
-    /**
-     * Execute la demo
-     * @param args non utilisé
-     */
-    public static void main(String[] args) {
-        SymbolFactory symbolFactory = new SymbolFactory();
+    // 2. Test d'une règle contextuelle : A < B > C -> D
+    SymbolList succD = new SymbolList(symbolFactory);
+    succD.add(d);
 
-        // créer les symboles A, B, +
-        Symbol a = symbolFactory.getSymbol('A');
-        Symbol b = symbolFactory.getSymbol('B');
-        Symbol plus = symbolFactory.getSymbol('+');
+    SymbolList contextL = SymbolList.of(a);
+    SymbolList contextR = SymbolList.of(c);
 
-        SymbolList a_predList = new SymbolList();
-        SymbolList a_succList = new SymbolList();
+    ContextRule contextRule = new ContextRule(b, succD, contextL, contextR);
 
-        // rules: (B->A), (A->B+B)
-        a_predList.add(a);
-        a_succList.add(b);
-        a_succList.add(plus);
-        a_succList.add(b);
+    System.out.println("--- Test Règle Contextuelle ---");
+    System.out.println("Règle créée : " + contextRule);
 
-        GenericRule rule_a_to_b = new SimpleRule(a, a_succList);
+    // Simulation de voisinage
+    SymbolList current = SymbolList.of(b);
+    SymbolList leftOk = SymbolList.of(a);
+    SymbolList rightOk = SymbolList.of(c);
+    SymbolList rightBad = SymbolList.of(a);
 
-        System.out.println(rule_a_to_b.getPredecessor().hashCode() + " " + a_predList.hashCode());
-        System.out.println(rule_a_to_b.getPredecessor().equals(a_predList));
-        System.out.println(a_predList.equals(a_predList));
-        System.out.println(a_predList.equals(a_predList));
-        System.out.println(a.equals(a));
+    System.out.println("Applicable avec A < B > C ? "
+        + contextRule.isApplicable(current, leftOk, rightOk)); // true
 
-        System.out.println(rule_a_to_b);
+    System.out.println("Applicable avec A < B > A ? "
+        + contextRule.isApplicable(current, leftOk, rightBad)); // false
 
-        RuleSetFactory factory = new RuleSetFactory(',', '>', symbolFactory);
-        RuleSet ruleSet = factory.parseString("A>B+B,B>A");
+    // 3. Test du RuleSet
+    System.out.println("\n--- Test RuleSet ---");
 
-        for (GenericRule rule : ruleSet.getRules()) {
-            System.out.println(rule);
-        }
+    RuleSet ruleSet = new RuleSet();
+    ruleSet.add(contextRule);
 
-        // System.out.println("Rule A>B is applicable to A : " + rule_a_to_b.isApplicable(a_predList));
-        // System.out.println("Rule A>B is applicable to B+B : " + rule_a_to_b.isApplicable(a_succList));
-    }
+    SymbolList result = ruleSet.successorOf(current, leftOk, rightOk);
+    System.out.println("Successeur trouvé : " + result);
+
+    // 4. Test du parsing (IMPORTANT pour ton projet)
+    System.out.println("\n--- Test Parsing ---");
+
+    RuleSetFactory factory = new RuleSetFactory(symbolFactory);
+    RuleSet parsedRules = factory.parseString("A<B>C>D");
+
+    SymbolList parsedResult = parsedRules.successorOf(current, leftOk, rightOk);
+    System.out.println("Successeur via parsing : " + parsedResult);
 }
