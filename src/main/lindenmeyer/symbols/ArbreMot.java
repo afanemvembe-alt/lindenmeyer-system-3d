@@ -1,31 +1,39 @@
 package lindenmeyer.symbols;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-/**
- * Un L-Système, représenté sous la forme d'une foret.
- *
- * Cette structure facilite la création d'une structure récursive, moins couteuse en mémoire.
- */
-public class ArbreMot implements Iterable<Mot>, Mot {
+public class ArbreMot implements Iterable<Mot> {
 
-    private NoeudMot premierEnfant;
-    // necessary to prevent infinitely recursive trees
-    private Integer max_depth;
+    private NoeudMot racine;
+    private Integer profondeurMax;
 
-    @Override
-    public List<Symbol> affiche() {
-        ArrayList<Symbol> res = new ArrayList<>();
+    public ArbreMot(NoeudMot racine, int profondeurMax) {
+        this.racine = racine;
+        this.profondeurMax = profondeurMax;
+    }
 
-        Iterator<Mot> iter = iterator();
+    public ArbreMot(NoeudMot racine) {
+        this(racine, 0);
+    }
 
-        while (iter.hasNext()) {
-            res.addAll(iter.next().affiche());
-        }
+    public void setProfondeurMax(int profondeurMax) {
+        this.profondeurMax = profondeurMax;
+    }
 
-        return res;
+    public int getProfondeurMax() {
+        return profondeurMax;
+    }
+
+    public ArbreMot() {
+        this(null, 0);
+    }
+
+    public NoeudMot getRacine() {
+        return racine;
+    }
+
+    public void setRacine(NoeudMot racine) {
+        this.racine = racine;
     }
 
     @Override
@@ -35,53 +43,43 @@ public class ArbreMot implements Iterable<Mot>, Mot {
 
     public class ArbreMotIterator implements Iterator<Mot> {
 
-        private int current_depth = 0;
-        private NoeudMot current_node = premierEnfant;
-        private ArrayList<NoeudMot> stack;
+        private int profondeur = 0;
+        private NoeudMot noeudCourant;
+        private List<NoeudMot> stack;
 
         public ArbreMotIterator() {
-            stack = new ArrayList<>(List.of(current_node));
-            current_depth = 0;
-
-            while (
-                current_node.getPremierEnfant() != null &&
-                current_depth < max_depth
-            ) {
-                stack.add(current_node);
-                current_node = current_node.getPremierEnfant();
-                current_depth += 1;
-            }
-
-            // current_node = a;
+            stack = new ArrayList<>();
+            stack.add(racine);
         }
 
         @Override
         public boolean hasNext() {
-            return current_node != null;
+            return !stack.isEmpty();
         }
 
         @Override
         public Mot next() {
-            Mot res = current_node.getValue();
-
-            while (current_node.getProchaineFratrie() != null) {
-                current_node = stack.removeLast();
-                current_depth--;
-            }
-
-            current_node = current_node.getProchaineFratrie();
-
-            if (current_node == null) {
-                return res;
-            }
+            noeudCourant = stack.removeLast();
+            Mot res;
 
             while (
-                current_node.getPremierEnfant() != null &&
-                current_depth < max_depth
+                noeudCourant.getRemplacement() != null &&
+                profondeur < profondeurMax
             ) {
-                current_depth++;
-                stack.add(current_node);
-                current_node = current_node.getPremierEnfant();
+                stack.add(noeudCourant);
+                noeudCourant = noeudCourant.getRemplacement();
+                profondeur++;
+            }
+
+            res = noeudCourant.getValeur();
+
+            while (!stack.isEmpty() && noeudCourant.getProchain() == null) {
+                noeudCourant = stack.removeLast();
+                profondeur--;
+            }
+
+            if (noeudCourant.getProchain() != null) {
+                stack.add(noeudCourant.getProchain());
             }
 
             return res;
