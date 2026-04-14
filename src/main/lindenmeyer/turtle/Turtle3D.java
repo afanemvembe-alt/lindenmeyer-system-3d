@@ -1,7 +1,7 @@
 package lindenmeyer.turtle;
 
-import javafx.scene.paint.Color;
 import java.util.*;
+import javafx.scene.paint.Color;
 
 /**
  * Tortue 3D orientee par un repere orthonorme (heading, left, up).
@@ -13,31 +13,37 @@ public class Turtle3D extends AbstractTurtle3D {
     //  Etat interne sauvegardable                                         //
     // ------------------------------------------------------------------ //
     private static class TurtleState {
+
         final double[] pos;
         final double[] heading;
         final double[] left;
         final double[] up;
 
-        TurtleState(double[] pos, double[] heading, double[] left, double[] up) {
-            this.pos     = pos.clone();
+        TurtleState(
+            double[] pos,
+            double[] heading,
+            double[] left,
+            double[] up
+        ) {
+            this.pos = pos.clone();
             this.heading = heading.clone();
-            this.left    = left.clone();
-            this.up      = up.clone();
+            this.left = left.clone();
+            this.up = up.clone();
         }
     }
 
     // ------------------------------------------------------------------ //
     //  Champs                                                           //
     // ------------------------------------------------------------------ //
-    private double[] pos;       // position courante
-    private double[] heading;   // axe H (direction de marche)
-    private double[] left;      // axe L (gauche)
-    private double[] up;        // axe U (haut)
+    private double[] pos; // position courante
+    private double[] heading; // axe H (direction de marche)
+    private double[] left; // axe L (gauche)
+    private double[] up; // axe U (haut)
 
     private final Deque<TurtleState> stack = new ArrayDeque<>();
-    private final List<Segment3D>    segments = new ArrayList<>();
+    private final List<Segment3D> segments = new ArrayList<>();
 
-    private Color        color = Color.BLACK;
+    private Color color = Color.BLACK;
     private ColorFactory colorFactory;
 
     // Bornes pour le centrage de la vue
@@ -48,17 +54,19 @@ public class Turtle3D extends AbstractTurtle3D {
     // ------------------------------------------------------------------ //
     public Turtle3D(ConfigTortue config) {
         super(config);
-        colorFactory = new ColorFactory();
+        colorFactory = new ColorFactory(
+            Arrays.asList(ColorFactory.BASE_COLORS)
+        );
         reset();
     }
 
     /** Remet la tortue à l'état initial (origine, dirigée vers le haut). */
     public void reset() {
-        pos     = new double[]{0, 0, 0};
-        heading = new double[]{0, 1, 0};   // pointe vers +Y (haut écran)
-        left    = new double[]{-1, 0, 0};  // pointe vers -X
-        up      = new double[]{0, 0, 1};   // pointe vers +Z (hors écran)
-        xMin = yMin = zMin =  Double.MAX_VALUE;
+        pos = new double[] { 0, 0, 0 };
+        heading = new double[] { 0, 1, 0 }; // pointe vers +Y (haut écran)
+        left = new double[] { -1, 0, 0 }; // pointe vers -X
+        up = new double[] { 0, 0, 1 }; // pointe vers +Z (hors écran)
+        xMin = yMin = zMin = Double.MAX_VALUE;
         xMax = yMax = zMax = -Double.MAX_VALUE;
     }
 
@@ -68,24 +76,34 @@ public class Turtle3D extends AbstractTurtle3D {
 
     /** Avance : pos += pas * heading  (trace un segment). */
     @Override
-    public void forward() { move(true); }
+    public void forward() {
+        move(true);
+    }
 
     /** Recule : pos -= pas * heading  (trace un segment). */
     @Override
-    public void backward() { move(false); }
+    public void backward() {
+        move(false);
+    }
 
     private void move(boolean forward) {
         double[] from = pos.clone();
-        double   d    = getConfig().getPas() * (forward ? 1 : -1);
+        double d = getConfig().getPas() * (forward ? 1 : -1);
         pos[0] += d * heading[0];
         pos[1] += d * heading[1];
         pos[2] += d * heading[2];
         updateBounds();
-        segments.add(new Segment3D(
-            from[0], from[1], from[2],
-            pos[0],  pos[1],  pos[2],
-            color
-        ));
+        segments.add(
+            new Segment3D(
+                from[0],
+                from[1],
+                from[2],
+                pos[0],
+                pos[1],
+                pos[2],
+                color
+            )
+        );
     }
 
     // ------------------------------------------------------------------ //
@@ -104,21 +122,22 @@ public class Turtle3D extends AbstractTurtle3D {
      */
     @Override
     public void rotateU(boolean clockwise) {
-        double a = getConfig().getAngleRotation() * Math.PI / 180.0;
+        double a = (getConfig().getAngleRotation() * Math.PI) / 180.0;
         if (!clockwise) a = -a;
-        double c = Math.cos(a), s = Math.sin(a);
+        double c = Math.cos(a),
+            s = Math.sin(a);
         double[] newH = {
-             c * heading[0] + s * left[0],
-             c * heading[1] + s * left[1],
-             c * heading[2] + s * left[2]
+            c * heading[0] + s * left[0],
+            c * heading[1] + s * left[1],
+            c * heading[2] + s * left[2],
         };
         double[] newL = {
             -s * heading[0] + c * left[0],
             -s * heading[1] + c * left[1],
-            -s * heading[2] + c * left[2]
+            -s * heading[2] + c * left[2],
         };
         heading = normalize(newH);
-        left    = normalize(newL);
+        left = normalize(newL);
         // up reste inchangé
     }
 
@@ -134,21 +153,22 @@ public class Turtle3D extends AbstractTurtle3D {
      */
     @Override
     public void rotateL(boolean clockwise) {
-        double a = getConfig().getAngleRotation() * Math.PI / 180.0;
+        double a = (getConfig().getAngleRotation() * Math.PI) / 180.0;
         if (!clockwise) a = -a;
-        double c = Math.cos(a), s = Math.sin(a);
+        double c = Math.cos(a),
+            s = Math.sin(a);
         double[] newH = {
-             c * heading[0] - s * up[0],
-             c * heading[1] - s * up[1],
-             c * heading[2] - s * up[2]
+            c * heading[0] - s * up[0],
+            c * heading[1] - s * up[1],
+            c * heading[2] - s * up[2],
         };
         double[] newU = {
-             s * heading[0] + c * up[0],
-             s * heading[1] + c * up[1],
-             s * heading[2] + c * up[2]
+            s * heading[0] + c * up[0],
+            s * heading[1] + c * up[1],
+            s * heading[2] + c * up[2],
         };
         heading = normalize(newH);
-        up      = normalize(newU);
+        up = normalize(newU);
         // left reste inchange
     }
 
@@ -164,21 +184,22 @@ public class Turtle3D extends AbstractTurtle3D {
      */
     @Override
     public void rotateH(boolean clockwise) {
-        double a = getConfig().getAngleRotation() * Math.PI / 180.0;
+        double a = (getConfig().getAngleRotation() * Math.PI) / 180.0;
         if (!clockwise) a = -a;
-        double c = Math.cos(a), s = Math.sin(a);
+        double c = Math.cos(a),
+            s = Math.sin(a);
         double[] newL = {
-             c * left[0] - s * up[0],
-             c * left[1] - s * up[1],
-             c * left[2] - s * up[2]
+            c * left[0] - s * up[0],
+            c * left[1] - s * up[1],
+            c * left[2] - s * up[2],
         };
         double[] newU = {
-             s * left[0] + c * up[0],
-             s * left[1] + c * up[1],
-             s * left[2] + c * up[2]
+            s * left[0] + c * up[0],
+            s * left[1] + c * up[1],
+            s * left[2] + c * up[2],
         };
         left = normalize(newL);
-        up   = normalize(newU);
+        up = normalize(newU);
         // heading reste inchange
     }
 
@@ -194,10 +215,10 @@ public class Turtle3D extends AbstractTurtle3D {
     @Override
     public void restorePosition() {
         TurtleState s = stack.pop();
-        pos     = s.pos.clone();
+        pos = s.pos.clone();
         heading = s.heading.clone();
-        left    = s.left.clone();
-        up      = s.up.clone();
+        left = s.left.clone();
+        up = s.up.clone();
     }
 
     // ------------------------------------------------------------------ //
@@ -205,21 +226,41 @@ public class Turtle3D extends AbstractTurtle3D {
     // ------------------------------------------------------------------ //
 
     @Override
-    public void changeColor(Color c) { this.color = c; }
+    public void changeColor(Color c) {
+        this.color = c;
+    }
 
     @Override
-    public void setColorOf(Object o) { this.color = colorFactory.getColor(o); }
+    public void setColorOf(Object o) {
+        this.color = colorFactory.getColor(o);
+    }
 
     // ------------------------------------------------------------------ //
     //  Accesseurs                                                         //
     // ------------------------------------------------------------------ //
 
-    public List<Segment3D> getSegments() { return segments; }
+    public List<Segment3D> getSegments() {
+        return segments;
+    }
 
     public class Bounds {
+
         public final double xMin, xMax, yMin, yMax, zMin, zMax;
-        Bounds(double x0,double x1,double y0,double y1,double z0,double z1){
-            xMin=x0; xMax=x1; yMin=y0; yMax=y1; zMin=z0; zMax=z1;
+
+        Bounds(
+            double x0,
+            double x1,
+            double y0,
+            double y1,
+            double z0,
+            double z1
+        ) {
+            xMin = x0;
+            xMax = x1;
+            yMin = y0;
+            yMax = y1;
+            zMin = z0;
+            zMax = z1;
         }
     }
 
@@ -232,14 +273,17 @@ public class Turtle3D extends AbstractTurtle3D {
     // ------------------------------------------------------------------ //
 
     private static double[] normalize(double[] v) {
-        double len = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+        double len = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
         if (len < 1e-12) return v;
-        return new double[]{ v[0]/len, v[1]/len, v[2]/len };
+        return new double[] { v[0] / len, v[1] / len, v[2] / len };
     }
 
     private void updateBounds() {
-        if (pos[0] < xMin) xMin = pos[0];  if (pos[0] > xMax) xMax = pos[0];
-        if (pos[1] < yMin) yMin = pos[1];  if (pos[1] > yMax) yMax = pos[1];
-        if (pos[2] < zMin) zMin = pos[2];  if (pos[2] > zMax) zMax = pos[2];
+        if (pos[0] < xMin) xMin = pos[0];
+        if (pos[0] > xMax) xMax = pos[0];
+        if (pos[1] < yMin) yMin = pos[1];
+        if (pos[1] > yMax) yMax = pos[1];
+        if (pos[2] < zMin) zMin = pos[2];
+        if (pos[2] > zMax) zMax = pos[2];
     }
 }

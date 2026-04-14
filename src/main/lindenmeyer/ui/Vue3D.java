@@ -6,32 +6,32 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 
 import java.util.*;
-
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Line;
+import javafx.scene.text.*;
 import javafx.scene.text.Font;
 import javafx.scene.transform.*;
-import javafx.scene.text.*;
-
 import lindenmeyer.turtle.Segment3D;
 
 /**
  * Composant servant à effectuer le rendu 3D d'un L-Système.
- * 
+ *
  * <h2>Attention</h2>
- * 
+ *
  * Ceci est un composant JavaFX, il faut donc l'adapter pour l'utiliser dans un
  * contexte Swing.
  */
 public class Vue3D extends Scene {
+
     private double lineThickness = 10;
     private double tilt = 0;
     private double rotation = 0;
@@ -40,7 +40,7 @@ public class Vue3D extends Scene {
 
     /**
      * Retourne l'épaisseur du trait de dessin.
-     * 
+     *
      * @return un double
      */
     public double getLineThickness() {
@@ -53,7 +53,7 @@ public class Vue3D extends Scene {
 
     /**
      * Modifie l'épaisseur du trait de dessin
-     * 
+     *
      * @param lineThickness épaisseur de la ligne
      */
     public void setLineThickness(double lineThickness) {
@@ -78,7 +78,6 @@ public class Vue3D extends Scene {
 
     public void render() {
         renderGrid();
-
     }
 
     public void redraw() {
@@ -91,7 +90,7 @@ public class Vue3D extends Scene {
 
     /**
      * Crée un nouveau cylindre à partir d'un segment.
-     * 
+     *
      * @param s le segment de base
      * @return cylindre résultant
      */
@@ -108,10 +107,15 @@ public class Vue3D extends Scene {
 
         double length = seg.magnitude();
 
-        Translate moveToMidpoint = new Translate(midpoint.getX(), midpoint.getY(), midpoint.getZ());
+        Translate moveToMidpoint = new Translate(
+            midpoint.getX(),
+            midpoint.getY(),
+            midpoint.getZ()
+        );
         Rotate rotateAroundCenter = new Rotate(-toDegrees(angle), rotationAxis);
 
         Cylinder c = new Cylinder(1, length);
+        c.setMaterial(new PhongMaterial(s.color));
         c.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
 
         return c;
@@ -125,5 +129,4 @@ public class Vue3D extends Scene {
             root.getChildren().addAll(line_x, line_y);
         }
     }
-    
 }
