@@ -19,8 +19,9 @@ import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.transform.*;
-import lindenmeyer.turtle.Segment3D;
 import javafx.scene.text.*;
+
+import lindenmeyer.turtle.Segment3D;
 
 /**
  * Composant servant à effectuer le rendu 3D d'un L-Système.
@@ -124,4 +125,5 @@ public class Vue3D extends Scene {
             root.getChildren().addAll(line_x, line_y);
         }
     }
+    
 }

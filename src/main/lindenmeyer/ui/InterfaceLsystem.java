@@ -8,7 +8,9 @@ import javax.swing.*;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.application.Platform;
-//import javafx.geometry.Point3D;
+import javafx.scene.PerspectiveCamera;
+import javafx.scene.Group;
+import javafx.scene.transform.*;
 
 import lindenmeyer.axiom.*;
 import lindenmeyer.symbols.*;
@@ -81,6 +83,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 	private CardLayout centerLayout;
 	private JFXPanel fxPanel;
 	
+	//Navigation et manipulation en 3D
+	private PerspectiveCamera camera3D;
+	private Rotate rotateX3D;
+	private Rotate rotateY3D;
+	private int lastMouseX;
+	private int lastMouseY;
+	private boolean panning3D = false;
+	
     public InterfaceLsystem() {
         super("LSystem");
 
@@ -91,12 +101,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.commands = new JPanel();
         Color bg = new Color(245,245,245);
 		this.commands.setBackground(bg);
-        //this.commands.setLayout(new GridLayout(4,1,5,5));
         this.commands.setLayout(new BoxLayout(this.commands, BoxLayout.Y_AXIS));
         this.commands.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder("Commandes"),BorderFactory.createEmptyBorder(10,10,10,10)));
         this.commands.setPreferredSize(new Dimension(300, 800));
-        //this.commands.setPreferredSize(new Dimension(300, 200));
 
+		//Les TextFields
         this.modifAxiom = new JTextField();
         this.rule = new JTextField();
         this.nbStep = new JTextField();
@@ -104,6 +113,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.modifAxiom.setFont(uiFont);
 		this.rule.setFont(uiFont);
 		this.nbStep.setFont(uiFont);
+
 
 		//Panels des JTextField
         JPanel ligneAxiom = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -116,6 +126,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         ligneStep.add(new JLabel("Etapes : "));
         ligneStep.add(this.nbStep);
 
+
 		//Definition des boutons
         this.defineLsystem = new JButton("Definir LSystem");
         this.generate = new JButton("Generer");
@@ -127,10 +138,12 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.play = new JButton("Play/Pause");
         this.switch3D = new JButton("Switch3D");
         
+        
         //Definition de couleur de fond des boutons
         this.generate.setBackground(new Color(120,200,120));
 		this.random.setBackground(new Color(120,170,240));
 		this.clear.setBackground(new Color(240,120,120));
+        
         
         //Definition de la taille des boutons
         Dimension boutonSize = new Dimension(130,30);
@@ -144,6 +157,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.play.setPreferredSize(boutonSize);
 		this.switch3D.setPreferredSize(boutonSize);
 		
+		
 		//Definition de la police des boutons
 		this.defineLsystem.setFont(uiFont);
 		this.generate.setFont(uiFont);
@@ -154,6 +168,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.settings.setFont(uiFont);
 		this.play.setFont(uiFont);
 		this.switch3D.setFont(uiFont);
+
 
 		//Action des boutons
         this.defineLsystem.addActionListener(this);
@@ -166,11 +181,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.play.addActionListener(this);
         this.switch3D.addActionListener(this);
 
+
 		//Taille des JTextField
         Dimension taille = new Dimension(180, 30);
         this.modifAxiom.setPreferredSize(taille);
         this.rule.setPreferredSize(taille);
         this.nbStep.setPreferredSize(taille);
+
 
 		//Creation de bordures pour chaque sous Panel
         this.panelLsystem = new JPanel(new FlowLayout());
@@ -189,6 +206,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.panelInfo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 		this.panelInfo.setBorder(BorderFactory.createTitledBorder("Informations preset"));
 
+
 		//Infos
 		this.presetInfo = new JTextArea(3,20);
 		this.presetInfo.setRows(3);
@@ -199,19 +217,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		JScrollPane scrollInfo = new JScrollPane(presetInfo);
 		this.panelInfo.add(scrollInfo, BorderLayout.CENTER);
 		
+		
 		//Selecteur de couleurs
 		String[] colors = {"Automatique", "Noir", "Rouge", "Vert", "Bleu", "Jaune", "Magenta", "Cyan", "Orange", "Rose", "Gris"};
 		colorSelector = new JComboBox<>(colors);
 		colorSelector.setSelectedIndex(0); 
 		colorSelector.addActionListener(this);
-		
-		//Selecteur LSystem
-		//String[] presetNames = preSetConfig.stream().map(cfg -> cfg.info.split("\n")[0]).toArray(String[]::new);
-		//presetSelector = new JComboBox<>(preSetConfig.toArray(new ConfigLsystem[0]));
-		//presetSelector.setSelectedIndex(-1);
-		//presetSelector.addActionListener(this);
 
-		
+
 		// Slider historique
 		this.historySlider = new JSlider(0, this.maxStep, 0);
 		this.historySlider.setMajorTickSpacing(1);
@@ -289,13 +302,15 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.commands.add(Box.createVerticalStrut(8));
 		this.commands.add(this.panelInfo);
         
-		//
+        
+		//LSystem (axiome et vue)
 		this.preSet= new ArrayList<>();
 		this.preSetConfig= new ArrayList<>();
 		this.addPreSet();
 		this.paramDialog= new ParamDialog(this);
         this.lsystem = new LSystem(new Axiom("F"));
         this.display = new VueLsystem(this.lsystem);
+        
         
         //Gestion visuelle de la partie dessin+slider
         // JavaFX instructions
@@ -319,7 +334,74 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.dessin.add(sliderPanel, BorderLayout.SOUTH);
 		Platform.runLater(() -> {
 			this.vue3D = new Vue3D(new ArrayList<>());
+			this.camera3D = new PerspectiveCamera(true);
+			this.camera3D.setNearClip(0.1);
+			this.camera3D.setFarClip(10000.0);
+			this.camera3D.setTranslateZ(-800);
+			this.vue3D.setCamera(this.camera3D);
+			// rotations globales pour mieux voir la profondeur
+			this.rotateX3D = new Rotate(-20, Rotate.X_AXIS);
+			this.rotateY3D = new Rotate(20, Rotate.Y_AXIS);
+			((Group) this.vue3D.getRoot()).getTransforms().addAll(
+				this.rotateX3D,
+				this.rotateY3D
+			);
 			this.fxPanel.setScene(this.vue3D);
+		});
+		
+		
+		//Listeners sur la souris
+		this.fxPanel.addMouseWheelListener(e -> {
+			if (!mode3D) return;
+			Platform.runLater(() -> {
+				if (this.camera3D != null) {
+					double z = this.camera3D.getTranslateZ() + e.getWheelRotation() * 50;
+					if (z > -100) z = -100;
+					if (z < -5000) z = -5000;
+					this.camera3D.setTranslateZ(z);
+				}
+			});
+		});
+
+		this.fxPanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				lastMouseX = e.getX();
+				lastMouseY = e.getY();
+				panning3D = SwingUtilities.isRightMouseButton(e);
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				panning3D = false;
+			}
+		});
+
+		this.fxPanel.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				if (!mode3D) return;
+
+				int dx = e.getX() - lastMouseX;
+				int dy = e.getY() - lastMouseY;
+
+				lastMouseX = e.getX();
+				lastMouseY = e.getY();
+
+				Platform.runLater(() -> {
+					if (panning3D) {
+						if (camera3D != null) {
+							camera3D.setTranslateX(camera3D.getTranslateX() + dx);
+							camera3D.setTranslateY(camera3D.getTranslateY() + dy);
+						}
+					} else {
+						if (rotateY3D != null && rotateX3D != null) {
+							rotateY3D.setAngle(rotateY3D.getAngle() + dx * 0.5);
+							rotateX3D.setAngle(rotateX3D.getAngle() - dy * 0.5);
+						}
+					}
+				});
+			}
+			
 		});
 		
 		//Scroll vertical pour les commandes
@@ -606,12 +688,32 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         }
 
         else if (e.getSource() == this.zoomP) {
-            this.display.zoomIn();
-        }
+			if (mode3D) {
+				Platform.runLater(() -> {
+					if (this.camera3D != null) {
+						double z = this.camera3D.getTranslateZ() + 100;
+						if (z > -100) z = -100;
+						this.camera3D.setTranslateZ(z);
+					}
+				});
+			} else {
+				this.display.zoomIn();
+			}
+		}
 
-        else if (e.getSource() == this.zoomM) {
-			this.display.zoomOut();
-        }
+		else if (e.getSource() == this.zoomM) {
+			if (mode3D) {
+				Platform.runLater(() -> {
+					if (this.camera3D != null) {
+						double z = this.camera3D.getTranslateZ() - 100;
+						if (z < -5000) z = -5000;
+						this.camera3D.setTranslateZ(z);
+					}
+				});
+			} else {
+				this.display.zoomOut();
+			}
+		}
 
         else if (e.getSource() == this.random) {
 			JDialog loading = new JDialog(this, "Chargement", true);
@@ -671,7 +773,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 				}
 
 				List<Segment3D> finalSegments3D = tortue3D.getSegments();
-
 				Platform.runLater(() -> {
 					if (this.vue3D != null) {
 						this.vue3D.setSegments(finalSegments3D);

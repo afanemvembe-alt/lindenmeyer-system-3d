@@ -84,9 +84,9 @@ protected void paintComponent(Graphics g) {
 
     // 4. Dessin
     g2.setStroke(new BasicStroke(1));
-    g2.setColor(drawColor != null ? drawColor : Color.BLACK);
 
     for (Segment s : segments) {
+		g2.setColor(drawColor != null ? drawColor : s.getCouleur());
         int x1 = (int) (s.getX1() * zoom + offsetX);
         int y1 = (int) (s.getY1() * zoom + offsetY);
         int x2 = (int) (s.getX2() * zoom + offsetX);
