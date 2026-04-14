@@ -1,21 +1,60 @@
 package lindenmeyer.ui;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.transform.*;
-import javax.swing.*;
-import lindenmeyer.axiom.*;
-import lindenmeyer.lsystem.*;
-import lindenmeyer.lsystem.history.*;
-import lindenmeyer.rules.*;
-import lindenmeyer.symbols.*;
-import lindenmeyer.turtle.*;
+import javafx.scene.transform.Rotate;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.WindowConstants;
+import lindenmeyer.axiom.Axiom;
+import lindenmeyer.lsystem.LSystem;
+import lindenmeyer.lsystem.history.History;
+import lindenmeyer.lsystem.history.State;
+import lindenmeyer.rules.GenericRule;
+import lindenmeyer.rules.RuleSet;
+import lindenmeyer.rules.RuleSetFactory;
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolFactory;
+import lindenmeyer.symbols.SymbolList;
+import lindenmeyer.turtle.ConfigTortue;
+import lindenmeyer.turtle.Segment;
+import lindenmeyer.turtle.Segment3D;
+import lindenmeyer.turtle.Tortue;
+import lindenmeyer.turtle.Turtle3D;
+// import java.awt.Button;
+import lindenmeyer.ui.components.*;
 
 public class InterfaceLsystem extends JFrame implements ActionListener {
 
@@ -34,14 +73,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     public JPanel panelLsystem;
 
     //Boutons de controle de l'interface
-    public JButton defineLsystem;
-    public JButton generate;
-    public JButton random;
-    public JButton clear;
-    public JButton zoomP;
-    public JButton zoomM;
-    public JButton settings;
-    public JButton play;
+    public Button defineLsystem;
+    public Button generate;
+    public Button random;
+    public Button clear;
+    public Button zoomP;
+    public Button zoomM;
+    public Button settings;
+    public Button play;
 
     //Infos sur les preset
     public JPanel panelInfo;
@@ -58,7 +97,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     //Selecteur de Couleurs
     public JComboBox<String> colorSelector;
     private Color selectedColor = Color.BLACK;
-    private JButton colorSelectButton;
+    private Button colorSelectButton;
 
     // paramètres tortue
     private int longueur = 10;
@@ -128,17 +167,22 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         ligneStep.add(new JLabel("Etapes : "));
         ligneStep.add(this.nbStep);
 
+        // Dimension boutonSize = new Dimension(130, 30);
+        // Button.setDefaultDimension(boutonSize);
+
+        Button.setBaseFont(uiFont);
+
         //Definition des boutons
-        this.defineLsystem = new JButton("Definir LSystem");
-        this.generate = new JButton("Generer");
-        this.clear = new JButton("Effacer");
-        this.zoomP = new JButton("Zoom+");
-        this.zoomM = new JButton("Zoom-");
-        this.random = new JButton("Random");
-        this.settings = new JButton("Parametres");
-        this.play = new JButton("Play/Pause");
-        this.switch3D = new JButton("Switch3D");
-        this.colorSelectButton = new JButton("Selection Couleur");
+        this.defineLsystem = new Button("Definir LSystem");
+        this.generate = new Button("Generer");
+        this.clear = new Button("Effacer");
+        this.zoomP = new Button("Zoom+");
+        this.zoomM = new Button("Zoom-");
+        this.random = new Button("Random");
+        this.settings = new Button("Parametres");
+        this.play = new Button("Play/Pause");
+        this.switch3D = new Button("Switch3D");
+        this.colorSelectButton = new Button("Selection Couleur");
 
         //Definition de couleur de fond des boutons
         this.generate.setBackground(new Color(120, 200, 120));
@@ -146,28 +190,29 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.clear.setBackground(new Color(240, 120, 120));
 
         //Definition de la taille des boutons
-        Dimension boutonSize = new Dimension(130, 30);
-        this.defineLsystem.setPreferredSize(boutonSize);
-        this.generate.setPreferredSize(boutonSize);
-        this.random.setPreferredSize(boutonSize);
-        this.clear.setPreferredSize(boutonSize);
-        this.zoomP.setPreferredSize(boutonSize);
-        this.zoomM.setPreferredSize(boutonSize);
-        this.settings.setPreferredSize(boutonSize);
-        this.play.setPreferredSize(boutonSize);
-        this.switch3D.setPreferredSize(boutonSize);
-        this.colorSelectButton.setPreferredSize(boutonSize);
+        Dimension boutonSize = new Dimension(130, 20);
+        Button.updateDimension(boutonSize);
+        // this.defineLsystem.setPreferredSize(boutonSize);
+        // this.generate.setPreferredSize(boutonSize);
+        // this.random.setPreferredSize(boutonSize);
+        // this.clear.setPreferredSize(boutonSize);
+        // this.zoomP.setPreferredSize(boutonSize);
+        // this.zoomM.setPreferredSize(boutonSize);
+        // this.settings.setPreferredSize(boutonSize);
+        // this.play.setPreferredSize(boutonSize);
+        // this.switch3D.setPreferredSize(boutonSize);
+        // this.colorSelectButton.setPreferredSize(boutonSize);
 
         //Definition de la police des boutons
-        this.defineLsystem.setFont(uiFont);
-        this.generate.setFont(uiFont);
-        this.random.setFont(uiFont);
-        this.clear.setFont(uiFont);
-        this.zoomP.setFont(uiFont);
-        this.zoomM.setFont(uiFont);
-        this.settings.setFont(uiFont);
-        this.play.setFont(uiFont);
-        this.switch3D.setFont(uiFont);
+        // this.defineLsystem.setFont(uiFont);
+        // this.generate.setFont(uiFont);
+        // this.random.setFont(uiFont);
+        // this.clear.setFont(uiFont);
+        // this.zoomP.setFont(uiFont);
+        // this.zoomM.setFont(uiFont);
+        // this.settings.setFont(uiFont);
+        // this.play.setFont(uiFont);
+        // this.switch3D.setFont(uiFont);
 
         //Action des boutons
         this.defineLsystem.addActionListener(this);
@@ -310,6 +355,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.panelZoom.add(this.zoomM);
         this.panelZoom.add(this.settings);
         this.panelZoom.add(this.play);
+
+        colorSelectButton.addActionListener(action -> {
+            JColorChooser.showDialog(
+                this.getContentPane(),
+                "Couleur de L-Systeme",
+                this.selectedColor
+            );
+        });
 
         this.commands.add(this.panelLsystem);
         this.commands.add(Box.createVerticalStrut(8));
