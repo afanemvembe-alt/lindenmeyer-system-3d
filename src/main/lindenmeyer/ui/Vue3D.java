@@ -4,19 +4,17 @@ import static java.lang.Math.acos;
 import static java.lang.Math.toDegrees;
 
 import java.util.List;
-
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.image.*;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Line;
-import javafx.scene.image.*;
+import javafx.scene.text.*;
 import javafx.scene.text.Font;
 import javafx.scene.transform.*;
-import javafx.scene.text.*;
-import javafx.scene.paint.ImagePattern;
-
 import lindenmeyer.turtle.Segment3D;
 
 /**
@@ -67,10 +65,11 @@ public class Vue3D extends Scene {
         // root.setScaleX(2);
         // root.setScaleY(2);
         this.segments = segments;
-        
-        image = new Image(getClass().getResourceAsStream("/lindenmeyer/ui/Mine.jpg"));
+
+        // image = new Image(getClass().getResourceAsStream("/lindenmeyer/ui/Mine.jpg"));
+        image = new Image(getClass().getResourceAsStream("Mine.jpg"));
         setFill(new ImagePattern(image, 0, 0, 1000, 1000, false));
-		renderGrid();
+        renderGrid();
         for (Segment3D s : segments) {
             root.getChildren().add(segmentToCylinder(s));
         }
