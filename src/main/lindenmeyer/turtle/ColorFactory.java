@@ -1,12 +1,12 @@
 package lindenmeyer.turtle;
 
+import static javafx.scene.paint.Color.*;
+
 // import static java.awt.Color.*;
 // import java.awt.Color;
 // import java.awt.color.ColorSpace;
 import java.util.*;
-
 import javafx.scene.paint.Color;
-import static javafx.scene.paint.Color.*;
 
 /**
  * Représente une source configurable de {@link Color}, associant des objects
@@ -21,16 +21,16 @@ public class ColorFactory {
      * Liste suggérée de couleurs de base.
      */
     public static final Color[] BASE_COLORS = {
-            BLACK,
-            RED,
-            GREEN,
-            BLUE,
-            YELLOW,
-            MAGENTA,
-            CYAN,
-            ORANGE,
-            PINK,
-            GRAY,
+        BLACK,
+        RED,
+        GREEN,
+        BLUE,
+        YELLOW,
+        MAGENTA,
+        CYAN,
+        ORANGE,
+        PINK,
+        GRAY,
     };
 
     // list of desired colors given by user
@@ -41,7 +41,7 @@ public class ColorFactory {
 
     /**
      * Construit une nouvelle instance avec les couleurs désirées.
-     * 
+     *
      * @param colors une liste de couleurs
      */
     public ColorFactory(List<Color> colors) {
@@ -71,14 +71,15 @@ public class ColorFactory {
             i++;
             return colors.get(i);
         } else {
-            return randomColor();
+            // return randomColor();
+            return Color.PURPLE;
         }
     }
 
     /**
      * Retourne la couleur associée à l'object donné, et y associe une couleur si
      * cet objet n'en a pas déjà.
-     * 
+     *
      * @param o un objet
      * @return la couleur associée à l'objet
      */

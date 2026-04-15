@@ -1,25 +1,18 @@
 package lindenmeyer.ui;
 
 import static java.lang.Math.acos;
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 
-import java.util.*;
+import java.util.List;
+
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Line;
-import javafx.scene.text.*;
-import javafx.scene.text.Font;
-import javafx.scene.transform.*;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import lindenmeyer.turtle.Segment3D;
 
 /**

@@ -190,8 +190,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.clear.setBackground(new Color(240, 120, 120));
 
         //Definition de la taille des boutons
-        Dimension boutonSize = new Dimension(130, 20);
-        Button.updateDimension(boutonSize);
+        // Dimension boutonSize = new Dimension(130, 20);
+        // Button.updateDimension(boutonSize);
         // this.defineLsystem.setPreferredSize(boutonSize);
         // this.generate.setPreferredSize(boutonSize);
         // this.random.setPreferredSize(boutonSize);
@@ -360,7 +360,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             JColorChooser.showDialog(
                 this.getContentPane(),
                 "Couleur de L-Systeme",
-                this.selectedColor
+                this.getBackground()
             );
         });
 
