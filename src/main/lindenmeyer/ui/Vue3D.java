@@ -60,8 +60,8 @@ public class Vue3D extends Scene {
         // Group root = new Group();
         super(new Group(), 720, 480);
         root = (Group) getRoot();
-        root.setTranslateX(720.0 / 2);
-        root.setTranslateY(480.0 / 2);
+        // root.setTranslateX(720.0 / 2);
+        // root.setTranslateY(480.0 / 2);
         // root.setScaleX(2);
         // root.setScaleY(2);
         this.segments = segments;
@@ -69,7 +69,7 @@ public class Vue3D extends Scene {
         // image = new Image(getClass().getResourceAsStream("/lindenmeyer/ui/Mine.jpg"));
         image = new Image(getClass().getResourceAsStream("Mine.jpg"));
         setFill(new ImagePattern(image, 0, 0, 1000, 1000, false));
-        renderGrid();
+        // renderGrid();
         for (Segment3D s : segments) {
             root.getChildren().add(segmentToCylinder(s));
         }
