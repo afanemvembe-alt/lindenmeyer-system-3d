@@ -41,4 +41,6 @@ public class ConfigLsystem {
     {
         return this.info;
     }
+
+
 }

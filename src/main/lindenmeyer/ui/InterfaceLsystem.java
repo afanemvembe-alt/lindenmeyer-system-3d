@@ -60,7 +60,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     private int angleRotation = 60;
     
     public JSlider historySlider;  
-	public History history;
+	public History history = new History();
 	public int maxStep=20;  
 	
 	//Pour play/pause du Lsystem
@@ -242,7 +242,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		//
 		this.preSet= new ArrayList<>();
 		this.preSetConfig= new ArrayList<>();
-		this.addPreSet();
 		this.paramDialog= new ParamDialog(this);
         this.lsystem = new LSystem(new Axiom("F"));
         this.display = new VueLsystem(this.lsystem);
@@ -307,84 +306,67 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 	{
 		return this.display;
 	}
-	
-	public void addPreSet(){
-		// Koch Flake
-		LSystem koch = new LSystem(new Axiom("F--F--F"));
-		koch.ajouterRegle('F', "F+F--F+F");
-		this.preSet.add(koch);
-		this.preSetConfig.add(new ConfigLsystem(60, 10, 300, 400,
-			"Koch Flake - Max steps 6\nDescription: Flocon de Koch classique\nAngle: 60\nLongueur: 10"));
 
-		// Tree
-		LSystem tree = new LSystem(new Axiom("X"));
-		tree.ajouterRegle('X', "F-[[X]+X]+F[+FX]-X");
-		tree.ajouterRegle('F', "FF");
-		this.preSet.add(tree);
-		this.preSetConfig.add(new ConfigLsystem(25, 5, 350, 500,
-			"Simple Tree - Max steps 5\nDescription: Arbre fractal\nAngle: 25\nLongueur: 5"));
+	public void draw(String step, LSystem lSystem, ConfigLsystem config, VueLsystem vue, History history)
+	{
+		JDialog loading = new JDialog(this, "Chargement", true);
+		loading.setLayout(new BorderLayout());
+		loading.add(new JLabel("Generation en cours...", SwingConstants.CENTER), BorderLayout.CENTER);
+		loading.setSize(200,100);
+		loading.setLocationRelativeTo(this);
 
-		// Dragon Curve
-		LSystem dragon = new LSystem(new Axiom("FX"));
-		dragon.ajouterRegle('X', "X+YF+");
-		dragon.ajouterRegle('Y', "-FX-Y");
-		this.preSet.add(dragon);
-		this.preSetConfig.add(new ConfigLsystem(90, 5, 400, 400,
-			"Dragon Curve - Max steps 5\nDescription: Courbe du dragon\nAngle: 90\nLongueur: 5"));
+		history.clear();
 
-		// Sierpinski Triangle
-		LSystem sierpinski = new LSystem(new Axiom("A"));
-		sierpinski.ajouterRegle('A', "B-A-B");
-		sierpinski.ajouterRegle('B', "A+B+A");
-		this.preSet.add(sierpinski);
-		this.preSetConfig.add(new ConfigLsystem(60, 5, 300, 300,
-			"Sierpinski Triangle - Max steps 5\nDescription: Triangle de Sierpinski\nAngle: 60\nLongueur: 5"));
+		ConfigTortue configTortue = new ConfigTortue(config.getPas(), config.getAngle());
+		new Thread(() -> {
+			int n = 2;
+			try {
+				if (!step.isEmpty()) n = Integer.parseInt(step);
+			} catch (NumberFormatException ex) {
+				n = 2;
+			}
+			if(n>this.maxStep){
+				n=this.maxStep;
+			}
 
-		// Hilbert Curve
-		LSystem hilbert = new LSystem(new Axiom("A"));
-		hilbert.ajouterRegle('A', "-BF+AFA+FB-");
-		hilbert.ajouterRegle('B', "+AF-BFB-FA+");
-		this.preSet.add(hilbert);
-		this.preSetConfig.add(new ConfigLsystem(90, 5, 400, 400,
-			"Hilbert Curve - Max steps 5\nDescription: Courbe de Hilbert\nAngle: 90\nLongueur: 5"));
+			Tortue tortue = new Tortue(
+				config.getStartX(), config.getStartY(),
+				-90, configTortue
+			);
 
-		// Peano Curve
-		LSystem peano = new LSystem(new Axiom("X"));
-		peano.ajouterRegle('X', "XFYFX+F+YFXFY-F-XFYFX");
-		peano.ajouterRegle('Y', "YFXFY-F-XFYFX+F+YFXFY");
-		this.preSet.add(peano);
-		this.preSetConfig.add(new ConfigLsystem(90, 3, 350, 350,
-			"Peano Curve - Max steps 3\nDescription: Courbe de Peano\nAngle: 90\nLongueur: 3"));
+			// why create a new lsystem?
+			LSystem temp = new LSystem(
+					new Axiom(lSystem.getAxiome().getContent()),
+					lSystem.getRegles(),
+					lSystem.getSymbolFactory()
+			);
 
-		// Levy C Curve
-		LSystem levy = new LSystem(new Axiom("F"));
-		levy.ajouterRegle('F', "+F--F+");
-		this.preSet.add(levy);
-		this.preSetConfig.add(new ConfigLsystem(45, 8, 400, 400,
-			"Levy C Curve - Max steps 8\nDescription: Courbe de Levy C\nAngle: 45\nLongueur: 8"));
+			// if we're running on a preset ??
+			history.addState(new State(temp.getCurrentGeneration()));
 
-		// Quadratic Koch Island
-		LSystem kochIsland = new LSystem(new Axiom("F+F+F+F"));
-		kochIsland.ajouterRegle('F', "F+F-F-FF+F+F-F");
-		this.preSet.add(kochIsland);
-		this.preSetConfig.add(new ConfigLsystem(90, 4, 300, 300,
-			"Quadratic Koch Island - Max steps 4\nDescription: Flocon quadratique\nAngle: 90\nLongueur: 4"));
+			for (int i = 0; i<n ; i++)
+			{
+				temp.step();
+				history.addState(new State(temp.getCurrentGeneration()));
+			}
 
-		// Plant-like fractal
-		LSystem plant = new LSystem(new Axiom("X"));
-		plant.ajouterRegle('X', "F-[[X]+X]+F[+FX]-X");
-		plant.ajouterRegle('F', "FF");
-		this.preSet.add(plant);
-		this.preSetConfig.add(new ConfigLsystem(25, 5, 350, 500,
-			"Plant-like fractal - Max steps 5\nDescription: Plante fractale\nAngle: 25\nLongueur: 5"));
+			List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
 
-		// Tree variant 2
-		LSystem tree2 = new LSystem(new Axiom("F"));
-		tree2.ajouterRegle('F', "F[+F]F[-F]F");
-		this.preSet.add(tree2);
-		this.preSetConfig.add(new ConfigLsystem(25, 5, 350, 500,
-			"Tree variant 2 - Max steps 5\nDescription: Variante d'arbre\nAngle: 25\nLongueur: 5"));
+			SwingUtilities.invokeLater(() -> {
+				// why are we doing this
+					this.longueur = config.pas;
+					this.angleRotation = config.angle;
+					this.display.setSegments(finalSegments);
+					this.display.getLSystem().setAxiome(new Axiom(lSystem.getAxiome().getContent()));
+					this.display.repaint();
+					this.historySlider.setMaximum(this.history.size());
+					this.historySlider.setValue(this.history.size());
+					loading.dispose();
+				});
+		}).start();
+		loading.setVisible(true);
 	}
+	
 
 	public void actionPerformed(ActionEvent e) {
 
@@ -527,6 +509,19 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			this.display.zoomOut();
         }
 
+		/**
+		 * load up the loading screen
+		 * initialize Histroy object
+		 * prepare config: nbSteps, angle, length
+		 * prepare lsystem: axiom, rules
+		 * set info text
+		 * create a temp lsystem
+		 * prepare turtle with config
+		 * add to history
+		 * initialize List<Segment>
+		 * draw on another thread
+		 * dispose loading screen
+		 */
         else if (e.getSource() == this.random) {
 			JDialog loading = new JDialog(this, "Chargement", true);
 			loading.setLayout(new BorderLayout());
