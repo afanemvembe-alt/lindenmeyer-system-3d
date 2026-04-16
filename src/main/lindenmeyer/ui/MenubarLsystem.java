@@ -171,8 +171,8 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         {
             // JOptionPane.showMessageDialog(this, "Ouvrir les configurations");
             this.paramDialog.setVisible(true);
-            this.interfaceLsystem.setLongeur(this.paramDialog.getLongueur());
-            this.interfaceLsystem.setAngleRotation(this.paramDialog.getAngle());
+            this.interfaceLsystem.getInterfaceConfig().setAngle(this.paramDialog.getLongueur());
+            this.interfaceLsystem.getInterfaceConfig().setPas(this.paramDialog.getAngle());
         }
         else if (source == zoomInMenuItem)
         {

@@ -37,14 +37,15 @@ public class ConfigLsystem {
         this.info = info;
     }
 
-    public String toString()
-    {
-        return this.info;
-    }
+    public String toString() { return this.info; }
 
     public int getAngle() { return this.angle; }
 
+    public void setAngle(int angle) { this.angle = angle; }
+
     public int getPas() { return this.pas; }
+
+    public void setPas(int pas) { this.pas = pas; }
 
     public double getStartX() { return this.startX; }
 

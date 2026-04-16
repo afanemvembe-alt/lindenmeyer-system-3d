@@ -17,27 +17,15 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
     public VueLsystem display;
     public LSystem lsystem;
+	public ConfigLsystem config;
 
 	//Panels de commande
-    public JPanel commands;
-    public JTextField modifAxiom;
-    public JTextField rule;
-    public JTextField nbStep;
+    public JPanel commands, panelGeneration, panelZoom, panelLsystem;
 
-	//Sous panels de commande
-    public JPanel panelGeneration;
-    public JPanel panelZoom;
-    public JPanel panelLsystem;
+    public JTextField modifAxiom, rule, nbStep;
 
 	//Boutons de controle de l'interface
-    public JButton defineLsystem;
-    public JButton generate;
-    public JButton random;
-    public JButton clear;
-    public JButton zoomP;
-    public JButton zoomM;
-    public JButton settings;
-    public JButton play;
+    public JButton defineLsystem, generate, random, clear, zoomP, zoomM, settings, play;
     
     //Infos sur les preset
     public JPanel panelInfo;
@@ -46,7 +34,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     //Listes de systemes predefinis et leur configuration
     public ArrayList<LSystem> preSet;
     private ArrayList<ConfigLsystem> preSetConfig;
-    //public JComboBox<ConfigLsystem> presetSelector;
+
     
     //Boite de dialogue
     private ParamDialog paramDialog;
@@ -54,10 +42,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     //Selecteur de Couleurs
     public JComboBox<String> colorSelector;
 	private Color selectedColor = Color.BLACK;
-
-    // paramètres tortue
-    private int longueur = 10;
-    private int angleRotation = 60;
     
     public JSlider historySlider;  
 	public History history = new History();
@@ -267,15 +251,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
-	public void setLongeur(int l)
-	{
-		this.longueur = l;
-	}
-
-	public void setAngleRotation(int a)
-	{
-		this.angleRotation = a;
-	}
+	public ConfigLsystem getInterfaceConfig() { return this.config; }
     
     public void showError(JTextField field, String message) {
 		field.setBorder(BorderFactory.createLineBorder(Color.RED));
@@ -296,11 +272,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		this.lsystem = lSystem;
 	}
 
-	public void setConfig(ConfigLsystem config)
-	{
-		this.longueur = config.pas;
-		this.angleRotation = config.angle;
-	}
+	public void setConfig(ConfigLsystem config) { this.config = config; }
 
 	public VueLsystem getVueLsystem()
 	{
@@ -354,8 +326,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
 			SwingUtilities.invokeLater(() -> {
 				// why are we doing this
-					this.longueur = config.pas;
-					this.angleRotation = config.angle;
+					// this.longueur = config.pas;
+					// this.angleRotation = config.angle;
 					this.display.setSegments(finalSegments);
 					this.display.getLSystem().setAxiome(new Axiom(lSystem.getAxiome().getContent()));
 					this.display.repaint();
@@ -434,7 +406,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 					n=this.maxStep;
 				}
 
-				ConfigTortue config = new ConfigTortue(longueur, angleRotation);
+				ConfigTortue config = new ConfigTortue(this.config.getPas(), this.config.getAngle());
 				Tortue tortue = new Tortue(300, 400, -90, config);
 
 				LSystem temp = new LSystem(
@@ -467,10 +439,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			loading.setVisible(true);
         }
 
+		// don't think this is necessary anymore
         else if (e.getSource() == this.settings) {		
             this.paramDialog.setVisible(true);
-            this.longueur = this.paramDialog.getLongueur();
-            this.angleRotation = this.paramDialog.getAngle();
+            this.config.setPas(this.paramDialog.getLongueur());
+            this.config.setAngle(this.paramDialog.getAngle());
         } 
         
         else if (e.getSource() == this.colorSelector) {
@@ -572,8 +545,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 				List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
 
 				SwingUtilities.invokeLater(() -> {
-					this.longueur = cfg.pas;
-					this.angleRotation = cfg.angle;
+					// this.longueur = cfg.pas;
+					// this.angleRotation = cfg.angle;
 					this.display.setSegments(finalSegments);
 					this.display.getLSystem().setAxiome(new Axiom(chosen.getAxiome().getContent()));
 					this.display.repaint();
@@ -614,7 +587,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			this.display.setLSystem(temp);
 			for (int i = 0; i < n; i++) temp.step();
 
-			ConfigTortue config = new ConfigTortue(longueur, angleRotation);
+			ConfigTortue config = new ConfigTortue(this.config.getPas(), config.getAngleRotation());
 			Tortue tortue = new Tortue(300, 400, -90, config);
 			List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
 			this.display.clearSegments();
