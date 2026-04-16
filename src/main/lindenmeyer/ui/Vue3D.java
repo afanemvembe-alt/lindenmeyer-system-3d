@@ -28,8 +28,6 @@ import lindenmeyer.turtle.Segment3D;
 public class Vue3D extends Scene {
 
     private double lineThickness = 10;
-    private double tilt = 0;
-    private double rotation = 0;
     private List<Segment3D> segments;
     private Group root;
     private Image image;

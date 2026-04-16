@@ -149,7 +149,7 @@ public class Turtle3D extends AbstractTurtle3D {
      *         |   0   1    0  |
      *         |  sin  0   cos |
      *
-     * @param clockwise  true → +α (symbole &), false → −α (symbole ^)
+     * @param clockwise  true → +α (symbole &amp;), false → −α (symbole ^)
      */
     @Override
     public void rotateL(boolean clockwise) {

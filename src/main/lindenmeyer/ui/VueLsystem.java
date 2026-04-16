@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.lsystem.LsystemListener;
 import lindenmeyer.turtle.Segment;
+import lindenmeyer.turtle.Tortue;
 
 //ajouter un updateusize dans le constructeur de vuelystem
 public class VueLsystem extends JPanel implements LsystemListener {
@@ -22,6 +23,7 @@ public class VueLsystem extends JPanel implements LsystemListener {
     private List<Segment> segments = new ArrayList<>();
     private double zoom = 1; // taille raisonnable
     private Color drawColor = null;
+    private Tortue tortue;
 
     // petit espace avec les bords
     private final int paddingX = 10;

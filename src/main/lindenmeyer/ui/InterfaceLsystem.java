@@ -97,7 +97,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     //Selecteur de Couleurs
     public JComboBox<String> colorSelector;
     private Color selectedColor = Color.BLACK;
-    private Button colorSelectButton;
 
     // paramètres tortue
     private int longueur = 10;
@@ -182,7 +181,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.settings = new Button("Parametres");
         this.play = new Button("Play/Pause");
         this.switch3D = new Button("Switch3D");
-        this.colorSelectButton = new Button("Selection Couleur");
 
         //Definition de couleur de fond des boutons
         this.generate.setBackground(new Color(120, 200, 120));
@@ -224,6 +222,16 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.settings.addActionListener(this);
         this.play.addActionListener(this);
         this.switch3D.addActionListener(this);
+
+        defineLsystem.setActionCommand("definir");
+        generate.setActionCommand("generer");
+        clear.setActionCommand("clear");
+        zoomP.setActionCommand("zoomIn");
+        zoomM.setActionCommand("zoomOut");
+        random.setActionCommand("random");
+        settings.setActionCommand("settings");
+        play.setActionCommand("play");
+        switch3D.setActionCommand("switch3d");
 
         //Taille des JTextField
         Dimension taille = new Dimension(180, 30);
@@ -277,6 +285,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             "Orange",
             "Rose",
             "Gris",
+            "Custom...",
         };
         colorSelector = new JComboBox<>(colors);
         colorSelector.setSelectedIndex(0);
@@ -350,19 +359,10 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
         this.panelZoom.add(new JLabel("Couleur : "));
         this.panelZoom.add(colorSelector);
-        this.panelZoom.add(colorSelectButton);
         this.panelZoom.add(this.zoomP);
         this.panelZoom.add(this.zoomM);
         this.panelZoom.add(this.settings);
         this.panelZoom.add(this.play);
-
-        colorSelectButton.addActionListener(action -> {
-            JColorChooser.showDialog(
-                this.getContentPane(),
-                "Couleur de L-Systeme",
-                this.getBackground()
-            );
-        });
 
         this.commands.add(this.panelLsystem);
         this.commands.add(Box.createVerticalStrut(8));
@@ -829,6 +829,12 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 case "Orange" -> this.selectedColor = Color.ORANGE;
                 case "Rose" -> this.selectedColor = Color.PINK;
                 case "Gris" -> this.selectedColor = Color.GRAY;
+                case "Custom..." -> this.selectedColor =
+                    JColorChooser.showDialog(
+                        this,
+                        "Selection de couleur",
+                        selectedColor
+                    );
             }
 
             List<Segment> current = this.display.getSegments();

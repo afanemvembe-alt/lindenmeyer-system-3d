@@ -48,6 +48,7 @@ public class ColorFactory {
         this.colors = new ArrayList<>(colors);
         this.rng = new Random();
         this.colorMap = new HashMap<>();
+        this.i = 0;
     }
 
     /**
@@ -68,8 +69,9 @@ public class ColorFactory {
 
     private Color getNextColor() {
         if (colors != null && i < colors.size()) {
-            i++;
-            return colors.get(i);
+            Color res = colors.get(i);
+            i = (i + 1) % colors.size();
+            return res;
         } else {
             // return randomColor();
             return Color.PURPLE;
@@ -92,5 +94,9 @@ public class ColorFactory {
         }
 
         return c;
+    }
+
+    public void setColorOf(Object o, Color c) {
+        colorMap.put(o, c);
     }
 }
