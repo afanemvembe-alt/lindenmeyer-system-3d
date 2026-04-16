@@ -42,5 +42,11 @@ public class ConfigLsystem {
         return this.info;
     }
 
+    public int getAngle() { return this.angle; }
 
+    public int getPas() { return this.pas; }
+
+    public double getStartX() { return this.startX; }
+
+    public double getStartY() { return this.startY; }
 }
