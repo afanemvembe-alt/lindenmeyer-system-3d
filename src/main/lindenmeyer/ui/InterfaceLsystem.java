@@ -192,7 +192,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			}
 			State s = (State) this.history.getState(index);
 			SymbolList symbols = s.getState();
-			ConfigTortue config = new ConfigTortue(this.longueur, this.angleRotation);
+			ConfigTortue config = new ConfigTortue(this.config.getPas(), this.config.getAngle());
 			Tortue tortue = new Tortue(300, 400, -90, config);
 			List<Segment> segments = tortue.interpreter(symbols.toString());
 			this.display.setSegments(segments);
@@ -587,7 +587,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			this.display.setLSystem(temp);
 			for (int i = 0; i < n; i++) temp.step();
 
-			ConfigTortue config = new ConfigTortue(this.config.getPas(), config.getAngleRotation());
+			ConfigTortue config = new ConfigTortue(this.config.getPas(), this.config.getAngle());
 			Tortue tortue = new Tortue(300, 400, -90, config);
 			List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
 			this.display.clearSegments();
