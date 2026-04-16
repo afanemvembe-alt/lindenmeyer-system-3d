@@ -22,6 +22,16 @@ public class NoeudMot {
         this.prochain = prochain;
     }
 
+    public void addProchainMot(Mot mot) {
+        NoeudMot tmp = this;
+
+        while (this.remplacement != null) {
+            tmp = this.remplacement;
+        }
+
+        tmp.setRemplacement(new NoeudMot(mot));
+    }
+
     public Mot getValeur() {
         return valeur;
     }
