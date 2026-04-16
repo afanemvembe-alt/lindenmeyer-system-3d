@@ -11,15 +11,9 @@ import lindenmeyer.symbols.SymbolList;
 public class LSystem extends AbstractLsystemListenable {
 
     private Axiom axiome;
-    // private Map<Character, String> regles;
     private RuleSet regles;
     private SymbolList currentGeneration;
     private SymbolFactory symbolFactory;
-
-    // public LSystem(String axiome) {
-    // this.axiome = axiome;
-    // this.regles = new HashMap<>();
-    // }
 
     public LSystem(Axiom axiome, RuleSet regles, SymbolList currentGeneration, SymbolFactory symbolFactory) {
         this.axiome = axiome;
@@ -32,24 +26,26 @@ public class LSystem extends AbstractLsystemListenable {
         this.axiome = axiome;
         this.regles = regles;
         this.symbolFactory = symbolFactory;
-        this.currentGeneration = new SymbolList(symbolFactory);
-
-        for (int i = 0; i < axiome.getContent().length(); i++) {
-            currentGeneration.add(axiome.getContent().charAt(i));
-        }
+        resetGeneration();
     }
 
     public LSystem(Axiom axiome) {
         this(axiome, new RuleSet(), new SymbolFactory());
     }
 
+    private void resetGeneration() {
+        this.currentGeneration = new SymbolList(this.symbolFactory);
+        for (int i = 0; i < axiome.getContent().length(); i++) {
+            currentGeneration.add(symbolFactory.getSymbol(axiome.getContent().charAt(i)));
+        }
+    }
+
     public void ajouterRegle(char symbole, String remplacement) {
         Symbol pred = symbolFactory.getSymbol(symbole);
         SymbolList succ = new SymbolList(symbolFactory);
         for (int i = 0; i < remplacement.length(); i++) {
-            succ.add(remplacement.charAt(i));
+            succ.add(symbolFactory.getSymbol(remplacement.charAt(i)));
         }
-
         regles.add(new SimpleRule(pred, succ));
         this.lsystemChange();
     }
@@ -60,13 +56,29 @@ public class LSystem extends AbstractLsystemListenable {
     }
 
     public void step() {
-        SymbolList res = new SymbolList(symbolFactory);
+        SymbolList nextGen = new SymbolList(symbolFactory);
 
-        for (Symbol s : currentGeneration) {
-            res.addAll(regles.successorOf(SymbolList.of(s)));
+        for (int i = 0; i < currentGeneration.size(); i++) {
+            Symbol current = currentGeneration.get(i);
+
+            // Gestion du contexte pour les règles contextuelles
+            SymbolList left = new SymbolList(symbolFactory);
+            if (i > 0) left.add(currentGeneration.get(i - 1));
+
+            SymbolList right = new SymbolList(symbolFactory);
+            if (i < currentGeneration.size() - 1) right.add(currentGeneration.get(i + 1));
+
+            // APPEL CORRIGÉ : On passe le symbole ET ses voisins
+            SymbolList successor = regles.successorOf(SymbolList.of(current), left, right);
+
+            if (successor != null) {
+                nextGen.addAll(successor);
+            } else {
+                nextGen.add(current);
+            }
         }
 
-        currentGeneration = res;
+        currentGeneration = nextGen;
         this.lsystemChange();
     }
 
@@ -77,61 +89,25 @@ public class LSystem extends AbstractLsystemListenable {
     }
 
     public String generer(int n) {
-        for (int i = 0; i < n; i++) {
-            step();
-        }
-
+        resetGeneration(); // On repart de l'axiome pour une nouvelle génération
+        step(n);
         return currentGeneration.toString();
-    }
-
-    public SymbolList getCurrentGeneration() {
-        return currentGeneration;
-    }
-
-    // public String generer(int n) {
-    // String resultat = axiome;
-
-    // for (int i = 0; i < n; i++) {
-    // String nouveau = "";
-
-    // for (int j = 0; j < resultat.length(); j++) {
-    // char c = resultat.charAt(j);
-
-    // if (regles.containsKey(c)) {
-    // nouveau = nouveau + regles.get(c);
-    // } else {
-    // nouveau = nouveau + c;
-    // }
-    // }
-
-    // resultat = nouveau;
-    // }
-
-    // return resultat;
-    // }
-
-    public Axiom getAxiome() {
-        return axiome;
     }
 
     public void setAxiome(Axiom axiome) {
         this.axiome = axiome;
+        resetGeneration(); // TRÈS IMPORTANT : vide la génération actuelle
         this.lsystemChange();
     }
 
+    // Getters standards
+    public SymbolList getCurrentGeneration() { return currentGeneration; }
+    public Axiom getAxiome() { return axiome; }
+    public RuleSet getRegles() { return regles; }
+    public SymbolFactory getSymbolFactory() { return symbolFactory; }
+    
+    @Override
     public String toString() {
         return axiome + " " + regles + " " + currentGeneration;
-    }
-
-    public RuleSet getRegles() {
-        return regles;
-    }
-
-    public Axiom getAxiom() {
-        return axiome;
-    }
-
-    public SymbolFactory getSymbolFactory() {
-        return symbolFactory;
     }
 }

@@ -1,26 +1,20 @@
 package lindenmeyer.rules;
 
 import java.util.Objects;
-
 import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolList;
 
 public abstract class GenericRule implements Applicable {
 
+    protected SymbolList predecessor; // Ajouté pour que les enfants y aient accès
     private SymbolList successor;
     private double weight = 1.0;
 
-    public GenericRule(SymbolList successor) {
-        if (successor == null) {
-            throw new IllegalArgumentException("Le successeur ne peut pas être null");
+    public GenericRule(SymbolList predecessor, SymbolList successor, double weight) {
+        if (predecessor == null || successor == null) {
+            throw new IllegalArgumentException("Les listes ne peuvent pas être nulles");
         }
-        this.successor = successor;
-    }
-
-    public GenericRule(SymbolList successor, double weight) {
-        if (successor == null) {
-            throw new IllegalArgumentException("Le successeur ne peut pas être null");
-        }
+        this.predecessor = predecessor;
         this.successor = successor;
         this.weight = weight;
     }
@@ -30,38 +24,27 @@ public abstract class GenericRule implements Applicable {
         return this.successor;
     }
 
+    @Override
+    public SymbolList getPredecessor() {
+        return this.predecessor;
+    }
+
     public double getWeight() {
         return this.weight;
     }
 
+   
     @Override
-    public boolean isApplicable(SymbolList generation) {
-        return isApplicable(generation, null, null);
-    }
-
-    public boolean isApplicable(SymbolList symbol, SymbolList left, SymbolList right) {
-        if (symbol == null || getPredecessor() == null) return false;
-        return symbol.equals(getPredecessor());
-    }
+    public abstract boolean isApplicable(SymbolList symbol, SymbolList left, SymbolList right);
 
     @Override
     public String toString() {
         StringBuilder res = new StringBuilder();
-
-        if (weight != 1.0) {
-            res.append("(").append(weight).append(") ");
-        }
-
-        for (Symbol s : getPredecessor()) {
-            res.append(s.getSymbol());
-        }
-
-        res.append(" -> ");
-
-        for (Symbol s : getSuccessor()) {
-            res.append(s.getSymbol());
-        }
-
+        if (weight != 1.0) res.append("(").append(weight).append(")");
+        
+        res.append(predecessor.toString())
+           .append(" -> ")
+           .append(successor.toString());
         return res.toString();
     }
 

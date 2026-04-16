@@ -1,42 +1,58 @@
 package lindenmeyer;
 
-// import java.util.*;
 import lindenmeyer.axiom.*;
 import lindenmeyer.symbols.*;
 import lindenmeyer.rules.*;
+import lindenmeyer.lsystem.LSystem;
 
 public class LindenmeyerDemo {
 
-	public static void main(String[] args) {
+    // Ton code de test que tu voulais garder (on le met ici)
+    public static void DemoTests(SymbolFactory symbolFactory) {
+        System.out.println("=== DEBUT DES TESTS UNITAIRES ===");
+        Symbol a = symbolFactory.getSymbol('A');
+        Symbol b = symbolFactory.getSymbol('B');
+        Symbol c = symbolFactory.getSymbol('C');
+        Symbol d = symbolFactory.getSymbol('D');
 
-		Axiom axiom = new Axiom("F");
-		Alphabet alphabet = new Alphabet();
-		System.out.println(axiom.isInAlphabet(alphabet));
+        SymbolList succD = new SymbolList(symbolFactory);
+        succD.add(d);
 
-		SymbolFactory factory = new SymbolFactory();
-		// Symbol pred= factory.getSymbol('F');
-		// SymbolList succ= SymbolList.fromString("F+F+F", factory);
-		SymbolList liste = SymbolList.fromString(axiom.getContent(), factory);
+        // Test règle contextuelle : A < B > C -> D
+        ContextRule contextRule = new ContextRule(b, succD, SymbolList.of(a), SymbolList.of(c), 1.0);
+        
+        System.out.println("Applicable avec A < B > C ? " 
+            + contextRule.isApplicable(SymbolList.of(b), SymbolList.of(a), SymbolList.of(c)));
+        System.out.println("=== FIN DES TESTS UNITAIRES ===\n");
+    }
 
-		RuleSetFactory rulefactory = new RuleSetFactory(',', '>', factory);
-		RuleSet ruleset = rulefactory.parseString("F>F+F+F");
+    public static void main(String[] args) {
+        SymbolFactory factory = new SymbolFactory();
+        
+        // 1. On lance tes tests d'abord
+        DemoTests(factory);
 
-		for (GenericRule rule : ruleset.getRules()) {
-			System.out.println(rule);
-		}
+        // 2. On lance la simulation du L-System
+        Axiom axiom = new Axiom("F");
+        RuleSetFactory rulefactory = new RuleSetFactory(',', '>', factory);
+        
+        // Test stochastique (aléatoire)
+        RuleSet ruleset = rulefactory.parseString("(0.5)F>F[+F], (0.5)F>F[-F]");
 
-		for (int i = 0; i < 5; i++) {
-			System.out.println(liste);
-			SymbolList neww = new SymbolList();
-			for (Symbol s : liste) {
-				SymbolList l = SymbolList.fromString("" + s.getSymbol(), factory);
-				SymbolList list = ruleset.successorOf(l);
-				for (Symbol li : list) {
-					neww.add(li);
-				}
-			}
-			liste = neww;
-		}
+        LSystem lsystem = new LSystem(axiom, ruleset, factory);
 
-	}
+        System.out.println("--- Simulation L-System ---");
+        for (int i = 0; i <= 3; i++) {
+            System.out.println("Génération " + i + " : " + lsystem.getCurrentGeneration());
+            lsystem.step();
+        }
+        
+        // 3. Test contextuel final
+        System.out.println("\n--- Test Contextuel Final ---");
+        lsystem.setAxiome(new Axiom("ABC"));
+        lsystem.getRegles().clear();
+        lsystem.ajouterRegle(rulefactory.parseString("A<B>C>D").iterator().next());
+        lsystem.step();
+        System.out.println("Résultat (ABC -> ADC) : " + lsystem.getCurrentGeneration());
+    }
 }

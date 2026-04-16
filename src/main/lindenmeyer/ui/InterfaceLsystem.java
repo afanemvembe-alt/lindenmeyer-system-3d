@@ -530,43 +530,47 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         String regle = this.rule.getText();
         String step = this.nbStep.getText();
 
-        if (e.getSource() == this.defineLsystem) {
-			if (!text.isEmpty()){ 
-				if (text.matches(".*\\d.*")){ 
-					showError(this.modifAxiom, "L'axiome ne peut pas contenir de chiffres");
-					return;
-				}
-				this.display.getLSystem().setAxiome(new Axiom(text));
-				resetField(modifAxiom);
-			} else {
-				resetField(modifAxiom);
-			}
-
-			if (regle.isEmpty()) {
-				showError(this.rule, "Vous devez entrer au moins une regle");
-				return;
-			} else if(!regle.isEmpty()) {
-				String[] rules = regle.split(",");
-				for (String r : rules){
-					String[] parts = r.split(">");
-					if (parts.length != 2) {
-						showError(this.rule, "Regle invalide : \"" + r + "\". Format attendu : symbole>regle");
-						return;
-					}
-					if (parts[0].length() != 1) {
-						showError(this.rule, "Le symbole doit etre un seul caractère : \"" + r + "\"");
-						return;
-					}
-				}
-			}
-			resetField(rule);
-
-            RuleSetFactory rsf = new RuleSetFactory(new SymbolFactory());
-			RuleSet rules = rsf.parseString(rule.getText());
-			for (GenericRule r : rules) {
-				this.display.getLSystem().ajouterRegle(r);
-			}
+      // --- REMPLACEMENT DU BLOC defineLsystem ---
+if (e.getSource() == this.defineLsystem) {
+    // 1. Gestion de l'Axiome (on garde ton code actuel)
+    if (!text.isEmpty()){ 
+        if (text.matches(".*\\d.*")){ 
+            showError(this.modifAxiom, "L'axiome ne peut pas contenir de chiffres");
+            return;
         }
+        this.display.getLSystem().setAxiome(new Axiom(text));
+        resetField(modifAxiom);
+    } else {
+        resetField(modifAxiom);
+    }
+
+    // 2. Gestion des Règles (C'est ici qu'on change tout !)
+    if (regle.isEmpty()) {
+        showError(this.rule, "Vous devez entrer au moins une regle");
+        return;
+    } else {
+        // On réinitialise les règles du L-System actuel
+        this.display.getLSystem().getRegles().clear();
+
+        // On utilise ta RuleSetFactory pour tout parser proprement
+        // On crée la factory localement pour être sûr qu'elle existe
+        RuleSetFactory rsf = new RuleSetFactory(this.display.getLSystem().getSymbolFactory());
+        RuleSet parsedRules = rsf.parseString(regle);
+
+        if (parsedRules.isEmpty()) {
+            showError(this.rule, "Format de règle invalide.");
+            return;
+        }
+
+        // On injecte les règles parsées dans le L-System
+        for (GenericRule r : parsedRules) {
+            this.display.getLSystem().ajouterRegle(r);
+        }
+        
+        resetField(rule);
+        System.out.println("Règles mises à jour avec succès !");
+    }
+}
         
         else if (e.getSource() == this.switch3D) {
 			if (mode3D) {
