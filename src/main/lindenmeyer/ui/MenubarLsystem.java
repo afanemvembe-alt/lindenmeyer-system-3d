@@ -4,18 +4,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.nio.file.Path;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Map;
 
 
 import javax.swing.*;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import lindenmeyer.lsystem.LSystem;
 
@@ -33,7 +25,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     // idea: what if the preset configs are read at launch
 
     // JSONObject root = new JSONParser().parse(new FileReader("JSONExample.json"));
-    private ArrayList<Preset> presets = new ArrayList<>();
+    // private ArrayList<Preset> presets = new ArrayList<>();
 
     // menus
     final JMenu fileMenu = new JMenu("Fichier");
@@ -65,29 +57,6 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
     public MenubarLsystem(InterfaceLsystem interfaceLsystem)
     {
-        try 
-        {
-            String fileString = Files.readString(Path.of("src/main/lindenmeyer/ui/presets.json"));
-
-            JSONObject root = new JSONObject(fileString);
-            JSONArray presetsArray = root.getJSONArray("presets");
-
-
-            for (int i=0; i<presetsArray.length(); i++)
-            {
-                JSONObject presetObj = presetsArray.getJSONObject(i);
-                LSystem lSyst = new LSystem(presetObj);
-                ConfigLsystem config = new ConfigLsystem(presetObj);
-
-                this.presets.add(new Preset(presetObj.getString("name"), config, lSyst));
-            }
-        } 
-        catch (IOException e) 
-        {
-            throw new RuntimeException("Failed to read presets.json", e);
-        }
-
-
         this.interfaceLsystem = interfaceLsystem;
         // file menu items
         newMenuItem.addActionListener(this);
@@ -121,7 +90,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         configMenu.add(configMenuItem);
 
         // preset menu
-        for (Preset preset : this.presets)
+        for (Preset preset : this.interfaceLsystem.getPresets())
         {
             presetMenu.add(crateMenuItem(preset));
         }

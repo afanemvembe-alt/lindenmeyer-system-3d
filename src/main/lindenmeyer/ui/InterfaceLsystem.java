@@ -2,9 +2,19 @@ package lindenmeyer.ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+import java.nio.file.Path;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.FileReader;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import lindenmeyer.axiom.*;
 import lindenmeyer.symbols.*;
@@ -32,8 +42,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 	public JTextArea presetInfo;
     
     //Listes de systemes predefinis et leur configuration
-    public ArrayList<LSystem> preSet;
-    private ArrayList<ConfigLsystem> preSetConfig;
+    public ArrayList<Preset> presets = new ArrayList<>();
 
     
     //Boite de dialogue
@@ -53,6 +62,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 	
     public InterfaceLsystem() {
         super("LSystem");
+		loadPresets();
 
 		// not sure about this
         MenubarLsystem menuBar = new MenubarLsystem(this);
@@ -223,9 +233,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.commands.add(this.panelZoom);
         this.commands.add(this.panelInfo);
         
-		//
-		this.preSet= new ArrayList<>();
-		this.preSetConfig= new ArrayList<>();
 		this.paramDialog= new ParamDialog(this);
         this.lsystem = new LSystem(new Axiom("F"));
         this.display = new VueLsystem(this.lsystem);
@@ -325,9 +332,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
 
 			SwingUtilities.invokeLater(() -> {
-				// why are we doing this
-					// this.longueur = config.pas;
-					// this.angleRotation = config.angle;
 					this.display.setSegments(finalSegments);
 					this.display.getLSystem().setAxiome(new Axiom(lSystem.getAxiome().getContent()));
 					this.display.repaint();
@@ -387,56 +391,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         else if (e.getSource() == this.generate) {
 			System.out.println(this.lsystem.toString());
 
-
-
-			JDialog loading = new JDialog(this, "Chargement", true);
-			loading.setLayout(new BorderLayout());
-			loading.add(new JLabel("Generation en cours...", SwingConstants.CENTER), BorderLayout.CENTER);
-			loading.setSize(200,100);
-			loading.setLocationRelativeTo(this);
-			history = new History();
-            new Thread(() -> {
-				int n = 2;
-				try {
-					if (!step.isEmpty()) n = Integer.parseInt(step);
-				} catch (NumberFormatException ex) {
-					n = 2;
-				}
-				if(n>this.maxStep){
-					n=this.maxStep;
-				}
-
-				ConfigTortue config = new ConfigTortue(this.config.getPas(), this.config.getAngle());
-				Tortue tortue = new Tortue(300, 400, -90, config);
-
-				LSystem temp = new LSystem(
-					new Axiom(this.display.getLSystem().getAxiome().getContent()),
-					this.display.getLSystem().getRegles(),
-					this.display.getLSystem().getSymbolFactory()
-				);
-				history.addState(new State(temp.getCurrentGeneration()));
-
-
-				for (int i = 0; i < n; i++){
-					temp.step();
-					history.addState(new State(temp.getCurrentGeneration()));
-				}
-				
-
-				List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
-
-				// Mise à jour de l'UI sur le thread Swing
-				SwingUtilities.invokeLater(() -> {
-					//this.longueur = config.pas;
-					//this.angleRotation = config.angleRotation;
-					this.display.setSegments(finalSegments);
-					this.display.repaint();
-					this.historySlider.setMaximum(this.history.size());
-					this.historySlider.setValue(this.history.size());
-					loading.dispose();
-				});
-			}).start();
-			loading.setVisible(true);
+			draw(step, this.lsystem, this.config, this.display, this.history);
         }
 
 		// don't think this is necessary anymore
@@ -482,80 +437,10 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			this.display.zoomOut();
         }
 
-		/**
-		 * load up the loading screen
-		 * initialize Histroy object
-		 * prepare config: nbSteps, angle, length
-		 * prepare lsystem: axiom, rules
-		 * set info text
-		 * create a temp lsystem
-		 * prepare turtle with config
-		 * add to history
-		 * initialize List<Segment>
-		 * draw on another thread
-		 * dispose loading screen
-		 */
         else if (e.getSource() == this.random) {
-			JDialog loading = new JDialog(this, "Chargement", true);
-			loading.setLayout(new BorderLayout());
-			loading.add(new JLabel("Generation en cours...", SwingConstants.CENTER), BorderLayout.CENTER);
-			loading.setSize(200,100);
-			loading.setLocationRelativeTo(this);
-			history = new History();
-			new Thread(() -> {
-				int pos = (int)(Math.random() * this.preSet.size());
-				LSystem chosen = this.preSet.get(pos);
-
-				// Mets à jour les champs (UI) sur EDT
-				SwingUtilities.invokeLater(() -> {
-					this.modifAxiom.setText(chosen.getAxiome().getContent());
-					String s = "";
-					for (GenericRule r : chosen.getRegles()) s += r.toString() + ",";
-					this.rule.setText(s);
-				});
-
-				ConfigLsystem cfg = this.preSetConfig.get(pos);
-				this.presetInfo.setText(cfg.info);
-				ConfigTortue configT = new ConfigTortue(cfg.pas, cfg.angle);
-				Tortue tortue = new Tortue(cfg.startX, cfg.startY, -90, configT);
-
-				LSystem temp = new LSystem(
-					new Axiom(chosen.getAxiome().getContent()),
-					chosen.getRegles(),
-					chosen.getSymbolFactory()
-				);
-				this.display.setLSystem(temp);
-
-				int n = 3;
-				try {
-					if (!step.isEmpty()) n = Integer.parseInt(step);
-				} catch (NumberFormatException ex) {
-					n = 3;
-				}
-				if(n>this.maxStep){
-					n=this.maxStep;
-				}
-				
-
-				for (int i = 0; i < n; i++){ 
-					temp.step();
-					history.addState(new State(temp.getCurrentGeneration()));
-				}
-
-				List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
-
-				SwingUtilities.invokeLater(() -> {
-					// this.longueur = cfg.pas;
-					// this.angleRotation = cfg.angle;
-					this.display.setSegments(finalSegments);
-					this.display.getLSystem().setAxiome(new Axiom(chosen.getAxiome().getContent()));
-					this.display.repaint();
-					this.historySlider.setMaximum(this.history.size());
-					this.historySlider.setValue(this.history.size());
-					loading.dispose();
-				});
-			}).start();
-			loading.setVisible(true);
+			int pos = (int)(Math.random() * this.presets.size());
+			Preset chosen = this.presets.get(pos);
+			draw(step, chosen.getLSys(), chosen.getConfig(), this.display, this.history);
 		}
 		
 		else if(e.getSource() == this.play) {
@@ -621,6 +506,33 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			playTimer.start();			
 		}
     }
+
+	public void loadPresets()
+	{
+		try 
+        {
+            String fileString = Files.readString(Path.of("src/main/lindenmeyer/ui/presets.json"));
+
+            JSONObject root = new JSONObject(fileString);
+            JSONArray presetsArray = root.getJSONArray("presets");
+
+
+            for (int i=0; i<presetsArray.length(); i++)
+            {
+                JSONObject presetObj = presetsArray.getJSONObject(i);
+                LSystem lSyst = new LSystem(presetObj);
+                ConfigLsystem config = new ConfigLsystem(presetObj);
+
+                this.presets.add(new Preset(presetObj.getString("name"), config, lSyst));
+            }
+        } 
+        catch (IOException e) 
+        {
+            throw new RuntimeException("Failed to read presets.json", e);
+        }
+	}
+
+	public ArrayList<Preset> getPresets() { return this.presets; }
     
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
