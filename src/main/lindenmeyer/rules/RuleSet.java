@@ -1,56 +1,74 @@
 package lindenmeyer.rules;
 
-import java.util.Set;
-
 import lindenmeyer.symbols.SymbolList;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Collection;
 
-import java.util.HashSet;
+public class RuleSet implements Iterable<GenericRule> {
+    private List<GenericRule> rules;
 
-/**
- * Un ensemble de règles.
- */
-public class RuleSet extends HashSet<GenericRule> {
-    // private HashSet<GenericRule> rules;
-
-    /**
-     * Retourne l'ensemble des règles.
-     * 
-     * @return
-     */
-    public Set<GenericRule> getRules() {
-        return this;
-    }
-
-    /**
-     * Construit un ensemble de règles à partir de l'ensemble donné.
-     * 
-     * @param rules
-     */
-    public RuleSet(Set<GenericRule> rules) {
-        // this.rules = new HashSet<>(rules);
-        super(rules);
-    }
-
-    /**
-     * Construit un ensemble de règles vide.
-     */
     public RuleSet() {
-        super();
+        this.rules = new ArrayList<>();
+    }
+
+    // Constructeur pour la compatibilité avec les tests profs
+    public RuleSet(Collection<GenericRule> rules) {
+        this.rules = new ArrayList<>(rules);
+    }
+
+    public List<GenericRule> getRules() {
+        return this.rules;
+    }
+
+   
+    public void clear() {
+        this.rules.clear();
+    }
+
+    public void add(GenericRule rule) {
+        this.rules.add(rule);
     }
 
     /**
-     * Retourne le successeur de la liste de symboles donnée.
-     * 
-     * @param s une liste de symboles
-     * @return le successeur s'il existe, sinon la liste donnee en entree
+     * Gère le choix de la règle en fonction du contexte et du poids (stochastique)
      */
-    public SymbolList successorOf(SymbolList s) {
-        for (GenericRule rule : getRules()) {
-            if (rule.isApplicable(s)) {
-                return rule.getSuccessor();
+    public SymbolList successorOf(SymbolList symbol, SymbolList left, SymbolList right) {
+        List<GenericRule> applicableRules = new ArrayList<>();
+        double totalWeight = 0;
+
+        // 1. Filtrer les règles applicables selon le contexte
+        for (GenericRule r : rules) {
+            if (r.isApplicable(symbol, left, right)) {
+                applicableRules.add(r);
+                totalWeight += r.getWeight();
             }
         }
 
-        return s;
+        if (applicableRules.isEmpty()) return null;
+
+        // 2. Tirage au sort pondéré (Stochastique)
+        double dice = Math.random() * totalWeight;
+        double currentRange = 0;
+
+        for (GenericRule r : applicableRules) {
+            currentRange += r.getWeight();
+            if (dice <= currentRange) return r.getSuccessor();
+        }
+        return applicableRules.get(0).getSuccessor();
+    }
+
+    public SymbolList successorOf(SymbolList symbol) {
+        return successorOf(symbol, null, null);
+    }
+
+    @Override
+    public Iterator<GenericRule> iterator() {
+        return rules.iterator();
+    }
+
+    public boolean isEmpty() {
+        return rules.isEmpty();
     }
 }

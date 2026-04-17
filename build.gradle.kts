@@ -12,7 +12,7 @@ plugins {
 }
 
 javafx {
-    modules("javafx.controls")
+    modules("javafx.controls", "javafx.swing")
 }
 
 repositories {
@@ -46,15 +46,15 @@ application {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
-    addTestOutputListener { descriptor, event ->
-       logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
-    }
 }
 
 sourceSets {
     main {
         java {
             setSrcDirs(listOf("src/main"))
+        }
+        resources {
+            setSrcDirs(listOf("src/resources"))
         }
     }
     test {

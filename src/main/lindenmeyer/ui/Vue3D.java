@@ -1,45 +1,42 @@
 package lindenmeyer.ui;
 
 import static java.lang.Math.acos;
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
 
-import java.util.*;
-
+import java.util.List;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
+import javafx.scene.image.*;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.Circle;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Line;
+import javafx.scene.text.*;
 import javafx.scene.text.Font;
 import javafx.scene.transform.*;
 import lindenmeyer.turtle.Segment3D;
-import javafx.scene.text.*;
 
 /**
  * Composant servant à effectuer le rendu 3D d'un L-Système.
- * 
+ *
  * <h2>Attention</h2>
- * 
+ *
  * Ceci est un composant JavaFX, il faut donc l'adapter pour l'utiliser dans un
  * contexte Swing.
  */
 public class Vue3D extends Scene {
+
     private double lineThickness = 10;
-    private double tilt = 0;
-    private double rotation = 0;
     private List<Segment3D> segments;
     private Group root;
+    private Image image;
+    private javafx.scene.paint.Color drawColor = null;
 
     /**
      * Retourne l'épaisseur du trait de dessin.
-     * 
+     *
      * @return un double
      */
     public double getLineThickness() {
@@ -52,7 +49,7 @@ public class Vue3D extends Scene {
 
     /**
      * Modifie l'épaisseur du trait de dessin
-     * 
+     *
      * @param lineThickness épaisseur de la ligne
      */
     public void setLineThickness(double lineThickness) {
@@ -63,13 +60,16 @@ public class Vue3D extends Scene {
         // Group root = new Group();
         super(new Group(), 720, 480);
         root = (Group) getRoot();
-        root.setTranslateX(720.0 / 2);
-        root.setTranslateY(480.0 / 2);
+        // root.setTranslateX(720.0 / 2);
+        // root.setTranslateY(480.0 / 2);
         // root.setScaleX(2);
         // root.setScaleY(2);
         this.segments = segments;
-        renderGrid();
 
+        // image = new Image(getClass().getResourceAsStream("/lindenmeyer/ui/Mine.jpg"));
+        image = new Image(getClass().getResourceAsStream("Mine.jpg"));
+        setFill(new ImagePattern(image, 0, 0, 1000, 700, false));
+        // renderGrid();
         for (Segment3D s : segments) {
             root.getChildren().add(segmentToCylinder(s));
         }
@@ -77,20 +77,28 @@ public class Vue3D extends Scene {
 
     public void render() {
         renderGrid();
-
     }
 
     public void redraw() {
         root.getChildren().clear();
-
         for (Segment3D s : segments) {
             root.getChildren().add(segmentToCylinder(s));
         }
     }
+    
+    public void setDrawColor(javafx.scene.paint.Color c) {
+		this.drawColor = c;
+		redraw();
+	}
+
+	public void resetDrawColor() {
+		this.drawColor = null;
+		redraw();
+	}
 
     /**
      * Crée un nouveau cylindre à partir d'un segment.
-     * 
+     *
      * @param s le segment de base
      * @return cylindre résultant
      */
@@ -107,10 +115,16 @@ public class Vue3D extends Scene {
 
         double length = seg.magnitude();
 
-        Translate moveToMidpoint = new Translate(midpoint.getX(), midpoint.getY(), midpoint.getZ());
+        Translate moveToMidpoint = new Translate(
+            midpoint.getX(),
+            midpoint.getY(),
+            midpoint.getZ()
+        );
         Rotate rotateAroundCenter = new Rotate(-toDegrees(angle), rotationAxis);
 
         Cylinder c = new Cylinder(1, length);
+        Color color = (drawColor != null) ? drawColor : s.color;
+		c.setMaterial(new PhongMaterial(color));
         c.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
 
         return c;

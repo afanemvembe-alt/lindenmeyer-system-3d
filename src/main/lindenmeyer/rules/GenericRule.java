@@ -1,26 +1,22 @@
 package lindenmeyer.rules;
 
 import java.util.Objects;
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolList;
 
-import lindenmeyer.symbols.*;
-
-/**
- * Règle abstraite, contenant un prédécesseur et un successeur.
- */
 public abstract class GenericRule implements Applicable {
 
-    /**
-     * Le successeur de la règle.
-     */
+    protected SymbolList predecessor; // Ajouté pour que les enfants y aient accès
     private SymbolList successor;
+    private double weight = 1.0;
 
-    /**
-     * Construit une règle contenant le successeur donne.
-     * 
-     * @param successor une SymbolList des successeurs
-     */
-    public GenericRule(SymbolList successor) {
+    public GenericRule(SymbolList predecessor, SymbolList successor, double weight) {
+        if (predecessor == null || successor == null) {
+            throw new IllegalArgumentException("Les listes ne peuvent pas être nulles");
+        }
+        this.predecessor = predecessor;
         this.successor = successor;
+        this.weight = weight;
     }
 
     @Override
@@ -29,39 +25,43 @@ public abstract class GenericRule implements Applicable {
     }
 
     @Override
-    public boolean isApplicable(SymbolList generation) {
-        return generation.equals(this.getPredecessor());
+    public SymbolList getPredecessor() {
+        return this.predecessor;
     }
+
+    public double getWeight() {
+        return this.weight;
+    }
+
+   
+    @Override
+    public abstract boolean isApplicable(SymbolList symbol, SymbolList left, SymbolList right);
 
     @Override
     public String toString() {
-        String res = "";
-        for (Symbol s : getPredecessor()) {
-            res += s.getSymbol();
-        }
-        res += ">";
-        for (Symbol s : getSuccessor()) {
-            res += s.getSymbol();
-        }
-
-        return res;
+        StringBuilder res = new StringBuilder();
+        if (weight != 1.0) res.append("(").append(weight).append(")");
+        
+        res.append(predecessor.toString())
+           .append(" -> ")
+           .append(successor.toString());
+        return res.toString();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof GenericRule) {
-            GenericRule tmp = (GenericRule) obj;
-            return getPredecessor().equals(tmp.getPredecessor()) && getSuccessor().equals(tmp.getSuccessor());
-        } else {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        GenericRule tmp = (GenericRule) obj;
+
+        return Double.compare(tmp.weight, weight) == 0 &&
+               getPredecessor().equals(tmp.getPredecessor()) &&
+               getSuccessor().equals(tmp.getSuccessor());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPredecessor(), getSuccessor());
+        return Objects.hash(getPredecessor(), getSuccessor(), weight);
     }
 }

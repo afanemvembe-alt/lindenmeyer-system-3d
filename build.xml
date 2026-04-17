@@ -32,8 +32,10 @@
     <mkdir dir="${ivy.jar.dir}" />
     <!-- download Ivy from web site so that it can be used even without any special installation -->
     <get
-      src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
-      dest="${ivy.jar.file}" usetimestamp="true" />
+            src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+            dest="${ivy.jar.file}"
+            usetimestamp="true"
+        />
   </target>
 
   <target name="init-ivy" depends="download-ivy">
@@ -45,8 +47,11 @@
       <fileset dir="${ivy.jar.dir}" includes="*.jar" />
 
     </path>
-    <taskdef resource="org/apache/ivy/ant/antlib.xml"
-      uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
+    <taskdef
+            resource="org/apache/ivy/ant/antlib.xml"
+            uri="antlib:org.apache.ivy.ant"
+            classpathref="ivy.lib.path"
+        />
   </target>
 
   <condition property="family" value="windows">
@@ -73,9 +78,15 @@
   <target name="javafx-deps">
     <mkdir dir="tmp" />
     <get
-      src="https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_${family}-${arch}_bin-sdk.zip"
-      dest="tmp/" usetimestamp="true" />
-    <unzip src="tmp/openjfx-21.0.10_${family}-${arch}_bin-sdk.zip" dest="${lib}" overwrite="false">
+            src="https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_${family}-${arch}_bin-sdk.zip"
+            dest="tmp/"
+            usetimestamp="true"
+        />
+    <unzip
+            src="tmp/openjfx-21.0.10_${family}-${arch}_bin-sdk.zip"
+            dest="${lib}"
+            overwrite="false"
+        >
     </unzip>
   </target>
 
@@ -98,7 +109,11 @@
     <!-- <delete dir="${mod}" /> -->
   </target>
 
-  <target name="deps" depends="init,init-ivy,javafx-deps" description="Pull projects dependencies">
+  <target
+        name="deps"
+        depends="init,init-ivy,javafx-deps"
+        description="Pull projects dependencies"
+    >
     <ivy:retrieve />
   </target>
 
@@ -108,21 +123,48 @@
 
   <path id="jfxmod" path="${lib}/javafx-sdk-21.0.10/lib" />
 
-  <target name="build" depends="init,deps,build.clean" description="Compile project files">
-    <javac srcdir="${src}" classpathref="jar.lib" destdir="${build}" includeAntRuntime="false"
-      modulepathref="jfxmod">
+  <target
+        name="build"
+        depends="init,deps,build.clean"
+        description="Compile project files"
+    >
+    <javac
+            srcdir="${src}"
+            classpathref="jar.lib"
+            destdir="${build}"
+            includeAntRuntime="false"
+            modulepathref="jfxmod"
+        >
+      <compilerarg line="--add-modules javafx.controls,javafx.swing" />
+    </javac>
+
+    <copy todir="build">
+		<fileset dir="src/resources" />
+    </copy>
+  </target>
+
+  <target
+        name="compile-test"
+        depends="init,deps,build.clean"
+        description="Compile tests"
+    >
+    <javac
+            srcdir="${src}"
+            classpathref="jar.lib"
+            includeAntRuntime="false"
+            destdir="${build}"
+            debug="true"
+            modulepathref="jfxmod"
+        >
       <compilerarg line="--add-modules javafx.controls" />
     </javac>
   </target>
 
-  <target name="compile-test" depends="init,deps,build.clean" description="Compile tests">
-    <javac srcdir="${src}" classpathref="jar.lib" includeAntRuntime="false" destdir="${build}"
-      debug="true" modulepathref="jfxmod">
-      <compilerarg line="--add-modules javafx.controls" />
-    </javac>
-  </target>
-
-  <target name="test.junit.launcher" depends="compile-test" description="Run tests">
+  <target
+        name="test.junit.launcher"
+        depends="compile-test"
+        description="Run tests"
+    >
     <junitlauncher printSummary="false">
       <classpath path="${build}" />
       <classpath refid="jar.lib" />
@@ -148,8 +190,12 @@
   </path>
 
   <target name="test.console.launcher" depends="compile-test">
-    <java classpathref="test.classpath" classname="org.junit.platform.console.ConsoleLauncher"
-      fork="true" failonerror="false">
+    <java
+            classpathref="test.classpath"
+            classname="org.junit.platform.console.ConsoleLauncher"
+            fork="true"
+            failonerror="false"
+        >
       <arg value="execute" />
       <arg value="--scan-classpath" />
     </java>
@@ -165,12 +211,20 @@
       <modulepath>
         <pathelement location="lib/javafx-sdk-21.0.10/lib" />
       </modulepath>
-      <jvmarg line="--add-modules javafx.controls" />
+      <jvmarg line="--add-modules javafx.controls,javafx.swing" />
     </java>
   </target>
 
 
-  <target name="doc" depends="init, deps" description="Build project documentation">
-    <javadoc sourcepath="${src}/main" destdir="${docs}" classpathref="jar.lib" />
+  <target
+        name="doc"
+        depends="init, deps"
+        description="Build project documentation"
+    >
+    <javadoc
+            sourcepath="${src}/main"
+            destdir="${docs}"
+            classpathref="jar.lib"
+        />
   </target>
 </project>

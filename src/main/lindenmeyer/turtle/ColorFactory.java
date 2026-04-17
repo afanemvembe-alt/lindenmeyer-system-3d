@@ -1,12 +1,12 @@
 package lindenmeyer.turtle;
 
+import static javafx.scene.paint.Color.*;
+
 // import static java.awt.Color.*;
 // import java.awt.Color;
 // import java.awt.color.ColorSpace;
 import java.util.*;
-
 import javafx.scene.paint.Color;
-import static javafx.scene.paint.Color.*;
 
 /**
  * Représente une source configurable de {@link Color}, associant des objects
@@ -21,16 +21,16 @@ public class ColorFactory {
      * Liste suggérée de couleurs de base.
      */
     public static final Color[] BASE_COLORS = {
-            BLACK,
-            RED,
-            GREEN,
-            BLUE,
-            YELLOW,
-            MAGENTA,
-            CYAN,
-            ORANGE,
-            PINK,
-            GRAY,
+        BLACK,
+        RED,
+        GREEN,
+        BLUE,
+        YELLOW,
+        MAGENTA,
+        CYAN,
+        ORANGE,
+        PINK,
+        GRAY,
     };
 
     // list of desired colors given by user
@@ -41,13 +41,14 @@ public class ColorFactory {
 
     /**
      * Construit une nouvelle instance avec les couleurs désirées.
-     * 
+     *
      * @param colors une liste de couleurs
      */
     public ColorFactory(List<Color> colors) {
         this.colors = new ArrayList<>(colors);
         this.rng = new Random();
         this.colorMap = new HashMap<>();
+        this.i = 0;
     }
 
     /**
@@ -68,17 +69,19 @@ public class ColorFactory {
 
     private Color getNextColor() {
         if (colors != null && i < colors.size()) {
-            i++;
-            return colors.get(i);
+            Color res = colors.get(i);
+            i = (i + 1) % colors.size();
+            return res;
         } else {
-            return randomColor();
+            // return randomColor();
+            return Color.PURPLE;
         }
     }
 
     /**
      * Retourne la couleur associée à l'object donné, et y associe une couleur si
      * cet objet n'en a pas déjà.
-     * 
+     *
      * @param o un objet
      * @return la couleur associée à l'objet
      */
@@ -91,5 +94,16 @@ public class ColorFactory {
         }
 
         return c;
+    }
+
+    public void setColorOf(Object o, Color c) {
+        colorMap.put(o, c);
+    }
+
+    /**
+     * Empties the internal color attributions of the factory.
+     */
+    public void clear() {
+        colorMap.clear();
     }
 }
