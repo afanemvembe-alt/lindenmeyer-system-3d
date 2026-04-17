@@ -2,7 +2,17 @@ package lindenmeyer.ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.nio.file.Path;
+
+import java.util.ArrayList;
+
+
 import javax.swing.*;
+
+import lindenmeyer.lsystem.LSystem;
+
+// import netscape.javascript.JSObject;
+
 
 public class MenubarLsystem extends JMenuBar implements ActionListener
 {
@@ -10,33 +20,34 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     
     // final JMenuBar menuBar = new JMenuBar();
 
-    // idea: generator menu with premade models instead of random
-    // idea: explain about lsystem structures in about menu or sth
+    // JSONObject root = new JSONParser().parse(new FileReader("JSONExample.json"));
+    // private ArrayList<Preset> presets = new ArrayList<>();
 
     // menus
     final JMenu fileMenu = new JMenu("Fichier");
-    final JMenu editMenu = new JMenu("Config");
-    final JMenu viewMenu = new JMenu("Affichage");
-    final JMenu aboutMenu = new JMenu("À propos");
-
     // file menu items
     JMenuItem newMenuItem = new JMenuItem("New");
     JMenuItem openMenuItem = new JMenuItem("Ouvrir");
     JMenuItem saveMenuItem = new JMenuItem("Sauvegarder");
     JMenuItem exitMenuItem = new JMenuItem("Sortir");
 
+    final JMenu configMenu = new JMenu("Config");
     // config menu items
     JMenuItem configMenuItem = new JMenuItem("Configurations");
 
+    final JMenu viewMenu = new JMenu("Affichage");
     // view menu items
     JMenuItem coulourMenuItem = new JMenuItem("Couleur"); // idea: colour wheel thing
     JMenuItem zoomInMenuItem = new JMenuItem("Zoom +");
     JMenuItem zoomOutMenuItem = new JMenuItem("Zoom -");
 
+    final JMenu presetMenu = new JMenu("Presets");
+    JMenuItem addPresetMenuItem = new JMenuItem("Ajouter preset");
+
+    final JMenu aboutMenu = new JMenu("À propos");
     // about menu items
     JMenuItem aboutMenuItem = new JMenuItem("Informations");
 
-    // note: not sure about this
     private ParamDialog paramDialog;
     private InterfaceLsystem interfaceLsystem;
 
@@ -72,7 +83,16 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         fileMenu.add(exitMenuItem);
 
         // config menu
-        editMenu.add(configMenuItem);
+        configMenu.add(configMenuItem);
+
+        // preset menu
+        for (Preset preset : this.interfaceLsystem.getPresets())
+        {
+            presetMenu.add(crateMenuItem(preset));
+        }
+        presetMenu.addSeparator();
+        presetMenu.add(addPresetMenuItem);
+
 
         // affichage menu
         viewMenu.add(coulourMenuItem);
@@ -83,63 +103,12 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         aboutMenu.add(aboutMenuItem);
 
         this.add(fileMenu);
-        this.add(editMenu);
+        this.add(configMenu);
+        this.add(presetMenu);
         this.add(viewMenu);
         this.add(aboutMenu);
     }
-/**
-    private void buildMenuBar()
-    {
-        newMenuItem.addActionListener(this);
-        openMenuItem.addActionListener(this);
-        saveMenuItem.addActionListener(this);
-        exitMenuItem.addActionListener(this);
-        configMenuItem.addActionListener(this);
-        aboutMenuItem.addActionListener(this);
 
-        fileMenu.add(newMenuItem);
-        fileMenu.add(openMenuItem);
-        fileMenu.add(saveMenuItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitMenuItem);
-
-        editMenu.add(configMenuItem);
-
-        aboutMenu.add(aboutMenuItem);
-
-        this.add(fileMenu);
-        this.add(editMenu);
-        this.add(aboutMenu);
-
-        // setJMenuBar(menuBar);
-    }
-
-    public JMenuBar createMenuBar()
-    {
-        newMenuItem.addActionListener(this);
-        openMenuItem.addActionListener(this);
-        saveMenuItem.addActionListener(this);
-        exitMenuItem.addActionListener(this);
-        configMenuItem.addActionListener(this);
-        aboutMenuItem.addActionListener(this);
-
-        fileMenu.add(newMenuItem);
-        fileMenu.add(openMenuItem);
-        fileMenu.add(saveMenuItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitMenuItem);
-
-        editMenu.add(configMenuItem);
-
-        aboutMenu.add(aboutMenuItem);
-
-        this.add(fileMenu);
-        this.add(editMenu);
-        this.add(aboutMenu);
-
-        return menuBar;
-    }
-        */
 
     public void actionPerformed(ActionEvent e)
     {
@@ -167,8 +136,8 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         {
             // JOptionPane.showMessageDialog(this, "Ouvrir les configurations");
             this.paramDialog.setVisible(true);
-            this.interfaceLsystem.setLongeur(this.paramDialog.getLongueur());
-            this.interfaceLsystem.setAngleRotation(this.paramDialog.getAngle());
+            this.interfaceLsystem.getInterfaceConfig().setAngle(this.paramDialog.getLongueur());
+            this.interfaceLsystem.getInterfaceConfig().setPas(this.paramDialog.getAngle());
         }
         else if (source == zoomInMenuItem)
         {
@@ -188,6 +157,22 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
                 JOptionPane.INFORMATION_MESSAGE
             );
         }
+    }
+
+    public JMenuItem crateMenuItem(Preset preset)
+    {
+        JMenuItem item = new JMenuItem(preset.getName());
+        item.addActionListener(e -> {
+            applyPreset(preset);
+        });
+        return item;
+    }
+
+    public void applyPreset(Preset preset)
+    {
+        this.interfaceLsystem.setLSystem(preset.getLSys());
+        this.interfaceLsystem.setInterfaceConfig(preset.getConfig());
+        this.interfaceLsystem.getVueLsystem().setLSystem(preset.getLSys());
     }
 
     public static void main(String[] args)

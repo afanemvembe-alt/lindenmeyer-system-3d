@@ -55,7 +55,6 @@ public class GenericRuleTest {
         GenericRule simpleRule = new SimpleRule(aPredList.get(0), aSuccList);
         assertEquals(str, simpleRule.toString());
     }
-
     @Test
     void equals() {
         Symbol a = sf.getSymbol('A');
@@ -73,14 +72,24 @@ public class GenericRuleTest {
         assertNotEquals(new MockRule(a, b), new MockRule(b, a));
     }
 
-    protected static class MockRule extends GenericRule {
+
+
+    // Change "private" en "public" pour que RuleSetTest puisse l'utiliser aussi
+    public static class MockRule extends GenericRule {
+        private Symbol pred;
+
         public MockRule(Symbol pred, Symbol succ) {
             super(SymbolList.of(pred), SymbolList.of(succ));
+            this.pred = pred;
         }
 
         @Override
         public boolean isApplicable(SymbolList symbol, SymbolList left, SymbolList right) {
             return symbol.equals(predecessor);
+        }
+
+        public SymbolList getPredecessor() {
+            return SymbolList.of(pred);
         }
     }
 }

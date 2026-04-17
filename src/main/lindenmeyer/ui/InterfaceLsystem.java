@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -58,22 +59,34 @@ import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.axiom.Axiom;
 // import java.awt.Button;
 import lindenmeyer.ui.components.*;
+import javax.swing.*;
+import java.nio.file.Path;
 
-public class InterfaceLsystem extends JFrame implements ActionListener {
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.FileReader;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import lindenmeyer.axiom.*;
+import lindenmeyer.symbols.*;
+import lindenmeyer.rules.*;
+import lindenmeyer.lsystem.*;
+import lindenmeyer.lsystem.history.*;
+import lindenmeyer.turtle.*;
+
+public class InterfaceLsystem extends JFrame implements ActionListener 
+{
     public VueLsystem display;
     public LSystem lsystem;
+	public ConfigLsystem config;
 
-    //Panels de commande
-    public JPanel commands;
-    public TextField modifAxiom;
-    public TextField rule;
-    public TextField nbStep;
+	//Panels de commande
+    public JPanel commands, panelGeneration, panelZoom, panelLsystem;
 
-    //Sous panels de commande
-    public JPanel panelGeneration;
-    public JPanel panelZoom;
-    public JPanel panelLsystem;
+    public JTextField modifAxiom, rule, nbStep;
 
     //Boutons de controle de l'interface
     public Button defineLsystem;
@@ -90,10 +103,9 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     public JTextArea presetInfo;
 
     //Listes de systemes predefinis et leur configuration
-    public ArrayList<LSystem> preSet;
-    private ArrayList<ConfigLsystem> preSetConfig;
-    //public JComboBox<ConfigLsystem> presetSelector;
+    public ArrayList<Preset> presets = new ArrayList<>();
 
+    
     //Boite de dialogue
     private ParamDialog paramDialog;
 
@@ -101,12 +113,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     public JComboBox<String> colorSelector;
     private Color selectedColor = Color.BLACK;
 
-    // paramètres tortue
-    private int longueur = 10;
-    private int angleRotation = 60;
-
     public JSlider historySlider;
-    public History history;
+    public History history = new History();
     public int maxStep = 20;
 
     //Pour play/pause du Lsystem
@@ -133,7 +141,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
     public InterfaceLsystem() {
         super("LSystem");
-        // not sure about this
+		loadPresets();
+
         MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
 
@@ -294,8 +303,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             SymbolList symbols = s.getState();
 
             ConfigTortue config = new ConfigTortue(
-                this.longueur,
-                this.angleRotation
+                this.config.getPas(),
+                this.config.getAngle()
             );
             // Pour la 2D
             List<Segment> segments2D = build2DSegments(symbols, 300, 400, config);
@@ -330,12 +339,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.commands.add(this.panelZoom);
         this.commands.add(Box.createVerticalStrut(8));
         this.commands.add(this.panelInfo);
-
-        //LSystem (axiome et vue)
-        LSystemPresets presetData = new LSystemPresets();
-		this.preSet = presetData.getPresets();
-		this.preSetConfig = presetData.getConfigs();
-        this.paramDialog = new ParamDialog(this);
+        
+		this.paramDialog= new ParamDialog(this);
         this.lsystem = new LSystem(new Axiom("F"));
         this.display = new VueLsystem(this.lsystem);
 
@@ -477,14 +482,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		);
 	}
 
-    public void setLongeur(int l) {
-        this.longueur = l;
-    }
-
-    public void setAngleRotation(int a) {
-        this.angleRotation = a;
-    }
-
     public void showError(JTextField field, String message) {
         field.setBorder(BorderFactory.createLineBorder(Color.RED));
         JOptionPane.showMessageDialog(
@@ -493,10 +490,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             "Erreur de saisie",
             JOptionPane.ERROR_MESSAGE
         );
-    }
-
-    public void resetField(JTextField field) {
-        field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     }
     
     private JDialog loadingDialog() {
@@ -573,6 +566,90 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 			source.getSymbolFactory()
 		);
 	}
+	
+	public void resetField(JTextField field) {
+		field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+	}
+
+	public void setLSystem(LSystem lSystem) { this.lsystem = lSystem; }
+
+	public ConfigLsystem getInterfaceConfig() { return this.config; }
+
+	public void setInterfaceConfig(ConfigLsystem config) { this.config = config; }
+
+	public VueLsystem getVueLsystem() { return this.display; }
+
+	public void draw(String step, LSystem lSystem, ConfigLsystem config, VueLsystem vue, History history)
+	{
+		JDialog loading = new JDialog(this, "Chargement", true);
+		loading.setLayout(new BorderLayout());
+		loading.add(new JLabel("Generation en cours...", SwingConstants.CENTER), BorderLayout.CENTER);
+		loading.setSize(200,100);
+		loading.setLocationRelativeTo(this);
+
+		history.clear();
+
+		ConfigTortue configTortue = new ConfigTortue(config.getPas(), config.getAngle());
+
+		new Thread(() -> {
+			int n = 2;
+			try {
+				if (!step.isEmpty()) n = Integer.parseInt(step);
+			} catch (NumberFormatException ex) {
+				n = 2;
+			}
+			if(n>this.maxStep){
+				n=this.maxStep;
+			}
+
+			Tortue tortue = new Tortue(
+				config.getStartX(), config.getStartY(),
+				-90, configTortue
+			);
+
+			// why create a new lsystem?
+			LSystem temp = copyLSystem(lSystem);
+
+			// if we're running on a preset ??
+			history.addState(new State(temp.getCurrentGeneration()));
+			for (int i = 0; i<n ; i++)
+			{
+				temp.step();
+				history.addState(new State(temp.getCurrentGeneration()));
+			}
+
+			List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
+
+            List<Segment> finalSegments2D = build2DSegments(
+                temp.getCurrentGeneration(),
+                config.getStartX(),
+                config.getStartY(),
+                configTortue
+            );
+
+            // --- Gestion3D pour random------------
+            List<Segment3D> finalSegments3D = build3DSegments(
+                temp.getCurrentGeneration(),
+                configTortue
+            );
+            update3D(finalSegments3D);
+
+			SwingUtilities.invokeLater(() -> {
+					// this.display.setSegments(finalSegments);
+					this.presetInfo.setText(config.info);
+                    this.display.setLSystem(temp);
+                    this.display.getLSystem().setAxiome(
+                        new Axiom(lSystem.getAxiome().getContent())
+                    );
+                    update2D(finalSegments);
+                    this.historySlider.setMaximum(this.history.size());
+                    this.historySlider.setValue(this.history.size());
+                    loading.dispose();
+				});
+		}).start();
+		loading.setVisible(true);
+	}
+
 
     public void actionPerformed(ActionEvent e) {
         String text = this.modifAxiom.getText();
@@ -611,12 +688,24 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     showError(this.rule, "Erreur dans le format des règles. Vérifiez la syntaxe.");
                     ex.printStackTrace();
                     return;
-                }
+  }
             }
             
+           
+            try {
+                lindenmeyer.symbols.SymbolFactory sf = this.display.getLSystem().getSymbolFactory();
+                lindenmeyer.rules.RuleSetFactory rsf = new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
+                this.display.getLSystem().setRegles(rsf.parseString(regle));
+                resetField(rule);
+            } catch (Exception ex) {
+                showError(this.rule, "Erreur dans le format des règles.");
+            }
+
             // On force le rafraîchissement de l'affichage
             this.display.repaint();
-        } else if (e.getSource() == this.switch3D) {
+
+        } else if (e.getSource() == this.switch3D) { 
+            
             if (mode3D) {
                 this.centerLayout.show(this.centerPanel, "2D");
                 mode3D = false;
@@ -626,53 +715,22 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 mode3D = true;
                 this.switch3D.setText("Switch2D");
             }
-        } else if (e.getSource() == this.generate) {
-            JDialog loading = loadingDialog();
-            history = new History();
-            new Thread(() -> {
-                int n = getStepCount(step, 2);
+        }
 
-                ConfigTortue config = new ConfigTortue(longueur, angleRotation);
-				LSystem temp = copyLSystem(this.display.getLSystem());
-                history.addState(new State(temp.getCurrentGeneration()));
+        else if (e.getSource() == this.generate) {
+			System.out.println(this.lsystem.toString());
 
-                for (int i = 0; i < n; i++) {
-                    temp.step();
-                    history.addState(new State(temp.getCurrentGeneration()));
-                }
+			draw(step, this.lsystem, this.config, this.display, this.history);
+        }
 
-                List<Segment> finalSegments = build2DSegments(
-					temp.getCurrentGeneration(),
-					300,
-					400,
-					config
-				);
-
-                //Gestion 3D------------------------
-                List<Segment3D> finalSegments3D = build3DSegments(
-					temp.getCurrentGeneration(),
-					config
-				);
-                update3D(finalSegments3D);
-                //----------------------Fin gestion3D
-
-                // Mise à jour de l'UI sur le thread Swing
-                SwingUtilities.invokeLater(() -> {
-                    //this.longueur = config.pas;
-                    //this.angleRotation = config.angleRotation;
-                    update2D(finalSegments);
-                    this.historySlider.setMaximum(this.history.size());
-                    this.historySlider.setValue(this.history.size());
-                    loading.dispose();
-                });
-            })
-                .start();
-            loading.setVisible(true);
-        } else if (e.getSource() == this.settings) {
+		// don't think this is necessary anymore
+        else if (e.getSource() == this.settings) {		
             this.paramDialog.setVisible(true);
-            this.longueur = this.paramDialog.getLongueur();
-            this.angleRotation = this.paramDialog.getAngle();
-        } else if (e.getSource() == this.colorSelector) {
+            this.config.setPas(this.paramDialog.getLongueur());
+            this.config.setAngle(this.paramDialog.getAngle());
+        } 
+        
+        else if (e.getSource() == this.colorSelector) {
             switch ((String) this.colorSelector.getSelectedItem()) {
                 case "Automatique" -> this.selectedColor = null;
                 case "Noir" -> this.selectedColor = Color.BLACK;
@@ -708,10 +766,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 					}
 				}
 			});
-        } else if (e.getSource() == this.clear) {
+        } 
+        
+        else if (e.getSource() == this.clear) {
             clear2D();
             clear3D();
-        } else if (e.getSource() == this.zoomP) {
+        } 
+        
+        else if (e.getSource() == this.zoomP) {
             if (mode3D) {
                 Platform.runLater(() -> {
                     if (this.camera3D != null) {
@@ -723,7 +785,9 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             } else {
                 this.display.zoomIn();
             }
-        } else if (e.getSource() == this.zoomM) {
+        } 
+        
+        else if (e.getSource() == this.zoomM) {
             if (mode3D) {
                 Platform.runLater(() -> {
                     if (this.camera3D != null) {
@@ -735,68 +799,18 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             } else {
                 this.display.zoomOut();
             }
-        } else if (e.getSource() == this.random) {
-            JDialog loading = loadingDialog();
-            history = new History();
-            new Thread(() -> {
-                int pos = (int) (Math.random() * this.preSet.size());
-                LSystem chosen = this.preSet.get(pos);
+        } 
 
-                // Mets à jour les champs (UI) sur EDT
-                SwingUtilities.invokeLater(() -> {
-                    this.modifAxiom.setText(chosen.getAxiome().getContent());
-                    String s = "";
-                    for (GenericRule r : chosen.getRegles())
-                        s += r.toString() + ",";
-                    this.rule.setText(s);
-                });
+        else if (e.getSource() == this.random) 
+        {
+            int pos = (int) (Math.random() * this.presets.size());
+            Preset chosen = this.presets.get(pos);
 
-                ConfigLsystem cfg = this.preSetConfig.get(pos);
-                
-                ConfigTortue configT = new ConfigTortue(cfg.pas, cfg.angle);
-       
-                LSystem temp = copyLSystem(chosen);
-                
+            draw(step, chosen.getLSys(), chosen.getConfig(), display, history);
+        } 
 
-                int n = getStepCount(step, 3);
-				history.addState(new State(temp.getCurrentGeneration()));
-                for (int i = 0; i < n; i++) {
-                    temp.step();
-                    history.addState(new State(temp.getCurrentGeneration()));
-                }
 
-                List<Segment> finalSegments = build2DSegments(
-					temp.getCurrentGeneration(),
-					cfg.startX,
-					cfg.startY,
-					configT
-				);
-
-                // --- Gestion3D pour random------------
-                List<Segment3D> finalSegments3D = build3DSegments(
-					temp.getCurrentGeneration(),
-					configT
-				);
-                update3D(finalSegments3D);
-                //-------------3D pour random------------
-
-                SwingUtilities.invokeLater(() -> {
-                    this.longueur = cfg.pas;
-                    this.angleRotation = cfg.angle;
-                    this.presetInfo.setText(cfg.info);
-                    this.display.setLSystem(temp);
-                    this.display.getLSystem().setAxiome(
-                        new Axiom(chosen.getAxiome().getContent())
-                    );
-                    update2D(finalSegments);
-                    this.historySlider.setMaximum(this.history.size());
-                    this.historySlider.setValue(this.history.size());
-                    loading.dispose();
-                });
-            })
-                .start();
-            loading.setVisible(true);
-        } else if (e.getSource() == this.play) {
+        else if (e.getSource() == this.play) {
             if (playing) {
                 if (playTimer != null && playTimer.isRunning()) {
                     playTimer.stop();
@@ -815,7 +829,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             this.display.setLSystem(temp);
             for (int i = 0; i < n; i++) temp.step();
 
-            ConfigTortue config = new ConfigTortue(longueur, angleRotation);
+            ConfigTortue config = new ConfigTortue(this.config.getPas(), this.config.getAngle());
 			List<Segment> finalSegments = build2DSegments(
 				temp.getCurrentGeneration(),
 				300,
@@ -872,13 +886,41 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(
-            new Runnable() {
-                public void run() {
-                    new InterfaceLsystem();
-                }
+	public void loadPresets()
+	{
+		try 
+        {
+            String fileString = Files.readString(Path.of("src/main/lindenmeyer/ui/presets.json"));
+
+            JSONObject root = new JSONObject(fileString);
+            JSONArray presetsArray = root.getJSONArray("presets");
+
+
+            for (int i=0; i<presetsArray.length(); i++)
+            {
+                JSONObject presetObj = presetsArray.getJSONObject(i);
+                LSystem lSyst = new LSystem(presetObj);
+                ConfigLsystem config = new ConfigLsystem(presetObj);
+
+                this.presets.add(new Preset(presetObj.getString("name"), config, lSyst));
             }
-        );
-    }
+        } 
+        catch (IOException e) 
+        {
+            throw new RuntimeException("Failed to read presets.json", e);
+        }
+	}
+
+	public ArrayList<Preset> getPresets() { return this.presets; }
+    
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				new InterfaceLsystem();
+			}
+		});
+	}
 }
+
+// todo: check for null objects
+// todo: update textfield

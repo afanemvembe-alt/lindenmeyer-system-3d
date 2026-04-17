@@ -8,6 +8,8 @@ import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
 
+import org.json.JSONObject;
+
 public class LSystem extends AbstractLsystemListenable {
 
     private Axiom axiome;
@@ -31,6 +33,24 @@ public class LSystem extends AbstractLsystemListenable {
 
     public LSystem(Axiom axiome) {
         this(axiome, new RuleSet(), new SymbolFactory());
+    }
+
+    public LSystem(JSONObject obj)
+    {
+        this(new Axiom(obj.getString("axiom")), new RuleSet(), new SymbolFactory());
+
+        JSONObject rulesObject = obj.getJSONObject("rules");
+        for (String key : rulesObject.keySet()) {
+            if (key.length() != 1) {
+                throw new IllegalArgumentException(
+                    "Rule key must be a single character: " + key
+                );
+            }
+
+            char symbol = key.charAt(0);
+            String replacement = rulesObject.getString(key);
+            this.ajouterRegle(symbol, replacement);
+        }
     }
 
     private void resetGeneration() {

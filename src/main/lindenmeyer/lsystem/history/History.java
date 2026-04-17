@@ -46,4 +46,9 @@ public class History {
     public int size() {
         return inner.size();
     }
+
+    public void clear()
+    {
+        this.inner.clear();
+    }
 }
