@@ -141,8 +141,18 @@ public class GenericRuleTest {
         }
 
         public MockRule(Symbol pred, Symbol succ) {
-            super(SymbolList.of(succ));
+            super(SymbolList.of(pred), SymbolList.of(succ), 0.0);
             this.pred = pred;
+        }
+
+        @Override
+        public boolean isApplicable(SymbolList symbol) {
+            return true;
+        }
+
+        public boolean isApplicable(SymbolList symbol, SymbolList left, SymbolList right)
+        {
+            return true;
         }
     }
 }

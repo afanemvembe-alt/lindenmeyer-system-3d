@@ -800,65 +800,12 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             }
         } 
 
-        else if (e.getSource() == this.random) {
-            JDialog loading = loadingDialog();
-            history = new History();
-            new Thread(() -> {
-                int pos = (int) (Math.random() * this.preSet.size());
-                LSystem chosen = this.preSet.get(pos);
+        else if (e.getSource() == this.random) 
+        {
+            int pos = (int) (Math.random() * this.presets.size());
+            Preset chosen = this.presets.get(pos);
 
-                // Mets à jour les champs (UI) sur EDT
-                SwingUtilities.invokeLater(() -> {
-                    this.modifAxiom.setText(chosen.getAxiome().getContent());
-                    String s = "";
-                    for (GenericRule r : chosen.getRegles())
-                        s += r.toString() + ",";
-                    this.rule.setText(s);
-                });
-
-                ConfigLsystem cfg = this.preSetConfig.get(pos);
-                
-                ConfigTortue configT = new ConfigTortue(cfg.pas, cfg.angle);
-       
-                LSystem temp = copyLSystem(chosen);
-                
-
-                int n = getStepCount(step, 3);
-				history.addState(new State(temp.getCurrentGeneration()));
-                for (int i = 0; i < n; i++) {
-                    temp.step();
-                    history.addState(new State(temp.getCurrentGeneration()));
-                }
-
-                List<Segment> finalSegments = build2DSegments(
-					temp.getCurrentGeneration(),
-					cfg.startX,
-					cfg.startY,
-					configT
-				);
-
-                // --- Gestion3D pour random------------
-                List<Segment3D> finalSegments3D = build3DSegments(
-					temp.getCurrentGeneration(),
-					configT
-				);
-                update3D(finalSegments3D);
-                //-------------3D pour random------------
-
-                SwingUtilities.invokeLater(() -> {
-                    this.presetInfo.setText(cfg.info);
-                    this.display.setLSystem(temp);
-                    this.display.getLSystem().setAxiome(
-                        new Axiom(chosen.getAxiome().getContent())
-                    );
-                    update2D(finalSegments);
-                    this.historySlider.setMaximum(this.history.size());
-                    this.historySlider.setValue(this.history.size());
-                    loading.dispose();
-                });
-            })
-                .start();
-            loading.setVisible(true);
+            draw(step, chosen.getLSys(), chosen.getConfig(), display, history);
         } 
 
 
