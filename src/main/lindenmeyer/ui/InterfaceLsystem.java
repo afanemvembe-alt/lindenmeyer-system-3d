@@ -587,6 +587,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 		history.clear();
 
 		ConfigTortue configTortue = new ConfigTortue(config.getPas(), config.getAngle());
+
 		new Thread(() -> {
 			int n = 2;
 			try {
@@ -604,15 +605,10 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 			);
 
 			// why create a new lsystem?
-			LSystem temp = new LSystem(
-					new Axiom(lSystem.getAxiome().getContent()),
-					lSystem.getRegles(),
-					lSystem.getSymbolFactory()
-			);
+			LSystem temp = copyLSystem(lSystem);
 
 			// if we're running on a preset ??
 			history.addState(new State(temp.getCurrentGeneration()));
-
 			for (int i = 0; i<n ; i++)
 			{
 				temp.step();
@@ -621,18 +617,36 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 
 			List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
 
+            List<Segment> finalSegments2D = build2DSegments(
+                temp.getCurrentGeneration(),
+                config.getStartX(),
+                config.getStartY(),
+                configTortue
+            );
+
+            // --- Gestion3D pour random------------
+            List<Segment3D> finalSegments3D = build3DSegments(
+                temp.getCurrentGeneration(),
+                configTortue
+            );
+            update3D(finalSegments3D);
+
 			SwingUtilities.invokeLater(() -> {
-					this.display.setSegments(finalSegments);
-					this.display.getLSystem().setAxiome(new Axiom(lSystem.getAxiome().getContent()));
-					this.display.repaint();
-					this.historySlider.setMaximum(this.history.size());
-					this.historySlider.setValue(this.history.size());
-					loading.dispose();
+					// this.display.setSegments(finalSegments);
+					this.presetInfo.setText(config.info);
+                    this.display.setLSystem(temp);
+                    this.display.getLSystem().setAxiome(
+                        new Axiom(lSystem.getAxiome().getContent())
+                    );
+                    update2D(finalSegments);
+                    this.historySlider.setMaximum(this.history.size());
+                    this.historySlider.setValue(this.history.size());
+                    loading.dispose();
 				});
 		}).start();
 		loading.setVisible(true);
 	}
-	
+
 
     public void actionPerformed(ActionEvent e) {
         String text = this.modifAxiom.getText();
@@ -713,7 +727,9 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             this.paramDialog.setVisible(true);
             this.config.setPas(this.paramDialog.getLongueur());
             this.config.setAngle(this.paramDialog.getAngle());
-        } else if (e.getSource() == this.colorSelector) {
+        } 
+        
+        else if (e.getSource() == this.colorSelector) {
             switch ((String) this.colorSelector.getSelectedItem()) {
                 case "Automatique" -> this.selectedColor = null;
                 case "Noir" -> this.selectedColor = Color.BLACK;
@@ -749,10 +765,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 					}
 				}
 			});
-        } else if (e.getSource() == this.clear) {
+        } 
+        
+        else if (e.getSource() == this.clear) {
             clear2D();
             clear3D();
-        } else if (e.getSource() == this.zoomP) {
+        } 
+        
+        else if (e.getSource() == this.zoomP) {
             if (mode3D) {
                 Platform.runLater(() -> {
                     if (this.camera3D != null) {
@@ -764,7 +784,9 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             } else {
                 this.display.zoomIn();
             }
-        } else if (e.getSource() == this.zoomM) {
+        } 
+        
+        else if (e.getSource() == this.zoomM) {
             if (mode3D) {
                 Platform.runLater(() -> {
                     if (this.camera3D != null) {
@@ -776,7 +798,9 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             } else {
                 this.display.zoomOut();
             }
-        } else if (e.getSource() == this.random) {
+        } 
+
+        else if (e.getSource() == this.random) {
             JDialog loading = loadingDialog();
             history = new History();
             new Thread(() -> {
@@ -822,8 +846,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener
                 //-------------3D pour random------------
 
                 SwingUtilities.invokeLater(() -> {
-                    this.longueur = cfg.pas;
-                    this.angleRotation = cfg.angle;
                     this.presetInfo.setText(cfg.info);
                     this.display.setLSystem(temp);
                     this.display.getLSystem().setAxiome(
@@ -837,7 +859,10 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             })
                 .start();
             loading.setVisible(true);
-        } else if (e.getSource() == this.play) {
+        } 
+
+
+        else if (e.getSource() == this.play) {
             if (playing) {
                 if (playTimer != null && playTimer.isRunning()) {
                     playTimer.stop();
