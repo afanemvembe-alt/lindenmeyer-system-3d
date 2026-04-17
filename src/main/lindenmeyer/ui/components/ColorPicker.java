@@ -7,9 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-public class ColorPicker extends JFrame implements ActionListener {
+public class ColorPicker extends JDialog implements ActionListener {
 
     private List<Color> colors;
     private Color selectedColor = null;
@@ -18,6 +19,9 @@ public class ColorPicker extends JFrame implements ActionListener {
         super();
         LayoutManager layout = new BorderLayout();
         Button addButton = new Button("+");
+        setLayout(layout);
+        add(addButton, BorderLayout.SOUTH);
+        pack();
     }
 
     public void addColor(Color color) {
