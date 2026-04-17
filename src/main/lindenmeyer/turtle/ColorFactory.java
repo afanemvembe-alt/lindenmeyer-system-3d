@@ -99,4 +99,11 @@ public class ColorFactory {
     public void setColorOf(Object o, Color c) {
         colorMap.put(o, c);
     }
+
+    /**
+     * Empties the internal color attributions of the factory.
+     */
+    public void clear() {
+        colorMap.clear();
+    }
 }
