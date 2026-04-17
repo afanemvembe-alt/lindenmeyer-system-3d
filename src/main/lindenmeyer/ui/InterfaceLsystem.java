@@ -63,9 +63,9 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
     //Panels de commande
     public JPanel commands;
-    public JTextField modifAxiom;
-    public JTextField rule;
-    public JTextField nbStep;
+    public TextField modifAxiom;
+    public TextField rule;
+    public TextField nbStep;
 
     //Sous panels de commande
     public JPanel panelGeneration;
@@ -147,14 +147,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.commands.setPreferredSize(new Dimension(300, 800));
 
         //Les TextFields
-        this.modifAxiom = new JTextField();
-        this.rule = new JTextField();
-        this.nbStep = new JTextField();
-        Font uiFont = new Font("Segoe UI", Font.PLAIN, 14);
-        this.modifAxiom.setFont(uiFont);
-        this.rule.setFont(uiFont);
-        this.nbStep.setFont(uiFont);
-
+        this.modifAxiom = new TextField();
+		this.rule = new TextField();
+		this.nbStep = new TextField();
+		Font uiFont = new Font("Segoe UI", Font.PLAIN, 14);
+        
         //Panels des JTextField
         JPanel ligneAxiom = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ligneAxiom.add(new JLabel("Axiome : "));
@@ -233,35 +230,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         play.setActionCommand("play");
         switch3D.setActionCommand("switch3d");
 
-        //Taille des JTextField
-        Dimension taille = new Dimension(180, 30);
-        this.modifAxiom.setPreferredSize(taille);
-        this.rule.setPreferredSize(taille);
-        this.nbStep.setPreferredSize(taille);
-
         //Creation de bordures pour chaque sous Panel
-        this.panelLsystem = new JPanel(new FlowLayout());
-        this.panelGeneration = new JPanel(new FlowLayout());
-        this.panelZoom = new JPanel(new FlowLayout());
-        this.panelInfo = new JPanel(new BorderLayout());
-        //
-        this.panelLsystem.setAlignmentX(Component.LEFT_ALIGNMENT);
-        this.panelGeneration.setAlignmentX(Component.LEFT_ALIGNMENT);
-        this.panelZoom.setAlignmentX(Component.LEFT_ALIGNMENT);
-        this.panelInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
-        //
-        this.panelLsystem.setBorder(
-            BorderFactory.createTitledBorder("Definition du LSystem")
-        );
-        this.panelGeneration.setBorder(
-            BorderFactory.createTitledBorder("Generation")
-        );
-        this.panelZoom.setBorder(BorderFactory.createTitledBorder("Affichage"));
-        this.panelInfo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
-        this.panelInfo.setBorder(
-            BorderFactory.createTitledBorder("Informations preset")
-        );
-
+        this.panelLsystem = new TitledPanel("Definition du LSystem", new FlowLayout());
+		this.panelGeneration = new TitledPanel("Generation", new FlowLayout());
+		this.panelZoom = new TitledPanel("Affichage", new FlowLayout());
+		this.panelInfo = new TitledPanel("Informations preset", new BorderLayout());
+		this.panelInfo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+		
         //Infos
         this.presetInfo = new JTextArea(3, 20);
         this.presetInfo.setRows(3);
@@ -304,15 +279,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             }
             int index = this.historySlider.getValue();
             if (index == 0) {
-                this.display.clearSegments();
-                this.display.repaint();
-
-                Platform.runLater(() -> {
-                    if (this.vue3D != null) {
-                        this.vue3D.setSegments(new ArrayList<>());
-                        this.vue3D.redraw();
-                    }
-                });
+                clear2D();
+                clear3D();
                 return;
             }
             index = index - 1;
@@ -327,23 +295,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 this.angleRotation
             );
             // Pour la 2D
-            Tortue tortue = new Tortue(300, 400, -90, config);
-            List<Segment> segments2D = tortue.interpreter(symbols.toString());
-            this.display.setSegments(segments2D);
-            this.display.repaint();
+            List<Segment> segments2D = build2DSegments(symbols, 300, 400, config);
+            update2D(segments2D);
             // Pour la 3D
-            Turtle3D tortue3D = new Turtle3D(config);
-            for (Symbol sym : symbols) {
-                sym.interpret(tortue3D);
-            }
-            List<Segment3D> segments3D = tortue3D.getSegments();
-
-            Platform.runLater(() -> {
-                if (this.vue3D != null) {
-                    this.vue3D.setSegments(segments3D);
-                    this.vue3D.redraw();
-                }
-            });
+            List<Segment3D> segments3D = build3DSegments(symbols, config);
+            update3D(segments3D);
         });
 
         //Ajout de composants dans le sous Panel correspondant
@@ -373,9 +329,9 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.commands.add(this.panelInfo);
 
         //LSystem (axiome et vue)
-        this.preSet = new ArrayList<>();
-        this.preSetConfig = new ArrayList<>();
-        this.addPreSet();
+        LSystemPresets presetData = new LSystemPresets();
+		this.preSet = presetData.getPresets();
+		this.preSetConfig = presetData.getConfigs();
         this.paramDialog = new ParamDialog(this);
         this.lsystem = new LSystem(new Axiom("F"));
         this.display = new VueLsystem(this.lsystem);
@@ -507,6 +463,16 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
+    
+    private javafx.scene.paint.Color awtToFxColor(Color c) {
+		if (c == null) return null;
+		return javafx.scene.paint.Color.rgb(
+			c.getRed(),
+			c.getGreen(),
+			c.getBlue(),
+			c.getAlpha() / 255.0
+		);
+	}
 
     public void setLongeur(int l) {
         this.longueur = l;
@@ -529,154 +495,81 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     public void resetField(JTextField field) {
         field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     }
+    
+    private JDialog loadingDialog() {
+		JDialog loading = new JDialog(this, "Chargement", true);
+		loading.setLayout(new BorderLayout());
+		loading.add(
+			new JLabel("Generation en cours...", SwingConstants.CENTER),
+			BorderLayout.CENTER
+		);
+		loading.setSize(200, 100);
+		loading.setLocationRelativeTo(this);
+		return loading;
+	}
+	
+	//Constructeurs de segments
+	private List<Segment> build2DSegments(SymbolList symbols, double startX, double startY, ConfigTortue config) {
+		Tortue tortue = new Tortue(startX, startY, -90, config);
+		return tortue.interpreter(symbols.toString());
+	}
+	private List<Segment3D> build3DSegments(SymbolList symbols, ConfigTortue config) {
+		Turtle3D tortue3D = new Turtle3D(config);
+		for (Symbol s : symbols) {
+			s.interpret(tortue3D);
+		}
+		return tortue3D.getSegments();
+	}
+	
+	//Dessin des systèmes
+	private void update2D(List<Segment> segments) {
+		this.display.setSegments(segments);
+		this.display.repaint();
+	}
+	private void update3D(List<Segment3D> segments) {
+		Platform.runLater(() -> {
+			if (this.vue3D != null) {
+				this.vue3D.setSegments(segments);
+				this.vue3D.redraw();
+			}
+		});
+	}
+	
+	//Clear 2D et 3D
+	private void clear2D() {
+		this.display.clearSegments();
+		this.display.repaint();
+	}
+	private void clear3D() {
+		update3D(new ArrayList<>());
+	}
+	
+	//Nombre d'étapes
+	private int getStepCount(String stepText, int defaultValue) {
+		int n = defaultValue;
+		try {
+			if (!stepText.isEmpty()) {
+				n = Integer.parseInt(stepText);
+			}
+		} catch (NumberFormatException ex) {
+			n = defaultValue;
+		}
 
-    public void addPreSet() {
-        // Koch Flake
-        LSystem koch = new LSystem(new Axiom("F--F--F"));
-        koch.ajouterRegle('F', "F+F--F+F");
-        this.preSet.add(koch);
-        this.preSetConfig.add(
-            new ConfigLsystem(
-                60,
-                10,
-                300,
-                400,
-                "Koch Flake - Max steps 6\nDescription: Flocon de Koch classique\nAngle: 60\nLongueur: 10"
-            )
-        );
+		if (n > this.maxStep) {
+			n = this.maxStep;
+		}
 
-        // Tree
-        LSystem tree = new LSystem(new Axiom("X"));
-        tree.ajouterRegle('X', "F-[[X]+X]+F[+FX]-X");
-        tree.ajouterRegle('F', "FF");
-        this.preSet.add(tree);
-        this.preSetConfig.add(
-            new ConfigLsystem(
-                25,
-                5,
-                350,
-                500,
-                "Simple Tree - Max steps 5\nDescription: Arbre fractal\nAngle: 25\nLongueur: 5"
-            )
-        );
-
-        // Dragon Curve
-        LSystem dragon = new LSystem(new Axiom("FX"));
-        dragon.ajouterRegle('X', "X+YF+");
-        dragon.ajouterRegle('Y', "-FX-Y");
-        this.preSet.add(dragon);
-        this.preSetConfig.add(
-            new ConfigLsystem(
-                90,
-                5,
-                400,
-                400,
-                "Dragon Curve - Max steps 5\nDescription: Courbe du dragon\nAngle: 90\nLongueur: 5"
-            )
-        );
-
-        // Sierpinski Triangle
-        LSystem sierpinski = new LSystem(new Axiom("A"));
-        sierpinski.ajouterRegle('A', "B-A-B");
-        sierpinski.ajouterRegle('B', "A+B+A");
-        this.preSet.add(sierpinski);
-        this.preSetConfig.add(
-            new ConfigLsystem(
-                60,
-                5,
-                300,
-                300,
-                "Sierpinski Triangle - Max steps 5\nDescription: Triangle de Sierpinski\nAngle: 60\nLongueur: 5"
-            )
-        );
-
-        // Hilbert Curve
-        LSystem hilbert = new LSystem(new Axiom("A"));
-        hilbert.ajouterRegle('A', "-BF+AFA+FB-");
-        hilbert.ajouterRegle('B', "+AF-BFB-FA+");
-        this.preSet.add(hilbert);
-        this.preSetConfig.add(
-            new ConfigLsystem(
-                90,
-                5,
-                400,
-                400,
-                "Hilbert Curve - Max steps 5\nDescription: Courbe de Hilbert\nAngle: 90\nLongueur: 5"
-            )
-        );
-
-        // Peano Curve
-        LSystem peano = new LSystem(new Axiom("X"));
-        peano.ajouterRegle('X', "XFYFX+F+YFXFY-F-XFYFX");
-        peano.ajouterRegle('Y', "YFXFY-F-XFYFX+F+YFXFY");
-        this.preSet.add(peano);
-        this.preSetConfig.add(
-            new ConfigLsystem(
-                90,
-                3,
-                350,
-                350,
-                "Peano Curve - Max steps 3\nDescription: Courbe de Peano\nAngle: 90\nLongueur: 3"
-            )
-        );
-
-        // Levy C Curve
-        LSystem levy = new LSystem(new Axiom("F"));
-        levy.ajouterRegle('F', "+F--F+");
-        this.preSet.add(levy);
-        this.preSetConfig.add(
-            new ConfigLsystem(
-                45,
-                8,
-                400,
-                400,
-                "Levy C Curve - Max steps 8\nDescription: Courbe de Levy C\nAngle: 45\nLongueur: 8"
-            )
-        );
-
-        // Quadratic Koch Island
-        LSystem kochIsland = new LSystem(new Axiom("F+F+F+F"));
-        kochIsland.ajouterRegle('F', "F+F-F-FF+F+F-F");
-        this.preSet.add(kochIsland);
-        this.preSetConfig.add(
-            new ConfigLsystem(
-                90,
-                4,
-                300,
-                300,
-                "Quadratic Koch Island - Max steps 4\nDescription: Flocon quadratique\nAngle: 90\nLongueur: 4"
-            )
-        );
-
-        // Plant-like fractal
-        LSystem plant = new LSystem(new Axiom("X"));
-        plant.ajouterRegle('X', "F-[[X]+X]+F[+FX]-X");
-        plant.ajouterRegle('F', "FF");
-        this.preSet.add(plant);
-        this.preSetConfig.add(
-            new ConfigLsystem(
-                25,
-                5,
-                350,
-                500,
-                "Plant-like fractal - Max steps 5\nDescription: Plante fractale\nAngle: 25\nLongueur: 5"
-            )
-        );
-
-        // Tree variant 2
-        LSystem tree2 = new LSystem(new Axiom("F"));
-        tree2.ajouterRegle('F', "F[+F]F[-F]F");
-        this.preSet.add(tree2);
-        this.preSetConfig.add(
-            new ConfigLsystem(
-                25,
-                5,
-                350,
-                500,
-                "Tree variant 2 - Max steps 5\nDescription: Variante d'arbre\nAngle: 25\nLongueur: 5"
-            )
-        );
-    }
+		return n;
+	}
+	
+	//Copie d'un LSystem 
+	private LSystem copyLSystem(LSystem source) {
+		return new LSystem(
+			new Axiom(source.getAxiome().getContent()),
+			source.getRegles(),
+			source.getSymbolFactory()
+		);
+	}
 
     public void actionPerformed(ActionEvent e) {
         String text = this.modifAxiom.getText();
@@ -743,36 +636,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 this.switch3D.setText("Switch2D");
             }
         } else if (e.getSource() == this.generate) {
-            JDialog loading = new JDialog(this, "Chargement", true);
-            loading.setLayout(new BorderLayout());
-            loading.add(
-                new JLabel("Generation en cours...", SwingConstants.CENTER),
-                BorderLayout.CENTER
-            );
-            loading.setSize(200, 100);
-            loading.setLocationRelativeTo(this);
+            JDialog loading = loadingDialog();
             history = new History();
             new Thread(() -> {
-                int n = 2;
-                try {
-                    if (!step.isEmpty()) n = Integer.parseInt(step);
-                } catch (NumberFormatException ex) {
-                    n = 2;
-                }
-                if (n > this.maxStep) {
-                    n = this.maxStep;
-                }
+                int n = getStepCount(step, 2);
 
                 ConfigTortue config = new ConfigTortue(longueur, angleRotation);
-                Tortue tortue = new Tortue(300, 400, -90, config);
-
-                LSystem temp = new LSystem(
-                    new Axiom(
-                        this.display.getLSystem().getAxiome().getContent()
-                    ),
-                    this.display.getLSystem().getRegles(),
-                    this.display.getLSystem().getSymbolFactory()
-                );
+				LSystem temp = copyLSystem(this.display.getLSystem());
                 history.addState(new State(temp.getCurrentGeneration()));
 
                 for (int i = 0; i < n; i++) {
@@ -780,31 +650,26 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     history.addState(new State(temp.getCurrentGeneration()));
                 }
 
-                List<Segment> finalSegments = tortue.interpreter(
-                    temp.getCurrentGeneration().toString()
-                );
+                List<Segment> finalSegments = build2DSegments(
+					temp.getCurrentGeneration(),
+					300,
+					400,
+					config
+				);
 
                 //Gestion 3D------------------------
-                Turtle3D tortue3D = new Turtle3D(config);
-                SymbolList generation3D = temp.getCurrentGeneration();
-                for (Symbol s : generation3D) {
-                    s.interpret(tortue3D);
-                }
-                List<Segment3D> finalSegments3D = tortue3D.getSegments();
-                Platform.runLater(() -> {
-                    if (this.vue3D != null) {
-                        this.vue3D.setSegments(finalSegments3D);
-                        this.vue3D.redraw();
-                    }
-                });
+                List<Segment3D> finalSegments3D = build3DSegments(
+					temp.getCurrentGeneration(),
+					config
+				);
+                update3D(finalSegments3D);
                 //----------------------Fin gestion3D
 
                 // Mise à jour de l'UI sur le thread Swing
                 SwingUtilities.invokeLater(() -> {
                     //this.longueur = config.pas;
                     //this.angleRotation = config.angleRotation;
-                    this.display.setSegments(finalSegments);
-                    this.display.repaint();
+                    update2D(finalSegments);
                     this.historySlider.setMaximum(this.history.size());
                     this.historySlider.setValue(this.history.size());
                     loading.dispose();
@@ -835,6 +700,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                         "Selection de couleur",
                         selectedColor
                     );
+                    
             }
 
             List<Segment> current = this.display.getSegments();
@@ -842,15 +708,18 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 this.display.setDrawColor(selectedColor);
                 this.display.repaint();
             }
-        } else if (e.getSource() == this.clear) {
-            this.display.clearSegments();
-            this.display.repaint();
             Platform.runLater(() -> {
-                if (this.vue3D != null) {
-                    this.vue3D.setSegments(new ArrayList<>());
-                    this.vue3D.redraw();
-                }
-            });
+				if (this.vue3D != null) {
+					if (selectedColor == null) {
+						this.vue3D.resetDrawColor();
+					} else {
+						this.vue3D.setDrawColor(awtToFxColor(selectedColor));
+					}
+				}
+			});
+        } else if (e.getSource() == this.clear) {
+            clear2D();
+            clear3D();
         } else if (e.getSource() == this.zoomP) {
             if (mode3D) {
                 Platform.runLater(() -> {
@@ -876,14 +745,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 this.display.zoomOut();
             }
         } else if (e.getSource() == this.random) {
-            JDialog loading = new JDialog(this, "Chargement", true);
-            loading.setLayout(new BorderLayout());
-            loading.add(
-                new JLabel("Generation en cours...", SwingConstants.CENTER),
-                BorderLayout.CENTER
-            );
-            loading.setSize(200, 100);
-            loading.setLocationRelativeTo(this);
+            JDialog loading = loadingDialog();
             history = new History();
             new Thread(() -> {
                 int pos = (int) (Math.random() * this.preSet.size());
@@ -899,66 +761,43 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 });
 
                 ConfigLsystem cfg = this.preSetConfig.get(pos);
-                this.presetInfo.setText(cfg.info);
+                
                 ConfigTortue configT = new ConfigTortue(cfg.pas, cfg.angle);
-                Tortue tortue = new Tortue(
-                    cfg.startX,
-                    cfg.startY,
-                    -90,
-                    configT
-                );
+       
+                LSystem temp = copyLSystem(chosen);
+                
 
-                LSystem temp = new LSystem(
-                    new Axiom(chosen.getAxiome().getContent()),
-                    chosen.getRegles(),
-                    chosen.getSymbolFactory()
-                );
-                this.display.setLSystem(temp);
-
-                int n = 3;
-                try {
-                    if (!step.isEmpty()) n = Integer.parseInt(step);
-                } catch (NumberFormatException ex) {
-                    n = 3;
-                }
-                if (n > this.maxStep) {
-                    n = this.maxStep;
-                }
-
+                int n = getStepCount(step, 3);
+				history.addState(new State(temp.getCurrentGeneration()));
                 for (int i = 0; i < n; i++) {
                     temp.step();
                     history.addState(new State(temp.getCurrentGeneration()));
                 }
 
-                List<Segment> finalSegments = tortue.interpreter(
-                    temp.getCurrentGeneration().toString()
-                );
+                List<Segment> finalSegments = build2DSegments(
+					temp.getCurrentGeneration(),
+					cfg.startX,
+					cfg.startY,
+					configT
+				);
 
                 // --- Gestion3D pour random------------
-                Turtle3D tortue3D = new Turtle3D(configT);
-                SymbolList generation3D = temp.getCurrentGeneration();
-
-                for (Symbol s : generation3D) {
-                    s.interpret(tortue3D);
-                }
-
-                List<Segment3D> finalSegments3D = tortue3D.getSegments();
-                Platform.runLater(() -> {
-                    if (this.vue3D != null) {
-                        this.vue3D.setSegments(finalSegments3D);
-                        this.vue3D.redraw();
-                    }
-                });
+                List<Segment3D> finalSegments3D = build3DSegments(
+					temp.getCurrentGeneration(),
+					configT
+				);
+                update3D(finalSegments3D);
                 //-------------3D pour random------------
 
                 SwingUtilities.invokeLater(() -> {
                     this.longueur = cfg.pas;
                     this.angleRotation = cfg.angle;
-                    this.display.setSegments(finalSegments);
+                    this.presetInfo.setText(cfg.info);
+                    this.display.setLSystem(temp);
                     this.display.getLSystem().setAxiome(
                         new Axiom(chosen.getAxiome().getContent())
                     );
-                    this.display.repaint();
+                    update2D(finalSegments);
                     this.historySlider.setMaximum(this.history.size());
                     this.historySlider.setValue(this.history.size());
                     loading.dispose();
@@ -979,36 +818,26 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             playing = true;
             play.setText("Pause");
 
-            int n = 3;
-            try {
-                if (!step.isEmpty()) n = Integer.parseInt(step);
-            } catch (NumberFormatException ex) {
-                n = 3;
-            }
-            if (n > this.maxStep) n = this.maxStep;
+            int n = getStepCount(step, 3);
 
-            LSystem temp = new LSystem(
-                new Axiom(this.display.getLSystem().getAxiome().getContent()),
-                this.display.getLSystem().getRegles(),
-                this.display.getLSystem().getSymbolFactory()
-            );
+            LSystem temp = copyLSystem(this.display.getLSystem());
             this.display.setLSystem(temp);
             for (int i = 0; i < n; i++) temp.step();
 
             ConfigTortue config = new ConfigTortue(longueur, angleRotation);
-            Tortue tortue = new Tortue(300, 400, -90, config);
-            List<Segment> finalSegments = tortue.interpreter(
-                temp.getCurrentGeneration().toString()
-            );
+			List<Segment> finalSegments = build2DSegments(
+				temp.getCurrentGeneration(),
+				300,
+				400,
+				config
+			);
 
-            Turtle3D tortue3D = new Turtle3D(config);
-            SymbolList generation3D = temp.getCurrentGeneration();
-            for (Symbol s : generation3D) {
-                s.interpret(tortue3D);
-            }
-            List<Segment3D> finalSegments3D = tortue3D.getSegments();
+			List<Segment3D> finalSegments3D = build3DSegments(
+				temp.getCurrentGeneration(),
+				config
+			);
 
-            this.display.clearSegments();
+            clear2D();
             final int[] index = { 0 };
 
             if (playTimer != null && playTimer.isRunning()) {
@@ -1037,23 +866,16 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     index[0]++;
                 }
 
-                this.display.setSegments(current);
-                this.display.repaint();
-
+                update2D(current);
                 final int currentIndex = index[0];
-                Platform.runLater(() -> {
-                    if (this.vue3D != null) {
-                        List<Segment3D> current3D = new ArrayList<>(
-                            finalSegments3D.subList(
-                                0,
-                                Math.min(currentIndex, finalSegments3D.size())
-                            )
-                        );
-                        this.vue3D.setSegments(current3D);
-                        this.vue3D.redraw();
-                    }
-                });
-            });
+                List<Segment3D> current3D = new ArrayList<>(
+					finalSegments3D.subList(
+						0,
+						Math.min(currentIndex, finalSegments3D.size())
+					)
+				);
+				update3D(current3D);
+			});
 
             playTimer.start();
         }

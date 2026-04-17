@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.*;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Line;
 import javafx.scene.text.*;
@@ -31,6 +32,7 @@ public class Vue3D extends Scene {
     private List<Segment3D> segments;
     private Group root;
     private Image image;
+    private javafx.scene.paint.Color drawColor = null;
 
     /**
      * Retourne l'épaisseur du trait de dessin.
@@ -66,7 +68,7 @@ public class Vue3D extends Scene {
 
         // image = new Image(getClass().getResourceAsStream("/lindenmeyer/ui/Mine.jpg"));
         image = new Image(getClass().getResourceAsStream("Mine.jpg"));
-        setFill(new ImagePattern(image, 0, 0, 1000, 1000, false));
+        setFill(new ImagePattern(image, 0, 0, 1000, 700, false));
         // renderGrid();
         for (Segment3D s : segments) {
             root.getChildren().add(segmentToCylinder(s));
@@ -83,6 +85,16 @@ public class Vue3D extends Scene {
             root.getChildren().add(segmentToCylinder(s));
         }
     }
+    
+    public void setDrawColor(javafx.scene.paint.Color c) {
+		this.drawColor = c;
+		redraw();
+	}
+
+	public void resetDrawColor() {
+		this.drawColor = null;
+		redraw();
+	}
 
     /**
      * Crée un nouveau cylindre à partir d'un segment.
@@ -111,7 +123,8 @@ public class Vue3D extends Scene {
         Rotate rotateAroundCenter = new Rotate(-toDegrees(angle), rotationAxis);
 
         Cylinder c = new Cylinder(1, length);
-        c.setMaterial(new PhongMaterial(s.color));
+        Color color = (drawColor != null) ? drawColor : s.color;
+		c.setMaterial(new PhongMaterial(color));
         c.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
 
         return c;
