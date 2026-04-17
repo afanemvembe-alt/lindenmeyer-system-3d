@@ -110,4 +110,9 @@ public class LSystem extends AbstractLsystemListenable {
     public String toString() {
         return axiome + " " + regles + " " + currentGeneration;
     }
+    public void setRegles(RuleSet regles) {
+    this.regles = regles;
+    // On notifie les observeurs (l'interface) que le modèle a changé
+    this.lsystemChange(); 
+}
 }

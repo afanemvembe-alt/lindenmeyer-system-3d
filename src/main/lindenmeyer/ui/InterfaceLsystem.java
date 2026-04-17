@@ -53,6 +53,9 @@ import lindenmeyer.turtle.Segment;
 import lindenmeyer.turtle.Segment3D;
 import lindenmeyer.turtle.Tortue;
 import lindenmeyer.turtle.Turtle3D;
+import lindenmeyer.rules.RuleSet;
+import lindenmeyer.rules.RuleSetFactory;
+import lindenmeyer.axiom.Axiom;
 // import java.awt.Button;
 import lindenmeyer.ui.components.*;
 
@@ -576,55 +579,43 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         String regle = this.rule.getText();
         String step = this.nbStep.getText();
 
-        if (e.getSource() == this.defineLsystem) {
+       if (e.getSource() == this.defineLsystem) {
+            // 1. Gestion de l'Axiome
             if (!text.isEmpty()) {
                 if (text.matches(".*\\d.*")) {
-                    showError(
-                        this.modifAxiom,
-                        "L'axiome ne peut pas contenir de chiffres"
-                    );
+                    showError(this.modifAxiom, "L'axiome ne peut pas contenir de chiffres");
                     return;
                 }
                 this.display.getLSystem().setAxiome(new Axiom(text));
                 resetField(modifAxiom);
-            } else {
-                resetField(modifAxiom);
             }
 
+            // 2. Gestion des Règles
             if (regle.isEmpty()) {
-                showError(this.rule, "Vous devez entrer au moins une regle");
+                showError(this.rule, "Vous devez entrer au moins une règle");
                 return;
-            } else if (!regle.isEmpty()) {
-                String[] rules = regle.split(",");
-                for (String r : rules) {
-                    String[] parts = r.split(">");
-                    if (parts.length != 2) {
-                        showError(
-                            this.rule,
-                            "Regle invalide : \"" +
-                                r +
-                                "\". Format attendu : symbole>regle"
-                        );
-                        return;
-                    }
-                    if (parts[0].length() != 1) {
-                        showError(
-                            this.rule,
-                            "Le symbole doit etre un seul caractère : \"" +
-                                r +
-                                "\""
-                        );
-                        return;
-                    }
+            } else {
+                try {
+                    // On récupère la SymbolFactory existante du LSystem
+                    lindenmeyer.symbols.SymbolFactory sf = this.display.getLSystem().getSymbolFactory();
+                    
+                    // On crée une RuleSetFactory pour parser la chaîne complexe (stochastique/contextuelle)
+                    // On utilise ',' pour séparer les règles et '>' pour le prédécesseur/successeur
+                    lindenmeyer.rules.RuleSetFactory rsf = new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
+                    
+                    // On parse et on met à jour les règles du LSystem
+                    this.display.getLSystem().setRegles(rsf.parseString(regle));
+                    
+                    resetField(rule); // On vide le champ après succès
+                } catch (Exception ex) {
+                    showError(this.rule, "Erreur dans le format des règles. Vérifiez la syntaxe.");
+                    ex.printStackTrace();
+                    return;
                 }
             }
-            resetField(rule);
-
-            RuleSetFactory rsf = new RuleSetFactory(new SymbolFactory());
-            RuleSet rules = rsf.parseString(rule.getText());
-            for (GenericRule r : rules) {
-                this.display.getLSystem().ajouterRegle(r);
-            }
+            
+            // On force le rafraîchissement de l'affichage
+            this.display.repaint();
         } else if (e.getSource() == this.switch3D) {
             if (mode3D) {
                 this.centerLayout.show(this.centerPanel, "2D");
