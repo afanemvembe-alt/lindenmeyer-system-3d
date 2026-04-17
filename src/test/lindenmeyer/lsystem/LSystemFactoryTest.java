@@ -1,9 +1,8 @@
-package lindenmeyer;
+package lindenmeyer.lsystem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import lindenmeyer.axiom.Axiom;
-import lindenmeyer.lsystem.*;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.symbols.SymbolFactory;

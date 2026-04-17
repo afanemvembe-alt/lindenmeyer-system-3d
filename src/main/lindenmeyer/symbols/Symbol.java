@@ -1,12 +1,13 @@
 package lindenmeyer.symbols;
 
+import java.util.List;
 import lindenmeyer.turtle.AbstractTurtle3D;
 import lindenmeyer.turtle.Interpretable3D;
 
 /**
  * Un symbole contenu dans un LSystème.
  */
-public class Symbol implements Interpretable3D {
+public class Symbol implements Interpretable3D, Mot {
 
     private char symbol;
 
@@ -58,5 +59,10 @@ public class Symbol implements Interpretable3D {
     public void interpret(AbstractTurtle3D turtle) {
         turtle.setColorOf(this);
         turtle.forward();
+    }
+
+    @Override
+    public List<Symbol> affiche() {
+        return SymbolList.of(this);
     }
 }

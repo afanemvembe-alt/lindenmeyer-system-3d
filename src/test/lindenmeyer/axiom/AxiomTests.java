@@ -1,4 +1,4 @@
-package axiom;
+package lindenmeyer.axiom;
 
 import static org.junit.jupiter.api.Assertions.*;
 

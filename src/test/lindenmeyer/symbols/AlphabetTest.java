@@ -1,4 +1,4 @@
-package symbols;
+package lindenmeyer.symbols;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
