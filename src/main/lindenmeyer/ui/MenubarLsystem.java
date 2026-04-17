@@ -20,10 +20,6 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     
     // final JMenuBar menuBar = new JMenuBar();
 
-    // idea: generator menu with premade models instead of random
-    // idea: explain about lsystem structures in about menu or sth
-    // idea: what if the preset configs are read at launch
-
     // JSONObject root = new JSONParser().parse(new FileReader("JSONExample.json"));
     // private ArrayList<Preset> presets = new ArrayList<>();
 

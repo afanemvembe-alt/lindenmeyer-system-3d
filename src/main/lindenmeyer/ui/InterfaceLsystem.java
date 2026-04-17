@@ -23,8 +23,8 @@ import lindenmeyer.lsystem.*;
 import lindenmeyer.lsystem.history.*;
 import lindenmeyer.turtle.*;
 
-public class InterfaceLsystem extends JFrame implements ActionListener {
-
+public class InterfaceLsystem extends JFrame implements ActionListener 
+{
     public VueLsystem display;
     public LSystem lsystem;
 	public ConfigLsystem config;
@@ -64,7 +64,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         super("LSystem");
 		loadPresets();
 
-		// not sure about this
         MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
 
@@ -536,3 +535,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		});
 	}
 }
+
+// todo: check for null objects
+// todo: update textfield
