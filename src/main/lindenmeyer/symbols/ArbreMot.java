@@ -59,7 +59,7 @@ public class ArbreMot implements Iterable<Mot> {
 
         @Override
         public Mot next() {
-            noeudCourant = stack.removeLast();
+            noeudCourant = stack.remove(stack.size() - 1);
             Mot res;
 
             while (
@@ -74,7 +74,7 @@ public class ArbreMot implements Iterable<Mot> {
             res = noeudCourant.getValeur();
 
             while (!stack.isEmpty() && noeudCourant.getProchain() == null) {
-                noeudCourant = stack.removeLast();
+                noeudCourant = stack.remove(stack.size() - 1);
                 profondeur--;
             }
 
