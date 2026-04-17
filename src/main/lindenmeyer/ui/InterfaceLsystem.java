@@ -257,8 +257,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
-
-	public ConfigLsystem getInterfaceConfig() { return this.config; }
     
     public void showError(JTextField field, String message) {
 		field.setBorder(BorderFactory.createLineBorder(Color.RED));
@@ -274,17 +272,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 		field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 	}
 
-	public void setLSystem(LSystem lSystem)
-	{
-		this.lsystem = lSystem;
-	}
+	public void setLSystem(LSystem lSystem) { this.lsystem = lSystem; }
 
-	public void setConfig(ConfigLsystem config) { this.config = config; }
+	public ConfigLsystem getInterfaceConfig() { return this.config; }
 
-	public VueLsystem getVueLsystem()
-	{
-		return this.display;
-	}
+	public void setInterfaceConfig(ConfigLsystem config) { this.config = config; }
+
+	public VueLsystem getVueLsystem() { return this.display; }
 
 	public void draw(String step, LSystem lSystem, ConfigLsystem config, VueLsystem vue, History history)
 	{

@@ -175,7 +175,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     public void applyPreset(Preset preset)
     {
         this.interfaceLsystem.setLSystem(preset.getLSys());
-        this.interfaceLsystem.setConfig(preset.getConfig());
+        this.interfaceLsystem.setInterfaceConfig(preset.getConfig());
         this.interfaceLsystem.getVueLsystem().setLSystem(preset.getLSys());
     }
 
