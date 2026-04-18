@@ -757,6 +757,17 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 case "Rose" -> this.selectedColor = Color.PINK;
                 case "Gris" -> this.selectedColor = Color.GRAY;
                 case "Custom..." -> {
+                    // List<Color> colors = new ArrayList<>();
+                    // for (javafx.scene.paint.Color c : customColorFactory3D.getColors()) {
+                    //     colors.add(
+                    //         new Color(
+                    //             (float) c.getRed(),
+                    //             (float) c.getGreen(),
+                    //             (float) c.getBlue(),
+                    //             (float) c.getOpacity()
+                    //         )
+                    //     );
+                    // }
                     colorPicker.setVisible(true);
                     List<Color> awtColors = colorPicker.getColors();
                     List<javafx.scene.paint.Color> fxColors = awtListToFxList(
