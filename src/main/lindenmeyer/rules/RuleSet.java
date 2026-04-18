@@ -4,6 +4,9 @@ import lindenmeyer.symbols.SymbolList;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.json.JSONObject;
+
 import java.util.Collection;
 
 public class RuleSet implements Iterable<GenericRule> {
@@ -71,4 +74,5 @@ public class RuleSet implements Iterable<GenericRule> {
     public boolean isEmpty() {
         return rules.isEmpty();
     }
+
 }

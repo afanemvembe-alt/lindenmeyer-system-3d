@@ -2,14 +2,20 @@ package lindenmeyer.ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.nio.file.Path;
 
 import java.util.ArrayList;
-
+import java.time.LocalDateTime;
 
 import javax.swing.*;
 
 import lindenmeyer.lsystem.LSystem;
+
+import java.nio.file.Files;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 // import netscape.javascript.JSObject;
 
@@ -126,6 +132,46 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         else if (source == saveMenuItem)
         {
             JOptionPane.showMessageDialog(this, "Sauvegarde du fichier");
+            JSONArray savedArray = new JSONArray();
+            try 
+            {
+                String fileString = Files.readString(Path.of("src/main/lindenmeyer/ui/saves.json"));
+
+                JSONObject root = new JSONObject(fileString);
+                savedArray = root.getJSONArray("saves");
+            } 
+            catch (IOException error) 
+            {
+                throw new RuntimeException("Failed to read saves.json", e1);
+            }
+
+            JSONObject newSave = new JSONObject();
+            // take current lsystem
+            LSystem lSystem = this.interfaceLsystem.getLSystem();
+            // take current config
+            ConfigLsystem config = this.interfaceLsystem.getInterfaceConfig();
+            // take date
+            String timestamp = LocalDateTime.now().toString();
+
+            SaveDialog dialog = new SaveDialog(this.interfaceLsystem);
+            dialog.setVisible(true);
+
+            String name, description;
+            if (dialog.isConfirmed()) {
+                name = dialog.getName();
+                description = dialog.getDescription();
+            }
+
+            newSave.put("date", timestamp);
+            newSave.put("name", name);
+            newSave.put("axiom", lSystem.getAxiome().toString());
+
+
+            savedArray.put(newSave);
+
+            // gotta take the info and description
+            // parse into json string
+            // write them out to saves.json
         }
         else if (source == exitMenuItem)
         {

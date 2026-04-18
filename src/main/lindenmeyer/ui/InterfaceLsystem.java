@@ -59,20 +59,10 @@ import lindenmeyer.ui.components.*;
 import javax.swing.*;
 import java.nio.file.Path;
 
-import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.io.FileReader;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import lindenmeyer.axiom.*;
-import lindenmeyer.symbols.*;
-import lindenmeyer.rules.*;
-import lindenmeyer.lsystem.*;
-import lindenmeyer.lsystem.history.*;
-import lindenmeyer.turtle.*;
 
 public class InterfaceLsystem extends JFrame implements ActionListener 
 {
@@ -568,6 +558,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 		field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 	}
 
+    public LSystem getLSystem() { return this.lsystem; }
+
 	public void setLSystem(LSystem lSystem) { this.lsystem = lSystem; }
 
 	public ConfigLsystem getInterfaceConfig() { return this.config; }
@@ -807,7 +799,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 
             draw(step, chosen.getLSys(), chosen.getConfig(), display, history);
         } 
-
 
         else if (e.getSource() == this.play) {
             if (playing) {
