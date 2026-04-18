@@ -1,4 +1,4 @@
-package lindenmeyer.symbols;
+package lindenmeyer.lsystem.symbols;
 
 import java.util.List;
 import java.util.ArrayList;

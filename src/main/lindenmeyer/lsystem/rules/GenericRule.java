@@ -1,8 +1,8 @@
-package lindenmeyer.rules;
+package lindenmeyer.lsystem.rules;
 
 import java.util.Objects;
 
-import lindenmeyer.symbols.*;
+import lindenmeyer.lsystem.symbols.*;
 
 /**
  * Règle abstraite, contenant un prédécesseur et un successeur.

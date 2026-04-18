@@ -1,8 +1,9 @@
 package lindenmeyer.ui;
 
 import java.util.ArrayList;
-import lindenmeyer.axiom.Axiom;
+
 import lindenmeyer.lsystem.LSystem;
+import lindenmeyer.lsystem.axiom.Axiom;
 
 public class LSystemPresets {
 

@@ -1,8 +1,8 @@
 package lindenmeyer.lsystem;
 
-import lindenmeyer.axiom.Axiom;
-import lindenmeyer.rules.*;
-import lindenmeyer.symbols.*;
+import lindenmeyer.lsystem.axiom.Axiom;
+import lindenmeyer.lsystem.rules.*;
+import lindenmeyer.lsystem.symbols.*;
 
 /**
  * Classe permettant de construire de manière simplifiée des {@link LSystem}.

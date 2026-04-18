@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import lindenmeyer.axiom.Axiom;
+
 import lindenmeyer.lsystem.LSystem;
-import lindenmeyer.rules.RuleSet;
-import lindenmeyer.rules.RuleSetFactory;
-import lindenmeyer.symbols.SymbolFactory;
+import lindenmeyer.lsystem.axiom.Axiom;
+import lindenmeyer.lsystem.rules.RuleSet;
+import lindenmeyer.lsystem.rules.RuleSetFactory;
+import lindenmeyer.lsystem.symbols.SymbolFactory;
+
 import org.junit.jupiter.api.Test;
 
 class LSystemTest {

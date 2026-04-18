@@ -1,12 +1,12 @@
 package lindenmeyer.lsystem;
 
-import lindenmeyer.axiom.Axiom;
-import lindenmeyer.rules.GenericRule;
-import lindenmeyer.rules.RuleSet;
-import lindenmeyer.rules.SimpleRule;
-import lindenmeyer.symbols.Symbol;
-import lindenmeyer.symbols.SymbolFactory;
-import lindenmeyer.symbols.SymbolList;
+import lindenmeyer.lsystem.axiom.Axiom;
+import lindenmeyer.lsystem.rules.GenericRule;
+import lindenmeyer.lsystem.rules.RuleSet;
+import lindenmeyer.lsystem.rules.SimpleRule;
+import lindenmeyer.lsystem.symbols.Symbol;
+import lindenmeyer.lsystem.symbols.SymbolFactory;
+import lindenmeyer.lsystem.symbols.SymbolList;
 
 public class LSystem extends AbstractLsystemListenable {
 

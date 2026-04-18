@@ -3,11 +3,11 @@ package lindenmeyer;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
-import lindenmeyer.rules.RuleSetFactory;
-import lindenmeyer.rules.RuleSet;
-import lindenmeyer.symbols.SymbolFactory;
+import lindenmeyer.lsystem.axiom.Axiom;
+import lindenmeyer.lsystem.rules.RuleSet;
+import lindenmeyer.lsystem.rules.RuleSetFactory;
+import lindenmeyer.lsystem.symbols.SymbolFactory;
 
 public class Cli {
 

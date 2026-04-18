@@ -1,7 +1,7 @@
-package lindenmeyer.rules;
+package lindenmeyer.lsystem.rules;
 
-import lindenmeyer.symbols.Symbol;
-import lindenmeyer.symbols.SymbolList;
+import lindenmeyer.lsystem.symbols.Symbol;
+import lindenmeyer.lsystem.symbols.SymbolList;
 
 /**
  * Une règle ayant comme prédécesseur un unique symbole.

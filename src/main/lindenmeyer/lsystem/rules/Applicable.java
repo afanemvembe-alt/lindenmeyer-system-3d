@@ -1,6 +1,6 @@
-package lindenmeyer.rules;
+package lindenmeyer.lsystem.rules;
 
-import lindenmeyer.symbols.SymbolList;
+import lindenmeyer.lsystem.symbols.SymbolList;
 
 /**
  * Un objet qui permet de transformer une `SymbolList` en une autre.

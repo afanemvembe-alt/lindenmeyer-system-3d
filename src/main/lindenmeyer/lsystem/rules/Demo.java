@@ -1,8 +1,8 @@
-package lindenmeyer.rules;
+package lindenmeyer.lsystem.rules;
 
-import lindenmeyer.symbols.Symbol;
-import lindenmeyer.symbols.SymbolFactory;
-import lindenmeyer.symbols.SymbolList;
+import lindenmeyer.lsystem.symbols.Symbol;
+import lindenmeyer.lsystem.symbols.SymbolFactory;
+import lindenmeyer.lsystem.symbols.SymbolList;
 
 /**
  * Demonstration de l'utilisation du package lindenmeyer.rules.

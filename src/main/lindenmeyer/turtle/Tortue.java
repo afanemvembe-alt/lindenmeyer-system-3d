@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * Une tortue permettant de dessiner une {@link lindenmeyer.symbols.SymbolList} en se baladant sur le plan avec les commandes données.
+ * Une tortue permettant de dessiner une {@link lindenmeyer.lsystem.symbols.SymbolList} en se baladant sur le plan avec les commandes données.
  *
  * <h2>Conventions</h2>
  *

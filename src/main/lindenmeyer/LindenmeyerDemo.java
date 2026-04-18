@@ -1,9 +1,8 @@
 package lindenmeyer;
 
-// import java.util.*;
-import lindenmeyer.axiom.*;
-import lindenmeyer.symbols.*;
-import lindenmeyer.rules.*;
+import lindenmeyer.lsystem.axiom.*;
+import lindenmeyer.lsystem.rules.*;
+import lindenmeyer.lsystem.symbols.*;
 
 public class LindenmeyerDemo {
 

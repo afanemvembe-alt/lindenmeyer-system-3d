@@ -1,10 +1,12 @@
-package axiom;
+package lindenmeyer.axiom;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
-import lindenmeyer.axiom.*;
-import lindenmeyer.symbols.*;
+
+import lindenmeyer.lsystem.axiom.*;
+import lindenmeyer.lsystem.symbols.*;
+
 import org.junit.jupiter.api.Test;
 
 public class AxiomTests {

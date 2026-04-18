@@ -1,8 +1,8 @@
 package lindenmeyer.lsystem;
 
-import lindenmeyer.axiom.Axiom;
-import lindenmeyer.rules.*;
-import lindenmeyer.symbols.*;
+import lindenmeyer.lsystem.axiom.Axiom;
+import lindenmeyer.lsystem.rules.*;
+import lindenmeyer.lsystem.symbols.*;
 
 public class Main {
     public static void main(String[] args) {

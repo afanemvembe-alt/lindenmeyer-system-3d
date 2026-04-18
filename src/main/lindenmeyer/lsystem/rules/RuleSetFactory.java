@@ -1,7 +1,7 @@
-package lindenmeyer.rules;
+package lindenmeyer.lsystem.rules;
 
-import lindenmeyer.symbols.SymbolFactory;
-import lindenmeyer.symbols.SymbolList;
+import lindenmeyer.lsystem.symbols.SymbolFactory;
+import lindenmeyer.lsystem.symbols.SymbolList;
 
 /**
  * Permet de contruire un `RuleSet` a partir d'une chaîne de character donnee.
