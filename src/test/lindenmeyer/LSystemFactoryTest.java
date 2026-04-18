@@ -2,12 +2,11 @@ package lindenmeyer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.*;
-import lindenmeyer.lsystem.axiom.Axiom;
-import lindenmeyer.lsystem.rules.GenericRule;
-import lindenmeyer.lsystem.rules.RuleSetFactory;
-import lindenmeyer.lsystem.symbols.SymbolFactory;
-
+import lindenmeyer.rules.GenericRule;
+import lindenmeyer.rules.RuleSetFactory;
+import lindenmeyer.symbols.SymbolFactory;
 import org.junit.jupiter.api.Test;
 
 public class LSystemFactoryTest {

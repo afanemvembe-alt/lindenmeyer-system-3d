@@ -1,4 +1,4 @@
-package lindenmeyer.lsystem.symbols;
+package lindenmeyer.symbols;
 
 public class SymbolDemo {
     public static void main(String[] args) {

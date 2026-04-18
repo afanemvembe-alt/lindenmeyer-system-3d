@@ -1,8 +1,8 @@
-package lindenmeyer.lsystem.rules;
+package lindenmeyer.rules;
 
 import java.util.Set;
 
-import lindenmeyer.lsystem.symbols.SymbolList;
+import lindenmeyer.symbols.SymbolList;
 
 import java.util.HashSet;
 

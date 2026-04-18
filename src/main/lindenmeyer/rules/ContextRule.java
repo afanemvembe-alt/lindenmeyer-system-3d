@@ -1,7 +1,7 @@
-package lindenmeyer.lsystem.rules;
+package lindenmeyer.rules;
 
-import lindenmeyer.lsystem.symbols.Symbol;
-import lindenmeyer.lsystem.symbols.SymbolList;
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolList;
 
 /**
  * Règle contenant une `SymbolList` comme prédécesseur.

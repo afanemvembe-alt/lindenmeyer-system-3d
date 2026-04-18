@@ -1,4 +1,4 @@
-package lindenmeyer.lsystem.symbols;
+package lindenmeyer.symbols;
 
 import lindenmeyer.turtle.AbstractTurtle3D;
 

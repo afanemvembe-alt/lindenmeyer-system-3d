@@ -1,6 +1,6 @@
 package lindenmeyer.lsystem.history;
 
-import lindenmeyer.lsystem.symbols.SymbolList;
+import lindenmeyer.symbols.SymbolList;
 
 /**
  * Un état individuel à stocker.

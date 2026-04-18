@@ -1,4 +1,4 @@
-package lindenmeyer.rules;
+package rules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -8,16 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 // import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
-import lindenmeyer.lsystem.rules.GenericRule;
-import lindenmeyer.lsystem.rules.RuleSet;
-import lindenmeyer.lsystem.rules.SimpleRule;
-import lindenmeyer.lsystem.symbols.Symbol;
-import lindenmeyer.lsystem.symbols.SymbolFactory;
-import lindenmeyer.lsystem.symbols.SymbolList;
-import lindenmeyer.rules.GenericRuleTest.MockRule;
-
+// import lindenmeyer.rules.ContextRule;
+import lindenmeyer.rules.GenericRule;
+// import lindenmeyer.rules.RuleFactory;
+import lindenmeyer.rules.RuleSet;
+import lindenmeyer.rules.SimpleRule;
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolFactory;
+import lindenmeyer.symbols.SymbolList;
 import org.junit.jupiter.api.Test;
+import rules.GenericRuleTest.MockRule;
 
 /**
  * Une classe qui fournit les tests pour une `{@link RuleSet}`

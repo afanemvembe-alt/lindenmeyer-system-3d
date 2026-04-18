@@ -1,11 +1,10 @@
-package lindenmeyer.symbols;
+package symbols;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolFactory;
 import org.junit.jupiter.api.Test;
-
-import lindenmeyer.lsystem.symbols.Symbol;
-import lindenmeyer.lsystem.symbols.SymbolFactory;
 
 public class SymbolFactoryTest {
 

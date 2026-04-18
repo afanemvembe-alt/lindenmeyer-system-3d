@@ -1,4 +1,4 @@
-package lindenmeyer.rules;
+package rules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import lindenmeyer.lsystem.rules.GenericRule;
-import lindenmeyer.lsystem.rules.SimpleRule;
-import lindenmeyer.lsystem.symbols.Symbol;
-import lindenmeyer.lsystem.symbols.SymbolFactory;
-import lindenmeyer.lsystem.symbols.SymbolList;
-
+import lindenmeyer.rules.GenericRule;
+import lindenmeyer.rules.SimpleRule;
+import lindenmeyer.symbols.Symbol;
+// import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolFactory;
+import lindenmeyer.symbols.SymbolList;
 import org.junit.jupiter.api.Test;
 
 /**

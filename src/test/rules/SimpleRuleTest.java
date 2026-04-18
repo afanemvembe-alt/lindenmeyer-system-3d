@@ -1,12 +1,11 @@
-package lindenmeyer.rules;
+package rules;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import lindenmeyer.lsystem.rules.GenericRule;
-import lindenmeyer.lsystem.rules.SimpleRule;
-import lindenmeyer.lsystem.symbols.SymbolFactory;
-import lindenmeyer.lsystem.symbols.SymbolList;
-
+import lindenmeyer.rules.GenericRule;
+import lindenmeyer.rules.SimpleRule;
+import lindenmeyer.symbols.SymbolFactory;
+import lindenmeyer.symbols.SymbolList;
 import org.junit.jupiter.api.Test;
 
 /**

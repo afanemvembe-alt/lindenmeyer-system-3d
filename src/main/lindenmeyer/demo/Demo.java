@@ -1,13 +1,13 @@
 package lindenmeyer.demo;
 
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolFactory;
+// import lindenmeyer.symbols.Alphabet;
+import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
-import lindenmeyer.lsystem.axiom.Axiom;
-import lindenmeyer.lsystem.rules.RuleSet;
-import lindenmeyer.lsystem.rules.SimpleRule;
-import lindenmeyer.lsystem.symbols.Symbol;
-import lindenmeyer.lsystem.symbols.SymbolFactory;
-import lindenmeyer.lsystem.symbols.SymbolList;
-
+import lindenmeyer.rules.RuleSet;
+import lindenmeyer.rules.SimpleRule;
+import lindenmeyer.symbols.SymbolList;
 import java.util.List;
 
 public class Demo {

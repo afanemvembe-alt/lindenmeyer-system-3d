@@ -1,6 +1,6 @@
-package lindenmeyer.lsystem.axiom;
+package lindenmeyer.axiom;
 
-import lindenmeyer.lsystem.symbols.*;
+import lindenmeyer.symbols.*;
 
 /**
  * Represente l'axiome de depart

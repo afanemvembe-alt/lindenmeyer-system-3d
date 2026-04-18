@@ -1,18 +1,20 @@
-package lindenmeyer.rules;
+package rules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-
-import lindenmeyer.lsystem.rules.GenericRule;
-import lindenmeyer.lsystem.rules.RuleSet;
-import lindenmeyer.lsystem.rules.RuleSetFactory;
-import lindenmeyer.lsystem.rules.SimpleRule;
-import lindenmeyer.lsystem.symbols.SymbolFactory;
-import lindenmeyer.lsystem.symbols.SymbolList;
-
+// import lindenmeyer.rules.ContextRule;
+import lindenmeyer.rules.GenericRule;
+import lindenmeyer.rules.RuleSet;
+// import lindenmeyer.rules.SimpleRule;
+import lindenmeyer.rules.RuleSetFactory;
+import lindenmeyer.rules.SimpleRule;
+// import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolFactory;
+// import lindenmeyer.symbols.SymbolList;
+import lindenmeyer.symbols.SymbolList;
 import org.junit.jupiter.api.Test;
 
 /**
