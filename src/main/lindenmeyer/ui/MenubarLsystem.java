@@ -15,6 +15,7 @@ import lindenmeyer.lsystem.LSystem;
 import java.nio.file.Files;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 // import netscape.javascript.JSObject;
@@ -142,7 +143,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
             } 
             catch (IOException error) 
             {
-                throw new RuntimeException("Failed to read saves.json", e1);
+                throw new RuntimeException("Failed to read saves.json", error);
             }
 
             JSONObject newSave = new JSONObject();
@@ -156,22 +157,33 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
             SaveDialog dialog = new SaveDialog(this.interfaceLsystem);
             dialog.setVisible(true);
 
-            String name, description;
-            if (dialog.isConfirmed()) {
+            String name = ""; 
+            if (dialog.isConfirmed()) 
+            {
                 name = dialog.getName();
-                description = dialog.getDescription();
+                config.setDescription(dialog.getDescription());
             }
 
             newSave.put("date", timestamp);
             newSave.put("name", name);
             newSave.put("axiom", lSystem.getAxiome().toString());
-
+            newSave.put("rules", lSystem.getRegles().toJsonObject());
+            newSave.put("config", config.toJsonObject());
 
             savedArray.put(newSave);
 
-            // gotta take the info and description
-            // parse into json string
-            // write them out to saves.json
+            try 
+            {
+                Files.writeString(Path.of("src/main/lindenmeyer/ui/saves.json"), savedArray.toString(2));
+            } 
+            catch (JSONException error) 
+            {
+                error.printStackTrace();
+            } 
+            catch (IOException error) 
+            {
+                error.printStackTrace();
+            }
         }
         else if (source == exitMenuItem)
         {

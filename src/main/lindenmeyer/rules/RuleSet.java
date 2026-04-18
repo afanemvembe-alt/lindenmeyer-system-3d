@@ -75,4 +75,13 @@ public class RuleSet implements Iterable<GenericRule> {
         return rules.isEmpty();
     }
 
+    public JSONObject toJsonObject()
+    {
+        JSONObject obj = new JSONObject();
+        for (GenericRule rule : this.rules)
+        {
+            obj.put(rule.getPredecessor().toString(), rule.getSuccessor().toString());
+        }
+        return obj;
+    }
 }

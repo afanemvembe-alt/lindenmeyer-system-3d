@@ -50,4 +50,18 @@ public class ConfigLsystem {
     public double getStartX() { return this.startX; }
 
     public double getStartY() { return this.startY; }
+
+    public void setDescription(String description) { this.info = description; }
+
+    public JSONObject toJsonObject()
+    {
+        JSONObject obj = new JSONObject();
+        obj.put("angle", this.angle);
+        obj.put("pas", this.pas);
+        obj.put("startX", this.startX);
+        obj.put("startY", this.startY);
+        obj.put("maxSteps", 8);
+
+        return obj;
+    }
 }
