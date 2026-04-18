@@ -23,13 +23,6 @@ import org.json.JSONObject;
 
 public class MenubarLsystem extends JMenuBar implements ActionListener
 {
-    // show the config info somewhere
-    
-    // final JMenuBar menuBar = new JMenuBar();
-
-    // JSONObject root = new JSONParser().parse(new FileReader("JSONExample.json"));
-    // private ArrayList<Preset> presets = new ArrayList<>();
-
     // menus
     final JMenu fileMenu = new JMenu("Fichier");
     // file menu items
@@ -126,13 +119,15 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         {
             JOptionPane.showMessageDialog(this, "Nouveau fichier");
         }
+
         else if (source == openMenuItem)
         {
             JOptionPane.showMessageDialog(this, "Ouvrir un fichier");
         }
+
         else if (source == saveMenuItem)
         {
-            JOptionPane.showMessageDialog(this, "Sauvegarde du fichier");
+            // JOptionPane.showMessageDialog(this, "Sauvegarde du fichier");
             JSONArray savedArray = new JSONArray();
             try 
             {
@@ -145,6 +140,8 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
             {
                 throw new RuntimeException("Failed to read saves.json", error);
             }
+
+            
 
             JSONObject newSave = new JSONObject();
             // take current lsystem
@@ -185,11 +182,13 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
                 error.printStackTrace();
             }
         }
+
         else if (source == exitMenuItem)
         {
             // dispose();
             interfaceLsystem.dispose();
         }
+
         else if (source == configMenuItem)
         {
             // JOptionPane.showMessageDialog(this, "Ouvrir les configurations");
@@ -197,15 +196,18 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
             this.interfaceLsystem.getInterfaceConfig().setAngle(this.paramDialog.getLongueur());
             this.interfaceLsystem.getInterfaceConfig().setPas(this.paramDialog.getAngle());
         }
+
         else if (source == zoomInMenuItem)
         {
             this.interfaceLsystem.display.zoomIn();
         }
+
         else if (source == zoomOutMenuItem)
         {
             // JOptionPane.showMessageDialog(this, "Ouvrir les configurations");
             this.interfaceLsystem.display.zoomOut();
         }
+
         else if (source == aboutMenuItem)
         {
             JOptionPane.showMessageDialog(

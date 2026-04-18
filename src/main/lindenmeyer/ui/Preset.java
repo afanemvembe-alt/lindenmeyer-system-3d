@@ -2,7 +2,8 @@ package lindenmeyer.ui;
 
 import lindenmeyer.lsystem.LSystem;
 
-public class Preset {
+public class Preset 
+{
     private String name;
     private ConfigLsystem config;
     private LSystem lSys;
@@ -14,33 +15,15 @@ public class Preset {
         this.lSys = lSys;
     }
 
-    public String getName()
-    {
-        return this.name;
-    }
+    public String getName() { return this.name; }
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+    public void setName(String name) { this.name = name; }
 
-    public ConfigLsystem getConfig()
-    {
-        return this.config;
-    }
+    public ConfigLsystem getConfig() { return this.config; }
 
-    public void setConfig(ConfigLsystem config)
-    {
-        this.config = config;
-    }
+    public void setConfig(ConfigLsystem config) { this.config = config; }
 
-    public LSystem getLSys()
-    {
-        return this.lSys;
-    }
+    public LSystem getLSys() { return this.lSys; }
 
-    public void setLSystem(LSystem lSys)
-    {
-        this.lSys = lSys;
-    }
+    public void setLSystem(LSystem lSys) { this.lSys = lSys; }
 }
