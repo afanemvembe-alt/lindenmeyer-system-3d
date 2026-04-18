@@ -36,11 +36,13 @@ public class RuleSetFactory {
 
             // 1. Extraction du POIDS
             double weight = 1.0;
+            boolean isStochastic = false;
             if (leftPart.startsWith("(")) {
                 int endBracket = leftPart.indexOf(")");
                 if (endBracket > 0) {
                     try {
                         weight = Double.parseDouble(leftPart.substring(1, endBracket));
+                        isStochastic = true;
                     } catch (NumberFormatException e) {
                         weight = 1.0;
                     }
@@ -54,39 +56,33 @@ public class RuleSetFactory {
                 successor.add(this.factory.getSymbol(c));
             }
 
-            // 3. Gestion CONTEXTUELLE ou SIMPLE
+            // 3. AIGUILLAGE vers la bonne classe
             if (leftPart.contains("<") || leftPart.contains(">")) {
-                // On utilise une regex pour découper proprement autour de < et >
                 String[] contextParts = leftPart.split("[<>]");
-
                 if (contextParts.length == 3) {
                     Symbol l = factory.getSymbol(contextParts[0].trim().charAt(0));
                     Symbol p = factory.getSymbol(contextParts[1].trim().charAt(0));
                     Symbol r = factory.getSymbol(contextParts[2].trim().charAt(0));
 
-                    // Correction ici : on crée des SymbolList proprement
-                    SymbolList leftContext = new SymbolList(factory);
-                    leftContext.add(l);
-                    SymbolList rightContext = new SymbolList(factory);
-                    rightContext.add(r);
+                    SymbolList pred = new SymbolList(factory); pred.add(p);
+                    SymbolList leftC = new SymbolList(factory); leftC.add(l);
+                    SymbolList rightC = new SymbolList(factory); rightC.add(r);
 
-                    res.add(new ContextRule(p, successor, leftContext, rightContext, weight));
+                    res.add(new ContextRule(pred, successor, leftC, rightC, weight));
                 }
+            } else if (isStochastic) {
+                Symbol p = factory.getSymbol(leftPart.charAt(0));
+                SymbolList pred = new SymbolList(factory); pred.add(p);
+                res.add(new StochasticRule(pred, successor, weight));
             } else {
-                // Règle simple (ex: F ou (0.5)F)
-                if (leftPart.length() >= 1) {
-                    res.add(new SimpleRule(
-                        factory.getSymbol(leftPart.charAt(0)),
-                        successor,
-                        weight
-                    ));
-                }
+                Symbol p = factory.getSymbol(leftPart.charAt(0));
+                SymbolList pred = new SymbolList(factory); pred.add(p);
+                res.add(new SimpleRule(pred, successor));
             }
         }
         return res;
     }
 
-    // Getters standard
     public char getRuleSeparator() { return this.rule_separator; }
     public char getPartSeparator() { return this.part_separator; }
     public SymbolFactory getFactory() { return this.factory; }

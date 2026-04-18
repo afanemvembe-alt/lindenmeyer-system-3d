@@ -10,48 +10,30 @@ import org.json.JSONObject;
 import java.util.Collection;
 
 public class RuleSet implements Iterable<GenericRule> {
-    private List<GenericRule> rules;
+    private List<GenericRule> rules = new ArrayList<>();
 
-    public RuleSet() {
-        this.rules = new ArrayList<>();
-    }
+    public RuleSet() {}
 
-    // Constructeur pour la compatibilité avec les tests profs
     public RuleSet(Collection<GenericRule> rules) {
         this.rules = new ArrayList<>(rules);
     }
 
-    public List<GenericRule> getRules() {
-        return this.rules;
-    }
+    public List<GenericRule> getRules() { return this.rules; }
+    public void add(GenericRule rule) { this.rules.add(rule); }
 
-   
-    public void clear() {
-        this.rules.clear();
-    }
-
-    public void add(GenericRule rule) {
-        this.rules.add(rule);
-    }
-
-    /**
-     * Gère le choix de la règle en fonction du contexte et du poids (stochastique)
-     */
     public SymbolList successorOf(SymbolList symbol, SymbolList left, SymbolList right) {
         List<GenericRule> applicableRules = new ArrayList<>();
         double totalWeight = 0;
 
-        // 1. Filtrer les règles applicables selon le contexte
         for (GenericRule r : rules) {
             if (r.isApplicable(symbol, left, right)) {
                 applicableRules.add(r);
-                totalWeight += r.getWeight();
+                totalWeight += r.getWeight(); // Marche car défini dans GenericRule
             }
         }
 
         if (applicableRules.isEmpty()) return null;
 
-        // 2. Tirage au sort pondéré (Stochastique)
         double dice = Math.random() * totalWeight;
         double currentRange = 0;
 
@@ -62,18 +44,17 @@ public class RuleSet implements Iterable<GenericRule> {
         return applicableRules.get(0).getSuccessor();
     }
 
-    public SymbolList successorOf(SymbolList symbol) {
-        return successorOf(symbol, null, null);
-    }
+@Override
+public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof RuleSet)) return false;
+    RuleSet other = (RuleSet) obj;
+    // Deux RuleSets sont égaux si leurs listes de règles sont identiques
+    return java.util.Objects.equals(this.rules, other.getRules());
+}
 
     @Override
-    public Iterator<GenericRule> iterator() {
-        return rules.iterator();
-    }
-
-    public boolean isEmpty() {
-        return rules.isEmpty();
-    }
+    public Iterator<GenericRule> iterator() { return rules.iterator(); }
 
     public JSONObject toJsonObject()
     {
