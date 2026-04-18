@@ -12,7 +12,9 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
+import lindenmeyer.turtle.ConfigTortue;
 
 public class ColorPicker extends JDialog implements ActionListener {
 
@@ -20,6 +22,7 @@ public class ColorPicker extends JDialog implements ActionListener {
     private Color selectedColor = null;
     private JPanel colorPanel;
     private JPanel bottomPanel;
+    private ConfigTortue configTortue;
 
     protected class ColorButton extends JButton {
 
@@ -35,8 +38,8 @@ public class ColorPicker extends JDialog implements ActionListener {
         }
     }
 
-    public ColorPicker() {
-        super();
+    public ColorPicker(JFrame parent) {
+        super(parent);
         colors = new ArrayList<>();
         LayoutManager layout = new BorderLayout();
         setLayout(layout);
@@ -103,6 +106,10 @@ public class ColorPicker extends JDialog implements ActionListener {
                 break;
             case "removeColor":
                 removeSelectedColor();
+                break;
+            case "valider":
+                break;
+            case "annuler":
                 break;
             default:
                 break;

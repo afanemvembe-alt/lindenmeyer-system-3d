@@ -97,7 +97,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     //Selecteur de Couleurs
     public JComboBox<String> colorSelector;
     private Color selectedColor = Color.BLACK;
-    private ColorPicker colorPicker = new ColorPicker();
+    private ColorPicker colorPicker;
 
     // paramètres tortue
     private int longueur = 10;
@@ -272,7 +272,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         colorSelector = new JComboBox<>(colors);
         colorSelector.setSelectedIndex(0);
         colorSelector.addActionListener(this);
-
+        colorPicker = new ColorPicker(this);
         // Slider historique
         this.historySlider = new JSlider(0, this.maxStep, 0);
         this.historySlider.setMajorTickSpacing(1);
