@@ -2,10 +2,12 @@ package lindenmeyer.turtle;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Arrays;
 
 public class ConfigTortue {
     private double pas; // remplace le "10"(la distance pour F)
     private double angleRotation; // remplace le "60"( l'angle pour + et -)
+	private ColorFactory colorFactory;
 
     // Dictionnaire qui associe un caractère à une action
     private Map<Character, CommandeTortue> commandes = new HashMap<>();
@@ -13,6 +15,7 @@ public class ConfigTortue {
     public ConfigTortue(double pas, double angleRotation) {
         this.pas = pas;
         this.angleRotation = angleRotation;
+        this.colorFactory = new ColorFactory(Arrays.asList(ColorFactory.BASE_COLORS));
     }
 
     public ConfigTortue() {
@@ -36,5 +39,14 @@ public class ConfigTortue {
     public double getAngleRotation() {
         return angleRotation;
     }
+    
+    public ColorFactory getColorFactory() {
+		return colorFactory;
+	}
+
+	public void setColorFactory(ColorFactory colorFactory) {
+		this.colorFactory = colorFactory;
+	}
+
 
 }

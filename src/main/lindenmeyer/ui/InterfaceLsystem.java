@@ -48,6 +48,7 @@ import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
+import lindenmeyer.turtle.ColorFactory;
 import lindenmeyer.turtle.ConfigTortue;
 import lindenmeyer.turtle.Segment;
 import lindenmeyer.turtle.Segment3D;
@@ -60,6 +61,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
     public VueLsystem display;
     public LSystem lsystem;
+    private SymbolList currentSymbols = null;
 
     //Panels de commande
     public JPanel commands;
@@ -89,15 +91,15 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     //Listes de systemes predefinis et leur configuration
     public ArrayList<LSystem> preSet;
     private ArrayList<ConfigLsystem> preSetConfig;
-    //public JComboBox<ConfigLsystem> presetSelector;
 
     //Boite de dialogue
     private ParamDialog paramDialog;
 
     //Selecteur de Couleurs
     public JComboBox<String> colorSelector;
-    private Color selectedColor = Color.BLACK;
+    private Color selectedColor = null;
     private ColorPicker colorPicker;
+    private ColorFactory customColorFactory3D;
 
     // paramètres tortue
     private int longueur = 10;
@@ -296,11 +298,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             }
             State s = (State) this.history.getState(index);
             SymbolList symbols = s.getState();
+            this.currentSymbols = symbols;
 
             ConfigTortue config = new ConfigTortue(
                 this.longueur,
                 this.angleRotation
             );
+            applyCustom3DColors(config);
             // Pour la 2D
             List<Segment> segments2D = build2DSegments(
                 symbols,
@@ -476,6 +480,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
+    //Conversion de couleurs AWT to JFX
     private javafx.scene.paint.Color awtToFxColor(Color c) {
         if (c == null) return null;
         return javafx.scene.paint.Color.rgb(
@@ -486,6 +491,19 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         );
     }
 
+    private List<javafx.scene.paint.Color> awtListToFxList(
+        List<Color> awtColors
+    ) {
+        List<javafx.scene.paint.Color> fxColors = new ArrayList<>();
+        for (Color c : awtColors) {
+            if (c != null) {
+                fxColors.add(awtToFxColor(c));
+            }
+        }
+        return fxColors;
+    }
+
+    //Configuration et validation de l'interface
     public void setLongeur(int l) {
         this.longueur = l;
     }
@@ -508,6 +526,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     }
 
+    //Création des boites de dialogue
     private JDialog loadingDialog() {
         JDialog loading = new JDialog(this, "Chargement", true);
         loading.setLayout(new BorderLayout());
@@ -520,7 +539,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         return loading;
     }
 
-    //Constructeurs de segments
+    //Construction des segments 2D/3D à partir des symboles
     private List<Segment> build2DSegments(
         SymbolList symbols,
         double startX,
@@ -542,7 +561,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         return tortue3D.getSegments();
     }
 
-    //Dessin des systèmes
+    //Mise à jour et nettoyage des vues 2D/3D
     private void update2D(List<Segment> segments) {
         this.display.setSegments(segments);
         this.display.repaint();
@@ -557,7 +576,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         });
     }
 
-    //Clear 2D et 3D
     private void clear2D() {
         this.display.clearSegments();
         this.display.repaint();
@@ -567,7 +585,27 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         update3D(new ArrayList<>());
     }
 
-    //Nombre d'étapes
+    //Gestion des palettes de couleurs personalisées pour la vue3D
+    private void applyCustom3DColors(ConfigTortue config) {
+        if (customColorFactory3D != null) {
+            config.setColorFactory(customColorFactory3D);
+        }
+    }
+
+    private void refreshCurrent3DWithCustomColors() {
+        if (this.currentSymbols == null) return;
+
+        ConfigTortue config = new ConfigTortue(longueur, angleRotation);
+        applyCustom3DColors(config);
+
+        List<Segment3D> segments3D = build3DSegments(
+            this.currentSymbols,
+            config
+        );
+        update3D(segments3D);
+    }
+
+    // Utilitaires de génération et copie des L-systèmes
     private int getStepCount(String stepText, int defaultValue) {
         int n = defaultValue;
         try {
@@ -585,7 +623,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         return n;
     }
 
-    //Copie d'un LSystem
     private LSystem copyLSystem(LSystem source) {
         return new LSystem(
             new Axiom(source.getAxiome().getContent()),
@@ -648,6 +685,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             for (GenericRule r : rules) {
                 this.display.getLSystem().ajouterRegle(r);
             }
+            this.currentSymbols = null;
         } else if (e.getSource() == this.switch3D) {
             if (mode3D) {
                 this.centerLayout.show(this.centerPanel, "2D");
@@ -665,6 +703,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 int n = getStepCount(step, 2);
 
                 ConfigTortue config = new ConfigTortue(longueur, angleRotation);
+                applyCustom3DColors(config);
                 LSystem temp = copyLSystem(this.display.getLSystem());
                 history.addState(new State(temp.getCurrentGeneration()));
 
@@ -679,6 +718,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     400,
                     config
                 );
+                SymbolList finalSymbols = temp.getCurrentGeneration();
+                this.currentSymbols = finalSymbols;
 
                 //Gestion 3D------------------------
                 List<Segment3D> finalSegments3D = build3DSegments(
@@ -690,8 +731,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
                 // Mise à jour de l'UI sur le thread Swing
                 SwingUtilities.invokeLater(() -> {
-                    //this.longueur = config.pas;
-                    //this.angleRotation = config.angleRotation;
                     update2D(finalSegments);
                     this.historySlider.setMaximum(this.history.size());
                     this.historySlider.setValue(this.history.size());
@@ -717,7 +756,19 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 case "Orange" -> this.selectedColor = Color.ORANGE;
                 case "Rose" -> this.selectedColor = Color.PINK;
                 case "Gris" -> this.selectedColor = Color.GRAY;
-                case "Custom..." -> colorPicker.setVisible(true);
+                case "Custom..." -> {
+                    colorPicker.setVisible(true);
+                    List<Color> awtColors = colorPicker.getColors();
+                    List<javafx.scene.paint.Color> fxColors = awtListToFxList(
+                        awtColors
+                    );
+                    if (!fxColors.isEmpty()) {
+                        customColorFactory3D = new ColorFactory(fxColors);
+                        this.selectedColor = null;
+                        refreshCurrent3DWithCustomColors();
+                    }
+                    return;
+                }
             }
 
             List<Segment> current = this.display.getSegments();
@@ -780,7 +831,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 ConfigLsystem cfg = this.preSetConfig.get(pos);
 
                 ConfigTortue configT = new ConfigTortue(cfg.pas, cfg.angle);
-
+                applyCustom3DColors(configT);
                 LSystem temp = copyLSystem(chosen);
 
                 int n = getStepCount(step, 3);
@@ -804,7 +855,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 );
                 update3D(finalSegments3D);
                 //-------------3D pour random------------
-
+                SymbolList finalSymbols = temp.getCurrentGeneration();
+                this.currentSymbols = finalSymbols;
                 SwingUtilities.invokeLater(() -> {
                     this.longueur = cfg.pas;
                     this.angleRotation = cfg.angle;
@@ -830,69 +882,73 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 playing = false;
                 return;
             }
-
             playing = true;
             play.setText("Pause");
-
             int n = getStepCount(step, 3);
-
             LSystem temp = copyLSystem(this.display.getLSystem());
             this.display.setLSystem(temp);
-            for (int i = 0; i < n; i++) temp.step();
-
+            for (int i = 0; i < n; i++) {
+                temp.step();
+            }
+            this.currentSymbols = temp.getCurrentGeneration();
             ConfigTortue config = new ConfigTortue(longueur, angleRotation);
+            applyCustom3DColors(config);
             List<Segment> finalSegments = build2DSegments(
                 temp.getCurrentGeneration(),
                 300,
                 400,
                 config
             );
-
             List<Segment3D> finalSegments3D = build3DSegments(
                 temp.getCurrentGeneration(),
                 config
             );
-
             clear2D();
-            final int[] index = { 0 };
-
+            clear3D();
+            final int[] index2D = { 0 };
+            final int[] index3D = { 0 };
             if (playTimer != null && playTimer.isRunning()) {
                 playTimer.stop();
             }
-            playTimer = new Timer(20, null);
+            playTimer = new Timer(30, null);
             playTimer.addActionListener(ev -> {
-                if (index[0] >= finalSegments.size()) {
+                boolean done2D = index2D[0] >= finalSegments.size();
+                boolean done3D = index3D[0] >= finalSegments3D.size();
+                if (done2D && done3D) {
                     playTimer.stop();
                     play.setText("Play");
                     playing = false;
                     return;
                 }
-
-                List<Segment> current = new ArrayList<>(
-                    this.display.getSegments()
-                );
-
-                int speed = 10;
-                for (
-                    int i = 0;
-                    i < speed && index[0] < finalSegments.size();
-                    i++
-                ) {
-                    current.add(finalSegments.get(index[0]));
-                    index[0]++;
+                int speed = 5;
+                // Animation 2D
+                if (!done2D) {
+                    List<Segment> current2D = new ArrayList<>(
+                        this.display.getSegments()
+                    );
+                    for (
+                        int i = 0;
+                        i < speed && index2D[0] < finalSegments.size();
+                        i++
+                    ) {
+                        current2D.add(finalSegments.get(index2D[0]));
+                        index2D[0]++;
+                    }
+                    update2D(current2D);
                 }
-
-                update2D(current);
-                final int currentIndex = index[0];
-                List<Segment3D> current3D = new ArrayList<>(
-                    finalSegments3D.subList(
-                        0,
-                        Math.min(currentIndex, finalSegments3D.size())
-                    )
-                );
-                update3D(current3D);
+                // Animation 3D
+                if (!done3D) {
+                    int next3D = Math.min(
+                        index3D[0] + speed,
+                        finalSegments3D.size()
+                    );
+                    List<Segment3D> current3D = new ArrayList<>(
+                        finalSegments3D.subList(0, next3D)
+                    );
+                    index3D[0] = next3D;
+                    update3D(current3D);
+                }
             });
-
             playTimer.start();
         }
     }
