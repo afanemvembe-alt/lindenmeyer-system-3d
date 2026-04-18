@@ -1,6 +1,7 @@
-package lindenmeyer.ui;
+package modeleIO;
 
 import lindenmeyer.lsystem.LSystem;
+import lindenmeyer.ui.ConfigLsystem;
 
 public class Preset 
 {
