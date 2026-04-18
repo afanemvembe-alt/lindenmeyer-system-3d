@@ -39,7 +39,7 @@ public class ColorPicker extends JDialog implements ActionListener {
     }
 
     public ColorPicker(JFrame parent) {
-        super(parent);
+        super(parent, "Selection de couleurs", true);
         colors = new ArrayList<>();
         LayoutManager layout = new BorderLayout();
         setLayout(layout);
