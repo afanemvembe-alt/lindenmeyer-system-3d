@@ -61,6 +61,14 @@ public class ColorPicker extends JDialog implements ActionListener {
         bottomPanel.add(addButton);
         bottomPanel.add(okButton);
         bottomPanel.add(cancelButton);
+
+        addButton.setActionCommand("addColor");
+        okButton.setActionCommand("valider");
+        cancelButton.setActionCommand("annuler");
+
+        addButton.addActionListener(this);
+        okButton.addActionListener(this);
+        cancelButton.addActionListener(this);
     }
 
     protected void addColor(Color color) {
