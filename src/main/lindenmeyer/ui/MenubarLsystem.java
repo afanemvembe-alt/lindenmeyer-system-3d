@@ -31,7 +31,8 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     final JMenu fileMenu = new JMenu("Fichier");
     // file menu items
     JMenuItem newMenuItem = new JMenuItem("New");
-    JMenuItem openMenuItem = new JMenuItem("Ouvrir");
+
+    final JMenu openMenu = new JMenu("Ouvrir");
     JMenuItem saveMenuItem = new JMenuItem("Sauvegarder");
     JMenuItem exitMenuItem = new JMenuItem("Sortir");
 
@@ -46,7 +47,6 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     JMenuItem zoomOutMenuItem = new JMenuItem("Zoom -");
 
     final JMenu presetMenu = new JMenu("Presets");
-    JMenuItem addPresetMenuItem = new JMenuItem("Ajouter preset");
 
     final JMenu aboutMenu = new JMenu("À propos");
     // about menu items
@@ -54,13 +54,16 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
     private ParamDialog paramDialog;
     private InterfaceLsystem interfaceLsystem;
+    
+    String savePathString = System.getProperty("user.home").concat("/saves.json");
+    private ModeleList savedArray = new ModeleList(savePathString);
 
     public MenubarLsystem(InterfaceLsystem interfaceLsystem)
     {
         this.interfaceLsystem = interfaceLsystem;
         // file menu items
         newMenuItem.addActionListener(this);
-        openMenuItem.addActionListener(this);
+        // openMenuItem.addActionListener(this);
         saveMenuItem.addActionListener(this);
         exitMenuItem.addActionListener(this);
 
@@ -81,7 +84,14 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         // add menu items to menu
         // file menu
         fileMenu.add(newMenuItem);
-        fileMenu.add(openMenuItem);
+
+        fileMenu.add(openMenu);
+        for (ModeleIO saves : this.savedArray)
+        {
+            openMenu.add(createMenuItem(saves));
+        }
+
+        // fileMenu.add(openMenuItem);
         fileMenu.add(saveMenuItem);
         fileMenu.addSeparator();
         fileMenu.add(exitMenuItem);
@@ -94,8 +104,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         {
             presetMenu.add(createMenuItem(preset));
         }
-        presetMenu.addSeparator();
-        presetMenu.add(addPresetMenuItem);
+
 
 
         // affichage menu
@@ -124,17 +133,8 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
             JOptionPane.showMessageDialog(this, "Nouveau fichier");
         }
 
-        else if (source == openMenuItem)
-        {
-            JOptionPane.showMessageDialog(this, "Ouvrir un fichier");
-        }
-
         else if (source == saveMenuItem)
         {
-            String savePathString = System.getProperty("user.home").concat("/saves.json");
-
-            ModeleList savedArray = new ModeleList(savePathString);
-
             LSystem lSystem = this.interfaceLsystem.getLSystem();
             ConfigLsystem config = this.interfaceLsystem.getInterfaceConfig();
 
@@ -150,7 +150,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
             ModeleIO newSave = new Custom(name, config, lSystem);
 
-            // System.out.println(newSave.toJSON().toString());
+            //System.out.println(newSave.toJSON().toString());
 
             savedArray.add(newSave);
             savedArray.save();
