@@ -43,6 +43,8 @@ import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.lsystem.history.History;
 import lindenmeyer.lsystem.history.State;
+import lindenmeyer.modeleIO.ModeleIO;
+import lindenmeyer.modeleIO.ModeleList;
 import lindenmeyer.modeleIO.Preset;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSet;
@@ -95,7 +97,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener
     public JTextArea presetInfo;
 
     //Listes de systemes predefinis et leur configuration
-    public ArrayList<Preset> presets = new ArrayList<>();
+    public ModeleList presets = new ModeleList("src/resources/lindenmeyer/ui/presets.json");
 
     
     //Boite de dialogue
@@ -133,7 +135,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 
     public InterfaceLsystem() {
         super("LSystem");
-		loadPresets();
 
         MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
@@ -620,6 +621,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener
                 config.getStartY(),
                 configTortue
             );
+            update2D(finalSegments2D);
+
 
             // --- Gestion3D pour random------------
             List<Segment3D> finalSegments3D = build3DSegments(
@@ -629,16 +632,17 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             update3D(finalSegments3D);
 
 			SwingUtilities.invokeLater(() -> {
-					// this.display.setSegments(finalSegments);
+					this.display.setSegments(finalSegments);
 					this.presetInfo.setText(config.info);
                     this.display.setLSystem(temp);
                     this.display.getLSystem().setAxiome(
                         new Axiom(lSystem.getAxiome().getContent())
                     );
-                    update2D(finalSegments);
                     this.historySlider.setMaximum(this.history.size());
                     this.historySlider.setValue(this.history.size());
                     loading.dispose();
+                    this.display.revalidate();
+                    this.display.repaint();
 				});
 		}).start();
 		loading.setVisible(true);
@@ -797,8 +801,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 
         else if (e.getSource() == this.random) 
         {
-            int pos = (int) (Math.random() * this.presets.size());
-            Preset chosen = this.presets.get(pos);
+            int pos = (int) (Math.random() * this.presets.getModeles().size());
+            ModeleIO chosen = this.presets.getModeles().get(pos);
 
             draw(step, chosen.getLSystem(), chosen.getConfig(), display, history);
         } 
@@ -879,32 +883,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener
         }
     }
 
-	public void loadPresets()
-	{
-		try 
-        {
-            String fileString = Files.readString(Path.of("src/main/lindenmeyer/ui/presets.json"));
-
-            JSONObject root = new JSONObject(fileString);
-            JSONArray presetsArray = root.getJSONArray("modeles");
-
-
-            for (int i=0; i<presetsArray.length(); i++)
-            {
-                JSONObject presetObj = presetsArray.getJSONObject(i);
-                LSystem lSyst = new LSystem(presetObj);
-                ConfigLsystem config = new ConfigLsystem(presetObj);
-
-                this.presets.add(new Preset(presetObj.getString("name"), config, lSyst));
-            }
-        } 
-        catch (IOException e) 
-        {
-            throw new RuntimeException("Failed to read presets.json", e);
-        }
-	}
-
-	public ArrayList<Preset> getPresets() { return this.presets; }
+	public ModeleList getPresets() { return this.presets; }
     
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {

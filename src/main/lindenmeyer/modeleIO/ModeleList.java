@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public abstract class ModeleList implements Iterable<ModeleIO>
+public class ModeleList implements Iterable<ModeleIO>
 {
     private List<ModeleIO> modeles = new ArrayList<>();
 
@@ -28,7 +28,14 @@ public abstract class ModeleList implements Iterable<ModeleIO>
         String savePathString = System.getProperty("user.home").concat("/saves.json");
 
         if (Files.notExists(path)) {
-            throw new IllegalArgumentException("File does not exist: " + pathString);
+            if (pathString.equals(savePathString))
+            {
+                this.modeles = new ArrayList<>();
+                return;
+            }
+
+            else
+                throw new IllegalArgumentException("File does not exist: " + pathString);
         }
 
         try 
@@ -42,6 +49,8 @@ public abstract class ModeleList implements Iterable<ModeleIO>
             for (int i=0; i<modelesArray.length(); i++)
             {
                 JSONObject modeleObject = modelesArray.getJSONObject(i);
+
+                // System.out.println(modeleObject.toString());
 
                 if (pathString.equals("src/resources/lindenmeyer/ui/presets.json"))
                     this.modeles.add(new Preset(modeleObject));
@@ -63,9 +72,14 @@ public abstract class ModeleList implements Iterable<ModeleIO>
     {
         String savePathString = System.getProperty("user.home").concat("/saves.json");
 
-        JSONArray saveArray = new JSONArray(this.modeles);
+        JSONArray saveArray = new JSONArray();
+        for (ModeleIO modele : this.modeles)
+        {
+            saveArray.put(modele.toJSON());
+        }
         JSONObject saveObject = new JSONObject();
         saveObject.put("modeles", saveArray);
+        // System.out.println(saveObject.toString());
 
         try 
         {

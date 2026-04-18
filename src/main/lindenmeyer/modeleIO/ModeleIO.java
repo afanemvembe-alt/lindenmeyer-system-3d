@@ -28,19 +28,22 @@ public abstract class ModeleIO
 
     public ModeleIO(JSONObject object)
     {
+        // System.out.println(object.toString());
         this.name = object.getString("name");
 
+        JSONObject configObject = object.getJSONObject("config");
+
         String info = object.getString("name")
-        + " - Max steps " + object.getInt("maxSteps")
-        + "\nDescription: " + object.getString("description")
-        + "\nAngle: " + object.getInt("angle")
-        + "\nLongueur: " + object.getInt("pas");
+        // + " - Max steps " + configObject.getInt("maxSteps")
+        // + "\nDescription: " + configObject.getString("description")
+        + "\nAngle: " + configObject.getInt("angle")
+        + "\nLongueur: " + configObject.getInt("pas");
 
         this.config = new ConfigLsystem(
-            object.getInt("angle"),
-            object.getInt("pas"),
-            object.getInt("startX"),
-            object.getInt("startY"),
+            configObject.getInt("angle"),
+            configObject.getInt("pas"),
+            configObject.getInt("startX"),
+            configObject.getInt("startY"),
             info
         );
 
@@ -91,10 +94,11 @@ public abstract class ModeleIO
         configObject.put("pas", this.config.getPas());
         configObject.put("startX", this.config.getStartX());
         configObject.put("startY", this.config.getStartY());
-        configObject.put("maxSteps", 8);
+        // configObject.put("description", this.lSys)
+        // configObject.put("maxSteps", 8);
 
         object.put("config", configObject);
-        System.out.println(object.toString());
+        // System.out.println(object.toString());
 
         return object;
     }

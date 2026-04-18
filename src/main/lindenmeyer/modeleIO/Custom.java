@@ -12,9 +12,9 @@ public class Custom extends ModeleIO
 {
     private String timestamp;
     
-    public Custom(String name, ConfigLsystem config, LSystem lsystem)
+    public Custom(String name, ConfigLsystem config, LSystem lSystem)
     {
-        super(name, config, lsystem);
+        super(name, config, lSystem);
         this.timestamp = LocalDateTime.now().toString();
     }
 
@@ -46,7 +46,7 @@ public class Custom extends ModeleIO
         configObject.put("pas", this.config.getPas());
         configObject.put("startX", this.config.getStartX());
         configObject.put("startY", this.config.getStartY());
-        configObject.put("maxSteps", 8);
+        // configObject.put("maxSteps", 8);
         object.put("config", configObject);
 
         return object;
