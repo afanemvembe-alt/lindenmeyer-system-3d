@@ -43,6 +43,7 @@ import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.lsystem.history.History;
 import lindenmeyer.lsystem.history.State;
+import lindenmeyer.modeleIO.Preset;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSet;
 import lindenmeyer.rules.RuleSetFactory;
@@ -59,7 +60,6 @@ import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.axiom.Axiom;
 // import java.awt.Button;
 import lindenmeyer.ui.components.*;
-import modeleIO.Preset;
 
 import javax.swing.*;
 import java.nio.file.Path;
@@ -800,7 +800,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             int pos = (int) (Math.random() * this.presets.size());
             Preset chosen = this.presets.get(pos);
 
-            draw(step, chosen.getLSys(), chosen.getConfig(), display, history);
+            draw(step, chosen.getLSystem(), chosen.getConfig(), display, history);
         } 
 
         else if (e.getSource() == this.play) {
@@ -886,7 +886,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             String fileString = Files.readString(Path.of("src/main/lindenmeyer/ui/presets.json"));
 
             JSONObject root = new JSONObject(fileString);
-            JSONArray presetsArray = root.getJSONArray("presets");
+            JSONArray presetsArray = root.getJSONArray("modeles");
 
 
             for (int i=0; i<presetsArray.length(); i++)

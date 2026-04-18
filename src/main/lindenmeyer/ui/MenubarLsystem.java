@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import javax.swing.*;
 
 import lindenmeyer.lsystem.LSystem;
-import modeleIO.Preset;
+import lindenmeyer.modeleIO.Preset;
 
 import java.nio.file.Files;
 
@@ -128,8 +128,10 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
         else if (source == saveMenuItem)
         {
-            // JOptionPane.showMessageDialog(this, "Sauvegarde du fichier");
             JSONArray savedArray = new JSONArray();
+
+            /**
+            // JOptionPane.showMessageDialog(this, "Sauvegarde du fichier");
             try 
             {
                 String fileString = Files.readString(Path.of("src/main/lindenmeyer/ui/saves.json"));
@@ -142,6 +144,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
                 throw new RuntimeException("Failed to read saves.json", error);
             }
 
+            */
             
 
             JSONObject newSave = new JSONObject();
@@ -170,6 +173,9 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
             savedArray.put(newSave);
 
+            System.out.println(savedArray.toString());
+
+            /**
             try 
             {
                 Files.writeString(Path.of("src/main/lindenmeyer/ui/saves.json"), savedArray.toString(2));
@@ -182,6 +188,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
             {
                 error.printStackTrace();
             }
+                 */
         }
 
         else if (source == exitMenuItem)
@@ -231,9 +238,9 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
     public void applyPreset(Preset preset)
     {
-        this.interfaceLsystem.setLSystem(preset.getLSys());
+        this.interfaceLsystem.setLSystem(preset.getLSystem());
         this.interfaceLsystem.setInterfaceConfig(preset.getConfig());
-        this.interfaceLsystem.getVueLsystem().setLSystem(preset.getLSys());
+        this.interfaceLsystem.getVueLsystem().setLSystem(preset.getLSystem());
     }
 
     public static void main(String[] args)
