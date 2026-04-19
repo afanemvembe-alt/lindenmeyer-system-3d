@@ -922,45 +922,83 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     history
                 );
             }
-            // case "play" -> {
-            //     if (playing) {
-            //         if (playTimer != null && playTimer.isRunning()) {
-            //             playTimer.stop();
-            //         }
-            //         play.setText("Play");
-            //         playing = false;
-            //         return;
-            //     }
-            //     int speed = 5;
-            //     // Animation 2D
-            //     if (!done2D) {
-            //         List<Segment> current2D = new ArrayList<>(
-            //             this.display.getSegments()
-            //         );
-            //         for (
-            //             int i = 0;
-            //             i < speed && index2D[0] < finalSegments.size();
-            //             i++
-            //         ) {
-            //             current2D.add(finalSegments.get(index2D[0]));
-            //             index2D[0]++;
-            //         }
-            //         update2D(current2D);
-            //     }
-            //     // Animation 3D
-            //     if (!done3D) {
-            //         int next3D = Math.min(
-            //             index3D[0] + speed,
-            //             finalSegments3D.size()
-            //         );
-            //         List<Segment3D> current3D = new ArrayList<>(
-            //             finalSegments3D.subList(0, next3D)
-            //         );
-            //         index3D[0] = next3D;
-            //         update3D(current3D);
-            //     }
-            // });
-            // playTimer.start();
+            case "play" -> {
+                if (playing) {
+                    if (playTimer != null && playTimer.isRunning()) {
+                        playTimer.stop();
+                    }
+                    play.setText("Play");
+                    playing = false;
+                    return;
+                }
+
+                playing = true;
+                play.setText("Pause");
+
+                int n = getStepCount(step, 3);
+
+                LSystem temp = copyLSystem(this.display.getLSystem());
+                this.display.setLSystem(temp);
+                for (int i = 0; i < n; i++) temp.step();
+
+                ConfigTortue config = new ConfigTortue(
+                    this.config.getPas(),
+                    this.config.getAngle()
+                );
+                List<Segment> finalSegments = build2DSegments(
+                    temp.getCurrentGeneration(),
+                    300,
+                    400,
+                    config
+                );
+
+                List<Segment3D> finalSegments3D = build3DSegments(
+                    temp.getCurrentGeneration(),
+                    config
+                );
+
+                clear2D();
+                final int[] index = { 0 };
+
+                if (playTimer != null && playTimer.isRunning()) {
+                    playTimer.stop();
+                }
+                playTimer = new Timer(20, null);
+                playTimer.addActionListener(ev -> {
+                    if (index[0] >= finalSegments.size()) {
+                        playTimer.stop();
+                        play.setText("Play");
+                        playing = false;
+                        return;
+                    }
+
+                    List<Segment> current = new ArrayList<>(
+                        this.display.getSegments()
+                    );
+
+                    int speed = 10;
+                    for (
+                        int i = 0;
+                        i < speed && index[0] < finalSegments.size();
+                        i++
+                    ) {
+                        current.add(finalSegments.get(index[0]));
+                        index[0]++;
+                    }
+
+                    update2D(current);
+                    final int currentIndex = index[0];
+                    List<Segment3D> current3D = new ArrayList<>(
+                        finalSegments3D.subList(
+                            0,
+                            Math.min(currentIndex, finalSegments3D.size())
+                        )
+                    );
+                    update3D(current3D);
+                });
+
+                playTimer.start();
+            }
         }
     }
 
