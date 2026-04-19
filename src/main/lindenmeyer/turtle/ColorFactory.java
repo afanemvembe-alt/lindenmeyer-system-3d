@@ -100,6 +100,10 @@ public class ColorFactory {
         colorMap.put(o, c);
     }
 
+    public List<Color> getColors() {
+        return colors;
+    }
+
     /**
      * Empties the internal color attributions of the factory.
      */

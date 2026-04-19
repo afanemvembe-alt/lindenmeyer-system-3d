@@ -58,6 +58,7 @@ import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
+import lindenmeyer.turtle.ColorFactory;
 import lindenmeyer.turtle.ConfigTortue;
 import lindenmeyer.turtle.Segment;
 import lindenmeyer.turtle.Segment3D;
@@ -103,7 +104,9 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
     //Selecteur de Couleurs
     public JComboBox<String> colorSelector;
-    private Color selectedColor = Color.BLACK;
+    private Color selectedColor = null;
+    private ColorPicker colorPicker;
+    private ColorFactory customColorFactory3D;
 
     public JSlider historySlider;
     public History history = new History();
@@ -130,6 +133,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     private int lastMouseX;
     private int lastMouseY;
     private boolean panning3D = false;
+
+    private SymbolList currentSymbols;
 
     public InterfaceLsystem() {
         super("LSystem");
@@ -298,11 +303,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             }
             State s = (State) this.history.getState(index);
             SymbolList symbols = s.getState();
+            this.currentSymbols = symbols;
 
             ConfigTortue config = new ConfigTortue(
                 this.config.getPas(),
                 this.config.getAngle()
             );
+            applyCustom3DColors(config);
             // Pour la 2D
             List<Segment> segments2D = build2DSegments(
                 symbols,
@@ -474,6 +481,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
+    //Conversion de couleurs AWT to JFX
     private javafx.scene.paint.Color awtToFxColor(Color c) {
         if (c == null) return null;
         return javafx.scene.paint.Color.rgb(
@@ -484,6 +492,27 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         );
     }
 
+    private List<javafx.scene.paint.Color> awtListToFxList(
+        List<Color> awtColors
+    ) {
+        List<javafx.scene.paint.Color> fxColors = new ArrayList<>();
+        for (Color c : awtColors) {
+            if (c != null) {
+                fxColors.add(awtToFxColor(c));
+            }
+        }
+        return fxColors;
+    }
+
+    //Configuration et validation de l'interface
+    public void setLongeur(int l) {
+        this.config.setPas(l);
+    }
+
+    public void setAngleRotation(int a) {
+        this.config.setAngle(a);
+    }
+
     public void showError(JTextField field, String message) {
         field.setBorder(BorderFactory.createLineBorder(Color.RED));
         JOptionPane.showMessageDialog(
@@ -492,55 +521,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             "Erreur de saisie",
             JOptionPane.ERROR_MESSAGE
         );
-    }
-
-    private JDialog loadingDialog() {
-        JDialog loading = new JDialog(this, "Chargement", true);
-        loading.setLayout(new BorderLayout());
-        loading.add(
-            new JLabel("Generation en cours...", SwingConstants.CENTER),
-            BorderLayout.CENTER
-        );
-        loading.setSize(200, 100);
-        loading.setLocationRelativeTo(this);
-        return loading;
-    }
-
-    //Constructeurs de segments
-    private List<Segment> build2DSegments(
-        SymbolList symbols,
-        double startX,
-        double startY,
-        ConfigTortue config
-    ) {
-        Tortue tortue = new Tortue(startX, startY, -90, config);
-        return tortue.interpreter(symbols.toString());
-    }
-
-    private List<Segment3D> build3DSegments(
-        SymbolList symbols,
-        ConfigTortue config
-    ) {
-        Turtle3D tortue3D = new Turtle3D(config);
-        for (Symbol s : symbols) {
-            s.interpret(tortue3D);
-        }
-        return tortue3D.getSegments();
-    }
-
-    //Dessin des systèmes
-    private void update2D(List<Segment> segments) {
-        this.display.setSegments(segments);
-        this.display.repaint();
-    }
-
-    private void update3D(List<Segment3D> segments) {
-        Platform.runLater(() -> {
-            if (this.vue3D != null) {
-                this.vue3D.setSegments(segments);
-                this.vue3D.redraw();
-            }
-        });
     }
 
     //Clear 2D et 3D
@@ -692,6 +672,79 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         loading.setVisible(true);
     }
 
+    //Création des boites de dialogue
+    private JDialog loadingDialog() {
+        JDialog loading = new JDialog(this, "Chargement", true);
+        loading.setLayout(new BorderLayout());
+        loading.add(
+            new JLabel("Generation en cours...", SwingConstants.CENTER),
+            BorderLayout.CENTER
+        );
+        loading.setSize(200, 100);
+        loading.setLocationRelativeTo(this);
+        return loading;
+    }
+
+    //Construction des segments 2D/3D à partir des symboles
+    private List<Segment> build2DSegments(
+        SymbolList symbols,
+        double startX,
+        double startY,
+        ConfigTortue config
+    ) {
+        Tortue tortue = new Tortue(startX, startY, -90, config);
+        return tortue.interpreter(symbols.toString());
+    }
+
+    private List<Segment3D> build3DSegments(
+        SymbolList symbols,
+        ConfigTortue config
+    ) {
+        Turtle3D tortue3D = new Turtle3D(config);
+        for (Symbol s : symbols) {
+            s.interpret(tortue3D);
+        }
+        return tortue3D.getSegments();
+    }
+
+    //Mise à jour et nettoyage des vues 2D/3D
+    private void update2D(List<Segment> segments) {
+        this.display.setSegments(segments);
+        this.display.repaint();
+    }
+
+    private void update3D(List<Segment3D> segments) {
+        Platform.runLater(() -> {
+            if (this.vue3D != null) {
+                this.vue3D.setSegments(segments);
+                this.vue3D.redraw();
+            }
+        });
+    }
+
+    //Gestion des palettes de couleurs personalisées pour la vue3D
+    private void applyCustom3DColors(ConfigTortue config) {
+        if (customColorFactory3D != null) {
+            config.setColorFactory(customColorFactory3D);
+        }
+    }
+
+    private void refreshCurrent3DWithCustomColors() {
+        if (this.currentSymbols == null) return;
+
+        ConfigTortue config = new ConfigTortue(
+            this.config.getPas(),
+            this.config.getAngle()
+        );
+        applyCustom3DColors(config);
+
+        List<Segment3D> segments3D = build3DSegments(
+            this.currentSymbols,
+            config
+        );
+        update3D(segments3D);
+    }
+
     public void actionPerformed(ActionEvent e) {
         String text = this.modifAxiom.getText();
         String regle = this.rule.getText();
@@ -800,30 +853,31 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     case "Orange" -> this.selectedColor = Color.ORANGE;
                     case "Rose" -> this.selectedColor = Color.PINK;
                     case "Gris" -> this.selectedColor = Color.GRAY;
-                    case "Custom..." -> this.selectedColor =
-                        JColorChooser.showDialog(
+                    case "Custom..." -> {
+                        this.selectedColor = JColorChooser.showDialog(
                             this,
                             "Selection de couleur",
                             selectedColor
                         );
-                }
 
-                List<Segment> current = this.display.getSegments();
-                if (current != null && !current.isEmpty()) {
-                    this.display.setDrawColor(selectedColor);
-                    this.display.repaint();
-                }
-                Platform.runLater(() -> {
-                    if (this.vue3D != null) {
-                        if (selectedColor == null) {
-                            this.vue3D.resetDrawColor();
-                        } else {
-                            this.vue3D.setDrawColor(
-                                awtToFxColor(selectedColor)
-                            );
+                        List<Segment> current = this.display.getSegments();
+                        if (current != null && !current.isEmpty()) {
+                            this.display.setDrawColor(selectedColor);
+                            this.display.repaint();
                         }
+                        Platform.runLater(() -> {
+                            if (this.vue3D != null) {
+                                if (selectedColor == null) {
+                                    this.vue3D.resetDrawColor();
+                                } else {
+                                    this.vue3D.setDrawColor(
+                                        awtToFxColor(selectedColor)
+                                    );
+                                }
+                            }
+                        });
                     }
-                });
+                }
             }
             case "clear" -> {
                 clear2D();
@@ -868,83 +922,45 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     history
                 );
             }
-            case "play" -> {
-                if (playing) {
-                    if (playTimer != null && playTimer.isRunning()) {
-                        playTimer.stop();
-                    }
-                    play.setText("Play");
-                    playing = false;
-                    return;
-                }
-
-                playing = true;
-                play.setText("Pause");
-
-                int n = getStepCount(step, 3);
-
-                LSystem temp = copyLSystem(this.display.getLSystem());
-                this.display.setLSystem(temp);
-                for (int i = 0; i < n; i++) temp.step();
-
-                ConfigTortue config = new ConfigTortue(
-                    this.config.getPas(),
-                    this.config.getAngle()
-                );
-                List<Segment> finalSegments = build2DSegments(
-                    temp.getCurrentGeneration(),
-                    300,
-                    400,
-                    config
-                );
-
-                List<Segment3D> finalSegments3D = build3DSegments(
-                    temp.getCurrentGeneration(),
-                    config
-                );
-
-                clear2D();
-                final int[] index = { 0 };
-
-                if (playTimer != null && playTimer.isRunning()) {
-                    playTimer.stop();
-                }
-                playTimer = new Timer(20, null);
-                playTimer.addActionListener(ev -> {
-                    if (index[0] >= finalSegments.size()) {
-                        playTimer.stop();
-                        play.setText("Play");
-                        playing = false;
-                        return;
-                    }
-
-                    List<Segment> current = new ArrayList<>(
-                        this.display.getSegments()
-                    );
-
-                    int speed = 10;
-                    for (
-                        int i = 0;
-                        i < speed && index[0] < finalSegments.size();
-                        i++
-                    ) {
-                        current.add(finalSegments.get(index[0]));
-                        index[0]++;
-                    }
-
-                    update2D(current);
-                    final int currentIndex = index[0];
-                    List<Segment3D> current3D = new ArrayList<>(
-                        finalSegments3D.subList(
-                            0,
-                            Math.min(currentIndex, finalSegments3D.size())
-                        )
-                    );
-                    update3D(current3D);
-                });
-
-                playTimer.start();
-            }
+            // case "play" -> {
+            //     if (playing) {
+            //         if (playTimer != null && playTimer.isRunning()) {
+            //             playTimer.stop();
+            //         }
+            //         play.setText("Play");
+            //         playing = false;
+            //         return;
+            //     }
+            //     int speed = 5;
+            //     // Animation 2D
+            //     if (!done2D) {
+            //         List<Segment> current2D = new ArrayList<>(
+            //             this.display.getSegments()
+            //         );
+            //         for (
+            //             int i = 0;
+            //             i < speed && index2D[0] < finalSegments.size();
+            //             i++
+            //         ) {
+            //             current2D.add(finalSegments.get(index2D[0]));
+            //             index2D[0]++;
+            //         }
+            //         update2D(current2D);
+            //     }
+            //     // Animation 3D
+            //     if (!done3D) {
+            //         int next3D = Math.min(
+            //             index3D[0] + speed,
+            //             finalSegments3D.size()
+            //         );
+            //         List<Segment3D> current3D = new ArrayList<>(
+            //             finalSegments3D.subList(0, next3D)
+            //         );
+            //         index3D[0] = next3D;
+            //         update3D(current3D);
+            //     }
+            // });
+            // playTimer.start();
         }
     }
 
