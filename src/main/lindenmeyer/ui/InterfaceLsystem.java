@@ -75,7 +75,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 {
     public VueLsystem display;
     public LSystem lsystem;
-	public ConfigLsystem config;
+	public ConfigLsystem config = new ConfigLsystem(30, 10, 0, 0, "");
 
 	//Panels de commande
     public JPanel commands, panelGeneration, panelZoom, panelLsystem;
@@ -801,7 +801,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 
         else if (e.getSource() == this.random) 
         {
-            int pos = (int) (Math.random() * this.presets.getModeles().size());
+            int pos = (int) (Math.random() * (this.presets.getModeles().size() - 1));
             ModeleIO chosen = this.presets.getModeles().get(pos);
 
             draw(step, chosen.getLSystem(), chosen.getConfig(), display, history);
