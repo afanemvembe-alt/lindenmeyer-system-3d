@@ -5,17 +5,7 @@ import javafx.scene.paint.Color;
 
 /**
  * Classe abstraite d'une tortue 3D orientée par un repère (heading, left, up).
- *
- * Correspondance symboles L-Système / méthodes :
- *   F   → forward()
- *   +   → rotateU(true)    yaw à gauche   (RU(+α))
- *   -   → rotateU(false)   yaw à droite   (RU(-α))
- *   &amp;   → rotateL(true)    pitch vers bas (RL(+α))
- *   ^   → rotateL(false)   pitch vers haut(RL(-α))
- *   \   → rotateH(true)    roll droite    (RH(+α))
- *   /   → rotateH(false)   roll gauche    (RH(-α))
- *   [   → savePosition()
- *   ]   → restorePosition()
+ * Correspondance symboles L-Système 
  */
 public abstract class AbstractTurtle3D {
 
@@ -39,13 +29,13 @@ public abstract class AbstractTurtle3D {
 
     public abstract void backward();
 
-    /** Yaw   RU(±α) — autour de Up      */
+    /** Yaw   RU(±alpha) — autour de Up      */
     public abstract void rotateU(boolean clockwise);
 
-    /** Pitch RL(±α) — autour de Left    */
+    /** Pitch RL(±alpha) — autour de Left    */
     public abstract void rotateL(boolean clockwise);
 
-    /** Roll  RH(±α) — autour de Heading */
+    /** Roll  RH(±alpha) — autour de Heading */
     public abstract void rotateH(boolean clockwise);
 
     public abstract void savePosition();

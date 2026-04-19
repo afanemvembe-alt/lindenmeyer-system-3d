@@ -74,13 +74,13 @@ public class Turtle3D extends AbstractTurtle3D {
     //  Mouvements                                                         //
     // ------------------------------------------------------------------ //
 
-    /** Avance : pos += pas * heading  (trace un segment). */
+    /** Avance : pos += pas * heading  */
     @Override
     public void forward() {
         move(true);
     }
 
-    /** Recule : pos -= pas * heading  (trace un segment). */
+    /** Recule : pos -= pas * heading */
     @Override
     public void backward() {
         move(false);
@@ -111,14 +111,14 @@ public class Turtle3D extends AbstractTurtle3D {
     // ------------------------------------------------------------------ //
 
     /**
-     * Yaw : RU(±α) — rotation autour de l'axe Up.
+     * Yaw : RU(±alpha) — rotation autour de l'axe Up.
      * Fait tourner heading et left dans le plan (heading, left).
      *
-     * RU(α) = |  cos  sin  0 |
-     *         | -sin  cos  0 |
-     *         |   0    0   1 |
+     * RU(alpha) = |  cos  sin  0 |
+     *             | -sin  cos  0 |
+     *             |   0    0   1 |
      *
-     * @param clockwise  true -> +α (symbole +), false -> −α (symbole -)
+     * @param clockwise  true -> +alpha (+), false -> −alpha (-)
      */
     @Override
     public void rotateU(boolean clockwise) {
@@ -138,18 +138,18 @@ public class Turtle3D extends AbstractTurtle3D {
         };
         heading = normalize(newH);
         left = normalize(newL);
-        // up reste inchangé
+        // up reste inchange
     }
 
     /**
-     * Pitch : RL(±α) — rotation autour de l'axe Left.
+     * Pitch : RL(±alpha) — rotation autour de l'axe Left.
      * Fait tourner heading et up dans le plan (heading, up).
      *
-     * RL(α) = |  cos  0  -sin |
-     *         |   0   1    0  |
-     *         |  sin  0   cos |
+     * RL(alpha) = |  cos  0  -sin |
+     *             |   0   1    0  |
+     *             |  sin  0   cos |
      *
-     * @param clockwise  true → +α (symbole &amp;), false → −α (symbole ^)
+     * @param clockwise  true → +alpha (symbole &amp;), false → −alpha (symbole ^)
      */
     @Override
     public void rotateL(boolean clockwise) {
@@ -173,14 +173,14 @@ public class Turtle3D extends AbstractTurtle3D {
     }
 
     /**
-     * Roll : RH(±α) - rotation autour de l'axe Heading.
+     * Roll : RH(±alpha) - rotation autour de l'axe Heading.
      * Fait tourner left et up dans le plan (left, up).
      *
-     * RH(α) = | 1    0      0   |
-     *         | 0   cos   -sin  |
-     *         | 0   sin    cos  |
+     * RH(alpha) = | 1    0      0   |
+     *             | 0   cos   -sin  |
+     *             | 0   sin    cos  |
      *
-     * @param clockwise  true → +α (symbole \), false → −α (symbole /)
+     * @param clockwise  true → +alpha (\), false → −alpha (/)
      */
     @Override
     public void rotateH(boolean clockwise) {
@@ -268,9 +268,9 @@ public class Turtle3D extends AbstractTurtle3D {
         return new Bounds(xMin, xMax, yMin, yMax, zMin, zMax);
     }
 
-    // ------------------------------------------------------------------ //
-    //  Utilitaires prives                                                //
-    // ------------------------------------------------------------------ //
+    // ------------------------------------------------------------ //
+    //  Utilitaires                                                //
+    // ---------------------------------------------------------- //
 
     private static double[] normalize(double[] v) {
         double len = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
