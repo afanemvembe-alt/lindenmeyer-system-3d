@@ -13,6 +13,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -20,6 +22,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.transform.Rotate;
+import javax.swing.*;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -40,6 +43,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import lindenmeyer.axiom.Axiom;
+import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.lsystem.history.History;
 import lindenmeyer.lsystem.history.State;
@@ -48,6 +52,8 @@ import lindenmeyer.modeleIO.ModeleList;
 import lindenmeyer.modeleIO.Preset;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSet;
+import lindenmeyer.rules.RuleSet;
+import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
@@ -57,27 +63,18 @@ import lindenmeyer.turtle.Segment;
 import lindenmeyer.turtle.Segment3D;
 import lindenmeyer.turtle.Tortue;
 import lindenmeyer.turtle.Turtle3D;
-import lindenmeyer.rules.RuleSet;
-import lindenmeyer.rules.RuleSetFactory;
-import lindenmeyer.axiom.Axiom;
 // import java.awt.Button;
 import lindenmeyer.ui.components.*;
-
-import javax.swing.*;
-import java.nio.file.Path;
-
-import java.nio.file.Files;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class InterfaceLsystem extends JFrame implements ActionListener 
-{
+public class InterfaceLsystem extends JFrame implements ActionListener {
+
     public VueLsystem display;
     public LSystem lsystem;
-	public ConfigLsystem config = new ConfigLsystem(30, 10, 0, 0, "");
+    public ConfigLsystem config = new ConfigLsystem(30, 10, 0, 0, "");
 
-	//Panels de commande
+    //Panels de commande
     public JPanel commands, panelGeneration, panelZoom, panelLsystem;
 
     public JTextField modifAxiom, rule, nbStep;
@@ -97,9 +94,10 @@ public class InterfaceLsystem extends JFrame implements ActionListener
     public JTextArea presetInfo;
 
     //Listes de systemes predefinis et leur configuration
-    public ModeleList presets = new ModeleList("src/resources/lindenmeyer/ui/presets.json");
+    public ModeleList presets = new ModeleList(
+        "src/resources/lindenmeyer/ui/presets.json"
+    );
 
-    
     //Boite de dialogue
     private ParamDialog paramDialog;
 
@@ -135,7 +133,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 
     public InterfaceLsystem() {
         super("LSystem");
-
         MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
 
@@ -153,10 +150,10 @@ public class InterfaceLsystem extends JFrame implements ActionListener
 
         //Les TextFields
         this.modifAxiom = new TextField();
-		this.rule = new TextField();
-		this.nbStep = new TextField();
-		Font uiFont = new Font("Segoe UI", Font.PLAIN, 14);
-        
+        this.rule = new TextField();
+        this.nbStep = new TextField();
+        Font uiFont = new Font("Segoe UI", Font.PLAIN, 14);
+
         //Panels des JTextField
         JPanel ligneAxiom = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ligneAxiom.add(new JLabel("Axiome : "));
@@ -236,12 +233,18 @@ public class InterfaceLsystem extends JFrame implements ActionListener
         switch3D.setActionCommand("switch3d");
 
         //Creation de bordures pour chaque sous Panel
-        this.panelLsystem = new TitledPanel("Definition du LSystem", new FlowLayout());
-		this.panelGeneration = new TitledPanel("Generation", new FlowLayout());
-		this.panelZoom = new TitledPanel("Affichage", new FlowLayout());
-		this.panelInfo = new TitledPanel("Informations preset", new BorderLayout());
-		this.panelInfo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
-		
+        this.panelLsystem = new TitledPanel(
+            "Definition du LSystem",
+            new FlowLayout()
+        );
+        this.panelGeneration = new TitledPanel("Generation", new FlowLayout());
+        this.panelZoom = new TitledPanel("Affichage", new FlowLayout());
+        this.panelInfo = new TitledPanel(
+            "Informations preset",
+            new BorderLayout()
+        );
+        this.panelInfo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+
         //Infos
         this.presetInfo = new JTextArea(3, 20);
         this.presetInfo.setRows(3);
@@ -270,6 +273,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener
         colorSelector = new JComboBox<>(colors);
         colorSelector.setSelectedIndex(0);
         colorSelector.addActionListener(this);
+        colorSelector.setActionCommand("selectColors");
 
         // Slider historique
         this.historySlider = new JSlider(0, this.maxStep, 0);
@@ -300,7 +304,12 @@ public class InterfaceLsystem extends JFrame implements ActionListener
                 this.config.getAngle()
             );
             // Pour la 2D
-            List<Segment> segments2D = build2DSegments(symbols, 300, 400, config);
+            List<Segment> segments2D = build2DSegments(
+                symbols,
+                300,
+                400,
+                config
+            );
             update2D(segments2D);
             // Pour la 3D
             List<Segment3D> segments3D = build3DSegments(symbols, config);
@@ -332,8 +341,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener
         this.commands.add(this.panelZoom);
         this.commands.add(Box.createVerticalStrut(8));
         this.commands.add(this.panelInfo);
-        
-		this.paramDialog= new ParamDialog(this);
+
+        this.paramDialog = new ParamDialog(this);
         this.lsystem = new LSystem(new Axiom("F"));
         this.display = new VueLsystem(this.lsystem);
 
@@ -464,16 +473,16 @@ public class InterfaceLsystem extends JFrame implements ActionListener
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
-    
+
     private javafx.scene.paint.Color awtToFxColor(Color c) {
-		if (c == null) return null;
-		return javafx.scene.paint.Color.rgb(
-			c.getRed(),
-			c.getGreen(),
-			c.getBlue(),
-			c.getAlpha() / 255.0
-		);
-	}
+        if (c == null) return null;
+        return javafx.scene.paint.Color.rgb(
+            c.getRed(),
+            c.getGreen(),
+            c.getBlue(),
+            c.getAlpha() / 255.0
+        );
+    }
 
     public void showError(JTextField field, String message) {
         field.setBorder(BorderFactory.createLineBorder(Color.RED));
@@ -484,136 +493,171 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             JOptionPane.ERROR_MESSAGE
         );
     }
-    
+
     private JDialog loadingDialog() {
-		JDialog loading = new JDialog(this, "Chargement", true);
-		loading.setLayout(new BorderLayout());
-		loading.add(
-			new JLabel("Generation en cours...", SwingConstants.CENTER),
-			BorderLayout.CENTER
-		);
-		loading.setSize(200, 100);
-		loading.setLocationRelativeTo(this);
-		return loading;
-	}
-	
-	//Constructeurs de segments
-	private List<Segment> build2DSegments(SymbolList symbols, double startX, double startY, ConfigTortue config) {
-		Tortue tortue = new Tortue(startX, startY, -90, config);
-		return tortue.interpreter(symbols.toString());
-	}
-	private List<Segment3D> build3DSegments(SymbolList symbols, ConfigTortue config) {
-		Turtle3D tortue3D = new Turtle3D(config);
-		for (Symbol s : symbols) {
-			s.interpret(tortue3D);
-		}
-		return tortue3D.getSegments();
-	}
-	
-	//Dessin des systèmes
-	private void update2D(List<Segment> segments) {
-		this.display.setSegments(segments);
-		this.display.repaint();
-	}
-	private void update3D(List<Segment3D> segments) {
-		Platform.runLater(() -> {
-			if (this.vue3D != null) {
-				this.vue3D.setSegments(segments);
-				this.vue3D.redraw();
-			}
-		});
-	}
-	
-	//Clear 2D et 3D
-	private void clear2D() {
-		this.display.clearSegments();
-		this.display.repaint();
-	}
-	private void clear3D() {
-		update3D(new ArrayList<>());
-	}
-	
-	//Nombre d'étapes
-	private int getStepCount(String stepText, int defaultValue) {
-		int n = defaultValue;
-		try {
-			if (!stepText.isEmpty()) {
-				n = Integer.parseInt(stepText);
-			}
-		} catch (NumberFormatException ex) {
-			n = defaultValue;
-		}
+        JDialog loading = new JDialog(this, "Chargement", true);
+        loading.setLayout(new BorderLayout());
+        loading.add(
+            new JLabel("Generation en cours...", SwingConstants.CENTER),
+            BorderLayout.CENTER
+        );
+        loading.setSize(200, 100);
+        loading.setLocationRelativeTo(this);
+        return loading;
+    }
 
-		if (n > this.maxStep) {
-			n = this.maxStep;
-		}
+    //Constructeurs de segments
+    private List<Segment> build2DSegments(
+        SymbolList symbols,
+        double startX,
+        double startY,
+        ConfigTortue config
+    ) {
+        Tortue tortue = new Tortue(startX, startY, -90, config);
+        return tortue.interpreter(symbols.toString());
+    }
 
-		return n;
-	}
-	
-	//Copie d'un LSystem 
-	private LSystem copyLSystem(LSystem source) {
-		return new LSystem(
-			new Axiom(source.getAxiome().getContent()),
-			source.getRegles(),
-			source.getSymbolFactory()
-		);
-	}
-	
-	public void resetField(JTextField field) {
-		field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-	}
+    private List<Segment3D> build3DSegments(
+        SymbolList symbols,
+        ConfigTortue config
+    ) {
+        Turtle3D tortue3D = new Turtle3D(config);
+        for (Symbol s : symbols) {
+            s.interpret(tortue3D);
+        }
+        return tortue3D.getSegments();
+    }
 
-    public LSystem getLSystem() { return this.lsystem; }
+    //Dessin des systèmes
+    private void update2D(List<Segment> segments) {
+        this.display.setSegments(segments);
+        this.display.repaint();
+    }
 
-	public void setLSystem(LSystem lSystem) { this.lsystem = lSystem; }
+    private void update3D(List<Segment3D> segments) {
+        Platform.runLater(() -> {
+            if (this.vue3D != null) {
+                this.vue3D.setSegments(segments);
+                this.vue3D.redraw();
+            }
+        });
+    }
 
-	public ConfigLsystem getInterfaceConfig() { return this.config; }
+    //Clear 2D et 3D
+    private void clear2D() {
+        this.display.clearSegments();
+        this.display.repaint();
+    }
 
-	public void setInterfaceConfig(ConfigLsystem config) { this.config = config; }
+    private void clear3D() {
+        update3D(new ArrayList<>());
+    }
 
-	public VueLsystem getVueLsystem() { return this.display; }
+    //Nombre d'étapes
+    private int getStepCount(String stepText, int defaultValue) {
+        int n = defaultValue;
+        try {
+            if (!stepText.isEmpty()) {
+                n = Integer.parseInt(stepText);
+            }
+        } catch (NumberFormatException ex) {
+            n = defaultValue;
+        }
 
-	public void draw(String step, LSystem lSystem, ConfigLsystem config, VueLsystem vue, History history)
-	{
-		JDialog loading = new JDialog(this, "Chargement", true);
-		loading.setLayout(new BorderLayout());
-		loading.add(new JLabel("Generation en cours...", SwingConstants.CENTER), BorderLayout.CENTER);
-		loading.setSize(200,100);
-		loading.setLocationRelativeTo(this);
+        if (n > this.maxStep) {
+            n = this.maxStep;
+        }
 
-		history.clear();
+        return n;
+    }
 
-		ConfigTortue configTortue = new ConfigTortue(config.getPas(), config.getAngle());
+    //Copie d'un LSystem
+    private LSystem copyLSystem(LSystem source) {
+        return new LSystem(
+            new Axiom(source.getAxiome().getContent()),
+            source.getRegles(),
+            source.getSymbolFactory()
+        );
+    }
 
-		new Thread(() -> {
-			int n = 2;
-			try {
-				if (!step.isEmpty()) n = Integer.parseInt(step);
-			} catch (NumberFormatException ex) {
-				n = 2;
-			}
-			if(n>this.maxStep){
-				n=this.maxStep;
-			}
+    public void resetField(JTextField field) {
+        field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    }
 
-			Tortue tortue = new Tortue(
-				config.getStartX(), config.getStartY(),
-				-90, configTortue
-			);
+    public LSystem getLSystem() {
+        return this.lsystem;
+    }
 
-			// why create a new lsystem?
-			LSystem temp = copyLSystem(lSystem);
+    public void setLSystem(LSystem lSystem) {
+        this.lsystem = lSystem;
+    }
 
-			// if we're running on a preset ??
-			history.addState(new State(temp.getCurrentGeneration()));
-			for (int i = 0; i<n ; i++)
-			{
-				temp.step();
-				history.addState(new State(temp.getCurrentGeneration()));
-			}
+    public ConfigLsystem getInterfaceConfig() {
+        return this.config;
+    }
 
-			List<Segment> finalSegments = tortue.interpreter(temp.getCurrentGeneration().toString());
+    public void setInterfaceConfig(ConfigLsystem config) {
+        this.config = config;
+    }
+
+    public VueLsystem getVueLsystem() {
+        return this.display;
+    }
+
+    public void draw(
+        String step,
+        LSystem lSystem,
+        ConfigLsystem config,
+        VueLsystem vue,
+        History history
+    ) {
+        JDialog loading = new JDialog(this, "Chargement", true);
+        loading.setLayout(new BorderLayout());
+        loading.add(
+            new JLabel("Generation en cours...", SwingConstants.CENTER),
+            BorderLayout.CENTER
+        );
+        loading.setSize(200, 100);
+        loading.setLocationRelativeTo(this);
+
+        history.clear();
+
+        ConfigTortue configTortue = new ConfigTortue(
+            config.getPas(),
+            config.getAngle()
+        );
+
+        new Thread(() -> {
+            int n = 2;
+            try {
+                if (!step.isEmpty()) n = Integer.parseInt(step);
+            } catch (NumberFormatException ex) {
+                n = 2;
+            }
+            if (n > this.maxStep) {
+                n = this.maxStep;
+            }
+
+            Tortue tortue = new Tortue(
+                config.getStartX(),
+                config.getStartY(),
+                -90,
+                configTortue
+            );
+
+            // why create a new lsystem?
+            LSystem temp = copyLSystem(lSystem);
+
+            // if we're running on a preset ??
+            history.addState(new State(temp.getCurrentGeneration()));
+            for (int i = 0; i < n; i++) {
+                temp.step();
+                history.addState(new State(temp.getCurrentGeneration()));
+            }
+
+            List<Segment> finalSegments = tortue.interpreter(
+                temp.getCurrentGeneration().toString()
+            );
 
             List<Segment> finalSegments2D = build2DSegments(
                 temp.getCurrentGeneration(),
@@ -623,7 +667,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             );
             update2D(finalSegments2D);
 
-
             // --- Gestion3D pour random------------
             List<Segment3D> finalSegments3D = build3DSegments(
                 temp.getCurrentGeneration(),
@@ -631,267 +674,293 @@ public class InterfaceLsystem extends JFrame implements ActionListener
             );
             update3D(finalSegments3D);
 
-			SwingUtilities.invokeLater(() -> {
-					this.display.setSegments(finalSegments);
-					this.presetInfo.setText(config.info);
-                    this.display.setLSystem(temp);
-                    this.display.getLSystem().setAxiome(
-                        new Axiom(lSystem.getAxiome().getContent())
-                    );
-                    this.historySlider.setMaximum(this.history.size());
-                    this.historySlider.setValue(this.history.size());
-                    loading.dispose();
-                    this.display.revalidate();
-                    this.display.repaint();
-				});
-		}).start();
-		loading.setVisible(true);
-	}
-
+            SwingUtilities.invokeLater(() -> {
+                this.display.setSegments(finalSegments);
+                this.presetInfo.setText(config.info);
+                this.display.setLSystem(temp);
+                this.display.getLSystem().setAxiome(
+                    new Axiom(lSystem.getAxiome().getContent())
+                );
+                this.historySlider.setMaximum(this.history.size());
+                this.historySlider.setValue(this.history.size());
+                loading.dispose();
+                this.display.revalidate();
+                this.display.repaint();
+            });
+        })
+            .start();
+        loading.setVisible(true);
+    }
 
     public void actionPerformed(ActionEvent e) {
         String text = this.modifAxiom.getText();
         String regle = this.rule.getText();
         String step = this.nbStep.getText();
 
-       if (e.getSource() == this.defineLsystem) {
-            // 1. Gestion de l'Axiome
-            if (!text.isEmpty()) {
-                if (text.matches(".*\\d.*")) {
-                    showError(this.modifAxiom, "L'axiome ne peut pas contenir de chiffres");
-                    return;
+        switch (e.getActionCommand()) {
+            case "definir" -> {
+                // 1. Gestion de l'Axiome
+                if (!text.isEmpty()) {
+                    if (text.matches(".*\\d.*")) {
+                        showError(
+                            this.modifAxiom,
+                            "L'axiome ne peut pas contenir de chiffres"
+                        );
+                        return;
+                    }
+                    this.display.getLSystem().setAxiome(new Axiom(text));
+                    resetField(modifAxiom);
                 }
-                this.display.getLSystem().setAxiome(new Axiom(text));
-                resetField(modifAxiom);
-            }
 
-            // 2. Gestion des Règles
-            if (regle.isEmpty()) {
-                showError(this.rule, "Vous devez entrer au moins une règle");
-                return;
-            } else {
-                try {
-                    // On récupère la SymbolFactory existante du LSystem
-                    lindenmeyer.symbols.SymbolFactory sf = this.display.getLSystem().getSymbolFactory();
-                    
-                    // On crée une RuleSetFactory pour parser la chaîne complexe (stochastique/contextuelle)
-                    // On utilise ',' pour séparer les règles et '>' pour le prédécesseur/successeur
-                    lindenmeyer.rules.RuleSetFactory rsf = new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
-                    
-                    // On parse et on met à jour les règles du LSystem
-                    this.display.getLSystem().setRegles(rsf.parseString(regle));
-                    
-                    resetField(rule); // On vide le champ après succès
-                } catch (Exception ex) {
-                    showError(this.rule, "Erreur dans le format des règles. Vérifiez la syntaxe.");
-                    ex.printStackTrace();
-                    return;
-  }
-            }
-            
-           
-            try {
-                lindenmeyer.symbols.SymbolFactory sf = this.display.getLSystem().getSymbolFactory();
-                lindenmeyer.rules.RuleSetFactory rsf = new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
-                this.display.getLSystem().setRegles(rsf.parseString(regle));
-                resetField(rule);
-            } catch (Exception ex) {
-                showError(this.rule, "Erreur dans le format des règles.");
-            }
-
-            // On force le rafraîchissement de l'affichage
-            this.display.repaint();
-
-        } else if (e.getSource() == this.switch3D) { 
-            
-            if (mode3D) {
-                this.centerLayout.show(this.centerPanel, "2D");
-                mode3D = false;
-                this.switch3D.setText("Switch3D");
-            } else {
-                this.centerLayout.show(this.centerPanel, "3D");
-                mode3D = true;
-                this.switch3D.setText("Switch2D");
-            }
-        }
-
-        else if (e.getSource() == this.generate) {
-			System.out.println(this.lsystem.toString());
-
-			draw(step, this.lsystem, this.config, this.display, this.history);
-        }
-
-		// don't think this is necessary anymore
-        else if (e.getSource() == this.settings) {		
-            this.paramDialog.setVisible(true);
-            this.config.setPas(this.paramDialog.getLongueur());
-            this.config.setAngle(this.paramDialog.getAngle());
-        } 
-        
-        else if (e.getSource() == this.colorSelector) {
-            switch ((String) this.colorSelector.getSelectedItem()) {
-                case "Automatique" -> this.selectedColor = null;
-                case "Noir" -> this.selectedColor = Color.BLACK;
-                case "Rouge" -> this.selectedColor = Color.RED;
-                case "Vert" -> this.selectedColor = Color.GREEN;
-                case "Bleu" -> this.selectedColor = Color.BLUE;
-                case "Jaune" -> this.selectedColor = Color.YELLOW;
-                case "Magenta" -> this.selectedColor = Color.MAGENTA;
-                case "Cyan" -> this.selectedColor = Color.CYAN;
-                case "Orange" -> this.selectedColor = Color.ORANGE;
-                case "Rose" -> this.selectedColor = Color.PINK;
-                case "Gris" -> this.selectedColor = Color.GRAY;
-                case "Custom..." -> this.selectedColor =
-                    JColorChooser.showDialog(
-                        this,
-                        "Selection de couleur",
-                        selectedColor
+                // 2. Gestion des Règles
+                if (regle.isEmpty()) {
+                    showError(
+                        this.rule,
+                        "Vous devez entrer au moins une règle"
                     );
-                    
-            }
+                    return;
+                } else {
+                    try {
+                        // On récupère la SymbolFactory existante du LSystem
+                        lindenmeyer.symbols.SymbolFactory sf =
+                            this.display.getLSystem().getSymbolFactory();
 
-            List<Segment> current = this.display.getSegments();
-            if (current != null && !current.isEmpty()) {
-                this.display.setDrawColor(selectedColor);
+                        // On crée une RuleSetFactory pour parser la chaîne complexe (stochastique/contextuelle)
+                        // On utilise ',' pour séparer les règles et '>' pour le prédécesseur/successeur
+                        lindenmeyer.rules.RuleSetFactory rsf =
+                            new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
+
+                        // On parse et on met à jour les règles du LSystem
+                        this.display.getLSystem().setRegles(
+                            rsf.parseString(regle)
+                        );
+
+                        resetField(rule); // On vide le champ après succès
+                    } catch (Exception ex) {
+                        showError(
+                            this.rule,
+                            "Erreur dans le format des règles. Vérifiez la syntaxe."
+                        );
+                        ex.printStackTrace();
+                        return;
+                    }
+                }
+
+                try {
+                    lindenmeyer.symbols.SymbolFactory sf =
+                        this.display.getLSystem().getSymbolFactory();
+                    lindenmeyer.rules.RuleSetFactory rsf =
+                        new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
+                    this.display.getLSystem().setRegles(rsf.parseString(regle));
+                    resetField(rule);
+                } catch (Exception ex) {
+                    showError(this.rule, "Erreur dans le format des règles.");
+                }
+
+                // On force le rafraîchissement de l'affichage
                 this.display.repaint();
             }
-            Platform.runLater(() -> {
-				if (this.vue3D != null) {
-					if (selectedColor == null) {
-						this.vue3D.resetDrawColor();
-					} else {
-						this.vue3D.setDrawColor(awtToFxColor(selectedColor));
-					}
-				}
-			});
-        } 
-        
-        else if (e.getSource() == this.clear) {
-            clear2D();
-            clear3D();
-        } 
-        
-        else if (e.getSource() == this.zoomP) {
-            if (mode3D) {
-                Platform.runLater(() -> {
-                    if (this.camera3D != null) {
-                        double z = this.camera3D.getTranslateZ() + 100;
-                        if (z > -100) z = -100;
-                        this.camera3D.setTranslateZ(z);
-                    }
-                });
-            } else {
-                this.display.zoomIn();
-            }
-        } 
-        
-        else if (e.getSource() == this.zoomM) {
-            if (mode3D) {
-                Platform.runLater(() -> {
-                    if (this.camera3D != null) {
-                        double z = this.camera3D.getTranslateZ() - 100;
-                        if (z < -5000) z = -5000;
-                        this.camera3D.setTranslateZ(z);
-                    }
-                });
-            } else {
-                this.display.zoomOut();
-            }
-        } 
-
-        else if (e.getSource() == this.random) 
-        {
-            int pos = (int) (Math.random() * (this.presets.getModeles().size() - 1));
-            ModeleIO chosen = this.presets.getModeles().get(pos);
-
-            draw(step, chosen.getLSystem(), chosen.getConfig(), display, history);
-        } 
-
-        else if (e.getSource() == this.play) {
-            if (playing) {
-                if (playTimer != null && playTimer.isRunning()) {
-                    playTimer.stop();
+            case "switch3d" -> {
+                if (mode3D) {
+                    this.centerLayout.show(this.centerPanel, "2D");
+                    mode3D = false;
+                    this.switch3D.setText("Switch3D");
+                } else {
+                    this.centerLayout.show(this.centerPanel, "3D");
+                    mode3D = true;
+                    this.switch3D.setText("Switch2D");
                 }
-                play.setText("Play");
-                playing = false;
-                return;
             }
+            case "generer" -> {
+                System.out.println(this.lsystem.toString());
 
-            playing = true;
-            play.setText("Pause");
-
-            int n = getStepCount(step, 3);
-
-            LSystem temp = copyLSystem(this.display.getLSystem());
-            this.display.setLSystem(temp);
-            for (int i = 0; i < n; i++) temp.step();
-
-            ConfigTortue config = new ConfigTortue(this.config.getPas(), this.config.getAngle());
-			List<Segment> finalSegments = build2DSegments(
-				temp.getCurrentGeneration(),
-				300,
-				400,
-				config
-			);
-
-			List<Segment3D> finalSegments3D = build3DSegments(
-				temp.getCurrentGeneration(),
-				config
-			);
-
-            clear2D();
-            final int[] index = { 0 };
-
-            if (playTimer != null && playTimer.isRunning()) {
-                playTimer.stop();
+                draw(
+                    step,
+                    this.lsystem,
+                    this.config,
+                    this.display,
+                    this.history
+                );
             }
-            playTimer = new Timer(20, null);
-            playTimer.addActionListener(ev -> {
-                if (index[0] >= finalSegments.size()) {
-                    playTimer.stop();
+            case "settings" -> {
+                this.paramDialog.setVisible(true);
+                this.config.setPas(this.paramDialog.getLongueur());
+                this.config.setAngle(this.paramDialog.getAngle());
+            }
+            case "selectColors" -> {
+                switch ((String) this.colorSelector.getSelectedItem()) {
+                    case "Automatique" -> this.selectedColor = null;
+                    case "Noir" -> this.selectedColor = Color.BLACK;
+                    case "Rouge" -> this.selectedColor = Color.RED;
+                    case "Vert" -> this.selectedColor = Color.GREEN;
+                    case "Bleu" -> this.selectedColor = Color.BLUE;
+                    case "Jaune" -> this.selectedColor = Color.YELLOW;
+                    case "Magenta" -> this.selectedColor = Color.MAGENTA;
+                    case "Cyan" -> this.selectedColor = Color.CYAN;
+                    case "Orange" -> this.selectedColor = Color.ORANGE;
+                    case "Rose" -> this.selectedColor = Color.PINK;
+                    case "Gris" -> this.selectedColor = Color.GRAY;
+                    case "Custom..." -> this.selectedColor =
+                        JColorChooser.showDialog(
+                            this,
+                            "Selection de couleur",
+                            selectedColor
+                        );
+                }
+
+                List<Segment> current = this.display.getSegments();
+                if (current != null && !current.isEmpty()) {
+                    this.display.setDrawColor(selectedColor);
+                    this.display.repaint();
+                }
+                Platform.runLater(() -> {
+                    if (this.vue3D != null) {
+                        if (selectedColor == null) {
+                            this.vue3D.resetDrawColor();
+                        } else {
+                            this.vue3D.setDrawColor(
+                                awtToFxColor(selectedColor)
+                            );
+                        }
+                    }
+                });
+            }
+            case "clear" -> {
+                clear2D();
+                clear3D();
+            }
+            case "zoomIn" -> {
+                if (mode3D) {
+                    Platform.runLater(() -> {
+                        if (this.camera3D != null) {
+                            double z = this.camera3D.getTranslateZ() + 100;
+                            if (z > -100) z = -100;
+                            this.camera3D.setTranslateZ(z);
+                        }
+                    });
+                } else {
+                    this.display.zoomIn();
+                }
+            }
+            case "zoomOut" -> {
+                if (mode3D) {
+                    Platform.runLater(() -> {
+                        if (this.camera3D != null) {
+                            double z = this.camera3D.getTranslateZ() - 100;
+                            if (z < -5000) z = -5000;
+                            this.camera3D.setTranslateZ(z);
+                        }
+                    });
+                } else {
+                    this.display.zoomOut();
+                }
+            }
+            case "random" -> {
+                int pos = (int) (Math.random() *
+                    (this.presets.getModeles().size() - 1));
+                ModeleIO chosen = this.presets.getModeles().get(pos);
+
+                draw(
+                    step,
+                    chosen.getLSystem(),
+                    chosen.getConfig(),
+                    display,
+                    history
+                );
+            }
+            case "play" -> {
+                if (playing) {
+                    if (playTimer != null && playTimer.isRunning()) {
+                        playTimer.stop();
+                    }
                     play.setText("Play");
                     playing = false;
                     return;
                 }
 
-                List<Segment> current = new ArrayList<>(
-                    this.display.getSegments()
+                playing = true;
+                play.setText("Pause");
+
+                int n = getStepCount(step, 3);
+
+                LSystem temp = copyLSystem(this.display.getLSystem());
+                this.display.setLSystem(temp);
+                for (int i = 0; i < n; i++) temp.step();
+
+                ConfigTortue config = new ConfigTortue(
+                    this.config.getPas(),
+                    this.config.getAngle()
+                );
+                List<Segment> finalSegments = build2DSegments(
+                    temp.getCurrentGeneration(),
+                    300,
+                    400,
+                    config
                 );
 
-                int speed = 10;
-                for (
-                    int i = 0;
-                    i < speed && index[0] < finalSegments.size();
-                    i++
-                ) {
-                    current.add(finalSegments.get(index[0]));
-                    index[0]++;
+                List<Segment3D> finalSegments3D = build3DSegments(
+                    temp.getCurrentGeneration(),
+                    config
+                );
+
+                clear2D();
+                final int[] index = { 0 };
+
+                if (playTimer != null && playTimer.isRunning()) {
+                    playTimer.stop();
                 }
+                playTimer = new Timer(20, null);
+                playTimer.addActionListener(ev -> {
+                    if (index[0] >= finalSegments.size()) {
+                        playTimer.stop();
+                        play.setText("Play");
+                        playing = false;
+                        return;
+                    }
 
-                update2D(current);
-                final int currentIndex = index[0];
-                List<Segment3D> current3D = new ArrayList<>(
-					finalSegments3D.subList(
-						0,
-						Math.min(currentIndex, finalSegments3D.size())
-					)
-				);
-				update3D(current3D);
-			});
+                    List<Segment> current = new ArrayList<>(
+                        this.display.getSegments()
+                    );
 
-            playTimer.start();
+                    int speed = 10;
+                    for (
+                        int i = 0;
+                        i < speed && index[0] < finalSegments.size();
+                        i++
+                    ) {
+                        current.add(finalSegments.get(index[0]));
+                        index[0]++;
+                    }
+
+                    update2D(current);
+                    final int currentIndex = index[0];
+                    List<Segment3D> current3D = new ArrayList<>(
+                        finalSegments3D.subList(
+                            0,
+                            Math.min(currentIndex, finalSegments3D.size())
+                        )
+                    );
+                    update3D(current3D);
+                });
+
+                playTimer.start();
+            }
         }
     }
 
-	public ModeleList getPresets() { return this.presets; }
-    
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				new InterfaceLsystem();
-			}
-		});
-	}
+    public ModeleList getPresets() {
+        return this.presets;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(
+            new Runnable() {
+                public void run() {
+                    new InterfaceLsystem();
+                }
+            }
+        );
+    }
 }
 
 // todo: check for null objects
