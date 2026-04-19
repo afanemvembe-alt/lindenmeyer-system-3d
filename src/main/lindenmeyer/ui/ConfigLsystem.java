@@ -25,12 +25,10 @@ public class ConfigLsystem {
         this.startX = config.getInt("startX");
         this.startY = config.getInt("startY");
 
-        int maxSteps = config.getInt("maxSteps");
-        String description = config.getString("description");
+        // String description = config.getString("description");
 
         String info = obj.getString("name")
-        + " - Max steps " + maxSteps
-        + "\nDescription: " + description
+        // + "\nDescription: " + description
         + "\nAngle: " + angle
         + "\nLongueur: " + this.pas;
 
@@ -51,17 +49,5 @@ public class ConfigLsystem {
 
     public double getStartY() { return this.startY; }
 
-    public void setDescription(String description) { this.info = description; }
-
-    public JSONObject toJsonObject()
-    {
-        JSONObject obj = new JSONObject();
-        obj.put("angle", this.angle);
-        obj.put("pas", this.pas);
-        obj.put("startX", this.startX);
-        obj.put("startY", this.startY);
-        obj.put("maxSteps", 8);
-
-        return obj;
-    }
+    // public void setDescription(String description) { this.info = description; }
 }

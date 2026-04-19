@@ -11,7 +11,10 @@ import java.time.LocalDateTime;
 import javax.swing.*;
 
 import lindenmeyer.lsystem.LSystem;
-import modeleIO.Preset;
+import lindenmeyer.modeleIO.Custom;
+import lindenmeyer.modeleIO.ModeleIO;
+import lindenmeyer.modeleIO.ModeleList;
+import lindenmeyer.modeleIO.Preset;
 
 import java.nio.file.Files;
 
@@ -28,7 +31,8 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     final JMenu fileMenu = new JMenu("Fichier");
     // file menu items
     JMenuItem newMenuItem = new JMenuItem("New");
-    JMenuItem openMenuItem = new JMenuItem("Ouvrir");
+
+    final JMenu openMenu = new JMenu("Ouvrir");
     JMenuItem saveMenuItem = new JMenuItem("Sauvegarder");
     JMenuItem exitMenuItem = new JMenuItem("Sortir");
 
@@ -43,7 +47,6 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
     JMenuItem zoomOutMenuItem = new JMenuItem("Zoom -");
 
     final JMenu presetMenu = new JMenu("Presets");
-    JMenuItem addPresetMenuItem = new JMenuItem("Ajouter preset");
 
     final JMenu aboutMenu = new JMenu("À propos");
     // about menu items
@@ -51,13 +54,16 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
     private ParamDialog paramDialog;
     private InterfaceLsystem interfaceLsystem;
+    
+    String savePathString = System.getProperty("user.home").concat("/saves.json");
+    private ModeleList savedArray = new ModeleList(savePathString);
 
     public MenubarLsystem(InterfaceLsystem interfaceLsystem)
     {
         this.interfaceLsystem = interfaceLsystem;
         // file menu items
         newMenuItem.addActionListener(this);
-        openMenuItem.addActionListener(this);
+        // openMenuItem.addActionListener(this);
         saveMenuItem.addActionListener(this);
         exitMenuItem.addActionListener(this);
 
@@ -78,7 +84,14 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         // add menu items to menu
         // file menu
         fileMenu.add(newMenuItem);
-        fileMenu.add(openMenuItem);
+
+        fileMenu.add(openMenu);
+        for (ModeleIO saves : this.savedArray)
+        {
+            openMenu.add(createMenuItem(saves));
+        }
+
+        // fileMenu.add(openMenuItem);
         fileMenu.add(saveMenuItem);
         fileMenu.addSeparator();
         fileMenu.add(exitMenuItem);
@@ -87,12 +100,11 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         configMenu.add(configMenuItem);
 
         // preset menu
-        for (Preset preset : this.interfaceLsystem.getPresets())
+        for (ModeleIO preset : this.interfaceLsystem.getPresets().getModeles())
         {
-            presetMenu.add(crateMenuItem(preset));
+            presetMenu.add(createMenuItem(preset));
         }
-        presetMenu.addSeparator();
-        presetMenu.add(addPresetMenuItem);
+
 
 
         // affichage menu
@@ -121,36 +133,10 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
             JOptionPane.showMessageDialog(this, "Nouveau fichier");
         }
 
-        else if (source == openMenuItem)
-        {
-            JOptionPane.showMessageDialog(this, "Ouvrir un fichier");
-        }
-
         else if (source == saveMenuItem)
         {
-            // JOptionPane.showMessageDialog(this, "Sauvegarde du fichier");
-            JSONArray savedArray = new JSONArray();
-            try 
-            {
-                String fileString = Files.readString(Path.of("src/main/lindenmeyer/ui/saves.json"));
-
-                JSONObject root = new JSONObject(fileString);
-                savedArray = root.getJSONArray("saves");
-            } 
-            catch (IOException error) 
-            {
-                throw new RuntimeException("Failed to read saves.json", error);
-            }
-
-            
-
-            JSONObject newSave = new JSONObject();
-            // take current lsystem
             LSystem lSystem = this.interfaceLsystem.getLSystem();
-            // take current config
             ConfigLsystem config = this.interfaceLsystem.getInterfaceConfig();
-            // take date
-            String timestamp = LocalDateTime.now().toString();
 
             SaveDialog dialog = new SaveDialog(this.interfaceLsystem);
             dialog.setVisible(true);
@@ -159,17 +145,17 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
             if (dialog.isConfirmed()) 
             {
                 name = dialog.getName();
-                config.setDescription(dialog.getDescription());
+                // config.setDescription(dialog.getDescription());
             }
 
-            newSave.put("date", timestamp);
-            newSave.put("name", name);
-            newSave.put("axiom", lSystem.getAxiome().toString());
-            newSave.put("rules", lSystem.getRegles().toJsonObject());
-            newSave.put("config", config.toJsonObject());
+            ModeleIO newSave = new Custom(name, config, lSystem);
 
-            savedArray.put(newSave);
+            //System.out.println(newSave.toJSON().toString());
 
+            savedArray.add(newSave);
+            savedArray.save();
+
+            /**
             try 
             {
                 Files.writeString(Path.of("src/main/lindenmeyer/ui/saves.json"), savedArray.toString(2));
@@ -182,6 +168,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
             {
                 error.printStackTrace();
             }
+                 */
         }
 
         else if (source == exitMenuItem)
@@ -220,7 +207,7 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         }
     }
 
-    public JMenuItem crateMenuItem(Preset preset)
+    public JMenuItem createMenuItem(ModeleIO preset)
     {
         JMenuItem item = new JMenuItem(preset.getName());
         item.addActionListener(e -> {
@@ -229,11 +216,11 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         return item;
     }
 
-    public void applyPreset(Preset preset)
+    public void applyPreset(ModeleIO preset)
     {
-        this.interfaceLsystem.setLSystem(preset.getLSys());
+        this.interfaceLsystem.setLSystem(preset.getLSystem());
         this.interfaceLsystem.setInterfaceConfig(preset.getConfig());
-        this.interfaceLsystem.getVueLsystem().setLSystem(preset.getLSys());
+        this.interfaceLsystem.getVueLsystem().setLSystem(preset.getLSystem());
     }
 
     public static void main(String[] args)

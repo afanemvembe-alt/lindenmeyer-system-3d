@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolList;
 
 /**
  * Une tortue permettant de dessiner une {@link lindenmeyer.symbols.SymbolList} en se baladant sur le plan avec les commandes données.
@@ -26,15 +28,58 @@ public class Tortue {
     private double x, y, angle;
     private ConfigTortue config;
     private Stack<double[]> pile = new Stack<>();
+    private double maxX = 0,
+        minX = 0,
+        maxY = 0,
+        minY = 0;
+
+    public double getMinX() {
+        return minX;
+    }
+
+    public double getMaxX() {
+        return maxX;
+    }
+
+    public double getMinY() {
+        return minY;
+    }
+
+    public double getMaxY() {
+        return maxY;
+    }
 
     // Un "mini-bibliothéque" de 10 couleurs
     private Map<Character, Color> nuancier = new HashMap<>();
+
+    private void updateBounds() {
+        if (x < minX) {
+            minX = x;
+        } else if (x > maxX) {
+            maxX = x;
+        }
+
+        if (y < minY) {
+            minY = y;
+        } else if (y > maxY) {
+            maxY = y;
+        }
+    }
+
+    private void resetBounds() {
+        minX = 0;
+        maxX = 0;
+        minY = 0;
+        maxY = 0;
+    }
 
     public Tortue(double x, double y, double angle, ConfigTortue config) {
         this.x = x;
         this.y = y;
         this.angle = angle;
         this.config = config;
+
+        resetBounds();
 
         // Initialisation des 10 couleurs par défaut
         nuancier.put('A', Color.BLACK);
@@ -49,12 +94,13 @@ public class Tortue {
         nuancier.put('J', Color.GRAY);
     }
 
-    public List<Segment> interpreter(String sequence) {
+    public List<Segment> interpreter(SymbolList symbolList) {
         List<Segment> segments = new ArrayList<>();
         double pas = config.getPas();
         double deltaAngle = config.getAngleRotation();
 
-        for (char c : sequence.toCharArray()) {
+        for (Symbol s : symbolList) {
+            char c = s.getSymbol();
             // La tortue ne cherche plus la lettre 'F'. Elle regarde si le caractère c (peu
             // importe lequel) existe dans ton nuancier de 10 couleurs.
             // Si le caractère est une de nos 10 lettres (A à J)
@@ -84,6 +130,8 @@ public class Tortue {
                     angle = etat[2];
                 }
             }
+
+            updateBounds();
         }
         return segments;
     }

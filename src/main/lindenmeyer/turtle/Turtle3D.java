@@ -54,9 +54,7 @@ public class Turtle3D extends AbstractTurtle3D {
     // ------------------------------------------------------------------ //
     public Turtle3D(ConfigTortue config) {
         super(config);
-        colorFactory = new ColorFactory(
-            Arrays.asList(ColorFactory.BASE_COLORS)
-        );
+        colorFactory = config.getColorFactory();
         reset();
     }
 
