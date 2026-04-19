@@ -45,11 +45,13 @@ import javax.swing.WindowConstants;
 import lindenmeyer.axiom.Axiom;
 import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
+import lindenmeyer.lsystem.LSystemFactory;
 import lindenmeyer.lsystem.history.History;
 import lindenmeyer.lsystem.history.State;
 import lindenmeyer.modeleIO.ModeleIO;
 import lindenmeyer.modeleIO.ModeleList;
 import lindenmeyer.modeleIO.Preset;
+import lindenmeyer.profiling.Profiler;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSet;
 import lindenmeyer.rules.RuleSet;
@@ -136,10 +138,17 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
     private SymbolList currentSymbols;
 
+    private Profiler profiler;
+    
+    // Globals pour creer les systemes
+    private LSystemFactory lSystemFactory;
+
     public InterfaceLsystem() {
         super("LSystem");
         MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
+        
+        lSystemFactory = new LSystemFactory(',', '>');
 
         this.commands = new JPanel();
         Color bg = new Color(245, 245, 245);
@@ -311,12 +320,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             );
             applyCustom3DColors(config);
             // Pour la 2D
-            List<Segment> segments2D = build2DSegments(
-                symbols,
-                0,
-                0,
-                config
-            );
+            List<Segment> segments2D = build2DSegments(symbols, 0, 0, config);
             update2D(segments2D);
             // Pour la 3D
             List<Segment3D> segments3D = build3DSegments(symbols, config);
@@ -618,12 +622,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 n = this.maxStep;
             }
 
-            Tortue tortue = new Tortue(
-                0,
-                0,
-                -90,
-                configTortue
-            );
+            Tortue tortue = new Tortue(0, 0, -90, configTortue);
 
             // why create a new lsystem?
             LSystem temp = copyLSystem(lSystem);
@@ -805,6 +804,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     lindenmeyer.rules.RuleSetFactory rsf =
                         new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
                     this.display.getLSystem().setRegles(rsf.parseString(regle));
+                    System.err.println(display.getLSystem().getRegles().toString());
                     resetField(rule);
                 } catch (Exception ex) {
                     showError(this.rule, "Erreur dans le format des règles.");
