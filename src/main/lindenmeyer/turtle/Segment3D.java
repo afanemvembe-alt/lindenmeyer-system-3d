@@ -9,28 +9,26 @@ import static java.lang.Math.*;
  * Repésente un segment dans un espace 3D, composé de deux {@link Coord3D}.
  */
 public class Segment3D {
-    /** début du segment */
     public Coord3D start;
     /** fin du segment */
     public Coord3D end;
-    /** couleur du segment */
-    public Color color; // couleur de la branche
+    public Color color; 
 
     /**
      * Crée un segment à partir de deux points fournis et d'une couleur.
      * 
-     * @param start début du segment
+     * @param start debut du segment
      * @param end   fin du segment
      * @param c     couleur du segment
      */
     public Segment3D(Coord3D start, Coord3D end, Color c) {
         this.start = new Coord3D(start);
         this.end = new Coord3D(end);
-        this.color = c; // ✔ correction ici
+        this.color = c; 
     }
 
     /**
-     * Crée un segment à partir de coordonnées fournies.
+     * Crée un segment à partir de coordonnées
      * 
      * @param x1
      * @param y1
@@ -46,7 +44,7 @@ public class Segment3D {
 
         this.start = new Coord3D(x1, y1, z1);
         this.end = new Coord3D(x2, y2, z2);
-        this.color = color; // ✔ correction ici
+        this.color = color;
     }
 
     @Override
