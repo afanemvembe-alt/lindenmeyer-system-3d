@@ -7,7 +7,6 @@ import lindenmeyer.rules.SimpleRule;
 import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
-
 import org.json.JSONObject;
 
 public class LSystem extends AbstractLsystemListenable {
@@ -17,7 +16,12 @@ public class LSystem extends AbstractLsystemListenable {
     private SymbolList currentGeneration;
     private SymbolFactory symbolFactory;
 
-    public LSystem(Axiom axiome, RuleSet regles, SymbolList currentGeneration, SymbolFactory symbolFactory) {
+    public LSystem(
+        Axiom axiome,
+        RuleSet regles,
+        SymbolList currentGeneration,
+        SymbolFactory symbolFactory
+    ) {
         this.axiome = axiome;
         this.regles = regles;
         this.currentGeneration = currentGeneration;
@@ -35,10 +39,12 @@ public class LSystem extends AbstractLsystemListenable {
         this(axiome, new RuleSet(), new SymbolFactory());
     }
 
-    public LSystem(JSONObject obj)
-    {
-        this(new Axiom(obj.getString("axiom")), new RuleSet(), new SymbolFactory());
-
+    public LSystem(JSONObject obj) {
+        this(
+            new Axiom(obj.getString("axiom")),
+            new RuleSet(),
+            new SymbolFactory()
+        );
         JSONObject rulesObject = obj.getJSONObject("rules");
         for (String key : rulesObject.keySet()) {
             if (key.length() != 1) {
@@ -56,7 +62,9 @@ public class LSystem extends AbstractLsystemListenable {
     private void resetGeneration() {
         this.currentGeneration = new SymbolList(this.symbolFactory);
         for (int i = 0; i < axiome.getContent().length(); i++) {
-            currentGeneration.add(symbolFactory.getSymbol(axiome.getContent().charAt(i)));
+            currentGeneration.add(
+                symbolFactory.getSymbol(axiome.getContent().charAt(i))
+            );
         }
     }
 
@@ -76,36 +84,42 @@ public class LSystem extends AbstractLsystemListenable {
     }
 
     public void step() {
-        SymbolList nextGen = new SymbolList(symbolFactory);
-
-        for (int i = 0; i < currentGeneration.size(); i++) {
-            Symbol current = currentGeneration.get(i);
-
-            // Gestion du contexte pour les règles contextuelles
-            SymbolList left = new SymbolList(symbolFactory);
-            if (i > 0) left.add(currentGeneration.get(i - 1));
-
-            SymbolList right = new SymbolList(symbolFactory);
-            if (i < currentGeneration.size() - 1) right.add(currentGeneration.get(i + 1));
-
-            // APPEL CORRIGÉ : On passe le symbole ET ses voisins
-            SymbolList successor = regles.successorOf(SymbolList.of(current), left, right);
-
-            if (successor != null) {
-                nextGen.addAll(successor);
-            } else {
-                nextGen.add(current);
-            }
-        }
-
-        currentGeneration = nextGen;
-        this.lsystemChange();
+        step(1);
     }
 
     public void step(int n) {
         for (int i = 0; i < n; i++) {
-            step();
+            SymbolList nextGen = new SymbolList(symbolFactory);
+
+            for (int j = 0; j < currentGeneration.size(); j++) {
+                Symbol current = currentGeneration.get(j);
+
+                // Gestion du contexte pour les règles contextuelles
+                SymbolList left = new SymbolList(symbolFactory);
+                if (j > 0) left.add(currentGeneration.get(j - 1));
+
+                SymbolList right = new SymbolList(symbolFactory);
+                if (j < currentGeneration.size() - 1) right.add(
+                    currentGeneration.get(j + 1)
+                );
+
+                // APPEL CORRIGÉ : On passe le symbole ET ses voisins
+                SymbolList successor = regles.successorOf(
+                    SymbolList.of(current),
+                    left,
+                    right
+                );
+
+                if (successor != null) {
+                    nextGen.addAll(successor);
+                } else {
+                    nextGen.add(current);
+                }
+            }
+
+            currentGeneration = nextGen;
         }
+        lsystemChange();
     }
 
     public String generer(int n) {
@@ -121,18 +135,35 @@ public class LSystem extends AbstractLsystemListenable {
     }
 
     // Getters standards
-    public SymbolList getCurrentGeneration() { return currentGeneration; }
-    public Axiom getAxiome() { return axiome; }
-    public RuleSet getRegles() { return regles; }
-    public SymbolFactory getSymbolFactory() { return symbolFactory; }
-    
+    public SymbolList getCurrentGeneration() {
+        return currentGeneration;
+    }
+
+    public Axiom getAxiome() {
+        return axiome;
+    }
+
+    public RuleSet getRegles() {
+        return regles;
+    }
+
+    public SymbolFactory getSymbolFactory() {
+        return symbolFactory;
+    }
+
+    public void setCurrentGeneration(SymbolList symbols) {
+        this.currentGeneration = symbols;
+        lsystemChange();
+    }
+
     @Override
     public String toString() {
         return axiome + " " + regles + " " + currentGeneration;
     }
+
     public void setRegles(RuleSet regles) {
-    this.regles = regles;
-    // On notifie les observeurs (l'interface) que le modèle a changé
-    this.lsystemChange(); 
-}
+        this.regles = regles;
+        // On notifie les observeurs (l'interface) que le modèle a changé
+        this.lsystemChange();
+    }
 }

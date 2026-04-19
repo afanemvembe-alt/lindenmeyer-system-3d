@@ -313,8 +313,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             // Pour la 2D
             List<Segment> segments2D = build2DSegments(
                 symbols,
-                300,
-                400,
+                0,
+                0,
                 config
             );
             update2D(segments2D);
@@ -619,8 +619,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             }
 
             Tortue tortue = new Tortue(
-                config.getStartX(),
-                config.getStartY(),
+                0,
+                0,
                 -90,
                 configTortue
             );
@@ -636,13 +636,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             }
 
             List<Segment> finalSegments = tortue.interpreter(
-                temp.getCurrentGeneration().toString()
+                temp.getCurrentGeneration()
             );
 
             List<Segment> finalSegments2D = build2DSegments(
                 temp.getCurrentGeneration(),
-                config.getStartX(),
-                config.getStartY(),
+                0,
+                0,
                 configTortue
             );
             update2D(finalSegments2D);
@@ -693,7 +693,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         ConfigTortue config
     ) {
         Tortue tortue = new Tortue(startX, startY, -90, config);
-        return tortue.interpreter(symbols.toString());
+        return tortue.interpreter(symbols);
     }
 
     private List<Segment3D> build3DSegments(
@@ -947,8 +947,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 );
                 List<Segment> finalSegments = build2DSegments(
                     temp.getCurrentGeneration(),
-                    300,
-                    400,
+                    0,
+                    0,
                     config
                 );
 
