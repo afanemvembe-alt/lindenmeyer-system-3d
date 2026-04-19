@@ -148,6 +148,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
         
+        this.colorPicker = new ColorPicker(this);
+      
         lSystemFactory = new LSystemFactory(',', '>');
 
         this.commands = new JPanel();
@@ -854,28 +856,17 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     case "Rose" -> this.selectedColor = Color.PINK;
                     case "Gris" -> this.selectedColor = Color.GRAY;
                     case "Custom..." -> {
-                        this.selectedColor = JColorChooser.showDialog(
-                            this,
-                            "Selection de couleur",
-                            selectedColor
+                        colorPicker.setVisible(true);
+                        List<Color> awtColors = colorPicker.getColors();
+                        List<javafx.scene.paint.Color> fxColors = awtListToFxList(
+                            awtColors
                         );
-
-                        List<Segment> current = this.display.getSegments();
-                        if (current != null && !current.isEmpty()) {
-                            this.display.setDrawColor(selectedColor);
-                            this.display.repaint();
+                        if (!fxColors.isEmpty()) {
+                            customColorFactory3D = new ColorFactory(fxColors);
+                            this.selectedColor = null;
+                            refreshCurrent3DWithCustomColors();
                         }
-                        Platform.runLater(() -> {
-                            if (this.vue3D != null) {
-                                if (selectedColor == null) {
-                                    this.vue3D.resetDrawColor();
-                                } else {
-                                    this.vue3D.setDrawColor(
-                                        awtToFxColor(selectedColor)
-                                    );
-                                }
-                            }
-                        });
+                        return;
                     }
                 }
             }
