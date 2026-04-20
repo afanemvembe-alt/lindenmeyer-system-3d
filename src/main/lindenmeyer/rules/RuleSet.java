@@ -1,15 +1,14 @@
 package lindenmeyer.rules;
 
-import lindenmeyer.symbols.SymbolList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
+import lindenmeyer.symbols.SymbolList;
 import org.json.JSONObject;
 
-import java.util.Collection;
-
 public class RuleSet implements Iterable<GenericRule> {
+
     private List<GenericRule> rules = new ArrayList<>();
 
     public RuleSet() {}
@@ -18,10 +17,19 @@ public class RuleSet implements Iterable<GenericRule> {
         this.rules = new ArrayList<>(rules);
     }
 
-    public List<GenericRule> getRules() { return this.rules; }
-    public void add(GenericRule rule) { this.rules.add(rule); }
+    public List<GenericRule> getRules() {
+        return this.rules;
+    }
 
-    public SymbolList successorOf(SymbolList symbol, SymbolList left, SymbolList right) {
+    public void add(GenericRule rule) {
+        this.rules.add(rule);
+    }
+
+    public SymbolList successorOf(
+        SymbolList symbol,
+        SymbolList left,
+        SymbolList right
+    ) {
         List<GenericRule> applicableRules = new ArrayList<>();
         double totalWeight = 0;
 
@@ -44,25 +52,37 @@ public class RuleSet implements Iterable<GenericRule> {
         return applicableRules.get(0).getSuccessor();
     }
 
-@Override
-public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (!(obj instanceof RuleSet)) return false;
-    RuleSet other = (RuleSet) obj;
-    // Deux RuleSets sont égaux si leurs listes de règles sont identiques
-    return java.util.Objects.equals(this.rules, other.getRules());
-}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof RuleSet)) return false;
+        RuleSet other = (RuleSet) obj;
+        // Deux RuleSets sont égaux si leurs listes de règles sont identiques
+        return java.util.Objects.equals(this.rules, other.getRules());
+    }
 
     @Override
-    public Iterator<GenericRule> iterator() { return rules.iterator(); }
+    public Iterator<GenericRule> iterator() {
+        return rules.iterator();
+    }
 
-    public JSONObject toJsonObject()
-    {
+    public JSONObject toJsonObject() {
         JSONObject obj = new JSONObject();
-        for (GenericRule rule : this.rules)
-        {
-            obj.put(rule.getPredecessor().toString(), rule.getSuccessor().toString());
+        for (GenericRule rule : this.rules) {
+            obj.put(
+                rule.getPredecessor().toString(),
+                rule.getSuccessor().toString()
+            );
         }
         return obj;
+    }
+
+    @Override
+    public String toString() {
+        String res = "";
+        for (Object o : rules) {
+            res += o.toString() + '\n';
+        }
+        return res;
     }
 }

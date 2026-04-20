@@ -144,6 +144,7 @@ public class VueLsystem extends JPanel implements LsystemListener {
     @Override
     public void lsystemUpdated(Object source) {
         // Si le L-système change (nouvelle génération), on redessine
+        // lsystem = (LSystem) source;
         repaint();
     }
 }
