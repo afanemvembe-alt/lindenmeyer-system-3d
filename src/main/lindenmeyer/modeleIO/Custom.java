@@ -8,24 +8,44 @@ import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.ui.ConfigLsystem;
 
+/**
+ * L'implémentation de la classe {@link ModeleIO} pour un modèle Lindenmeyer
+ * défini par l'utlisateur
+ */
 public class Custom extends ModeleIO 
 {
+    /**
+     * Date de création du modèle
+     */
     private String timestamp;
-    
+
+    /**
+     * Initialise un modèle et sauvegarde la date de création
+     * @param name      le nom du système Lindenmeyer
+     * @param config    les configurations de l'affichage
+     * @param lSystem   le système Lindenmeyer
+     */
     public Custom(String name, ConfigLsystem config, LSystem lSystem)
     {
         super(name, config, lSystem);
         this.timestamp = LocalDateTime.now().toString();
     }
 
+    /**
+     * Initialise un système à partir d'un objet JSON et sauvegarde
+     * la date de création
+     * @param object    l'objet JSON
+     */
     public Custom(JSONObject object)
     {
         super(object);
         this.timestamp = LocalDateTime.now().toString();
     }
 
-    public String getTimestamp() { return this.timestamp; }
-
+    /**
+     * Transforme le modèle au format JSON pour être enregistré plus tard.
+     * @return  l'objet JSON
+     */
     public JSONObject toJSON()
     {
         JSONObject object = new JSONObject();
@@ -51,4 +71,6 @@ public class Custom extends ModeleIO
 
         return object;
     }
+
+    public String getTimestamp() { return this.timestamp; }
 }

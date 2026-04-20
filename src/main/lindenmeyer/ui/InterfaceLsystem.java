@@ -3,7 +3,6 @@ package lindenmeyer.ui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -12,9 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -22,7 +18,6 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.transform.Rotate;
-import javax.swing.*;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -49,14 +44,7 @@ import lindenmeyer.lsystem.history.History;
 import lindenmeyer.lsystem.history.State;
 import lindenmeyer.modeleIO.ModeleIO;
 import lindenmeyer.modeleIO.ModeleList;
-import lindenmeyer.modeleIO.Preset;
-import lindenmeyer.rules.GenericRule;
-import lindenmeyer.rules.RuleSet;
-import lindenmeyer.rules.RuleSet;
-import lindenmeyer.rules.RuleSetFactory;
-import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.symbols.Symbol;
-import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
 import lindenmeyer.turtle.ColorFactory;
 import lindenmeyer.turtle.ConfigTortue;
@@ -66,8 +54,6 @@ import lindenmeyer.turtle.Tortue;
 import lindenmeyer.turtle.Turtle3D;
 // import java.awt.Button;
 import lindenmeyer.ui.components.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class InterfaceLsystem extends JFrame implements ActionListener {
 
@@ -670,19 +656,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         })
             .start();
         loading.setVisible(true);
-    }
-
-    //Création des boites de dialogue
-    private JDialog loadingDialog() {
-        JDialog loading = new JDialog(this, "Chargement", true);
-        loading.setLayout(new BorderLayout());
-        loading.add(
-            new JLabel("Generation en cours...", SwingConstants.CENTER),
-            BorderLayout.CENTER
-        );
-        loading.setSize(200, 100);
-        loading.setLocationRelativeTo(this);
-        return loading;
     }
 
     //Construction des segments 2D/3D à partir des symboles
