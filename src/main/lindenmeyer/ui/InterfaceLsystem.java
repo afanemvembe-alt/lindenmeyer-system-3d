@@ -54,6 +54,7 @@ import lindenmeyer.rules.RuleSet;
 import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.symbols.Symbol;
+import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
 import lindenmeyer.turtle.ColorFactory;
 import lindenmeyer.turtle.ConfigTortue;
