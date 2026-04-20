@@ -8,9 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JPanel;
-
 import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.lsystem.LsystemListener;
 import lindenmeyer.turtle.Segment;
@@ -36,10 +34,11 @@ public class VueLsystem extends JPanel implements LsystemListener {
         this.lsystem.addListener(this);
     }
 
-    public LSystem getLSystem() { return this.lsystem; }
-    
-    public void setLSystem(LSystem lsystem)
-    {
+    public LSystem getLSystem() {
+        return this.lsystem;
+    }
+
+    public void setLSystem(LSystem lsystem) {
         this.lsystem = lsystem;
         this.repaint();
     }
@@ -81,11 +80,14 @@ public class VueLsystem extends JPanel implements LsystemListener {
             RenderingHints.VALUE_ANTIALIAS_ON
         );
 
+        // Appliquer le zoom
+        g2.scale(zoom, zoom);
+
         // 1. Trouver les limites réelles du L-System pour le centrage
-        double minX = Double.MAX_VALUE,
-            maxX = -Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE,
-            maxY = -Double.MAX_VALUE;
+        double minX = 0,
+            maxX = -0;
+        double minY = 0,
+            maxY = -0;
 
         for (Segment s : segments) {
             minX = Math.min(minX, Math.min(s.getX1(), s.getX2()));
@@ -94,26 +96,33 @@ public class VueLsystem extends JPanel implements LsystemListener {
             maxY = Math.max(maxY, Math.max(s.getY1(), s.getY2()));
         }
 
+        g2.translate(-minX + paddingX, -minY + paddingY);
+
+        // System.err.println(minX + " " + maxX + " " + minY + " " + maxY);
+
         // 2. Calculer la taille occupée par le L-System
         double systemWidth = (maxX - minX) * zoom;
         double systemHeight = (maxY - minY) * zoom;
 
         // 3. Calculer l'offset pour CENTRER dans le JPanel de 1000x1000
         // On ignore totalement le Viewport ici !
-        double offsetX = (getWidth() - systemWidth) / 2 - (minX * zoom);
-        double offsetY = (getHeight() - systemHeight) / 2 - (minY * zoom);
+        // double offsetX = (getWidth() - systemWidth) / 2 - (minX * zoom);
+        // double offsetY = (getHeight() - systemHeight) / 2 - (minY * zoom);
 
         // 4. Dessin
         g2.setStroke(new BasicStroke(1));
 
         for (Segment s : segments) {
             g2.setColor(drawColor != null ? drawColor : s.getCouleur());
-            int x1 = (int) (s.getX1() * zoom + offsetX);
-            int y1 = (int) (s.getY1() * zoom + offsetY);
-            int x2 = (int) (s.getX2() * zoom + offsetX);
-            int y2 = (int) (s.getY2() * zoom + offsetY);
+            int x1 = (int) (s.getX1());
+            int y1 = (int) (s.getY1());
+            int x2 = (int) (s.getX2());
+            int y2 = (int) (s.getY2());
             g2.drawLine(x1, y1, x2, y2);
         }
+
+        setPreferredSize(new Dimension((int) systemWidth, (int) systemHeight));
+        revalidate();
     }
 
     // Zoom manuel - CORRIGÉ
