@@ -51,6 +51,7 @@ import lindenmeyer.lsystem.history.State;
 import lindenmeyer.modeleIO.ModeleIO;
 import lindenmeyer.modeleIO.ModeleList;
 import lindenmeyer.modeleIO.Preset;
+import lindenmeyer.profiling.Lap;
 import lindenmeyer.profiling.Profiler;
 import lindenmeyer.rules.GenericRule;
 import lindenmeyer.rules.RuleSet;
@@ -149,6 +150,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         super("LSystem");
         MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
+        profiler = new Profiler();
 
         this.colorPicker = new ColorPicker(this);
 
@@ -330,8 +332,10 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             List<Segment> segments2D = build2DSegments(symbols, 0, 0, config);
             update2D(segments2D);
             // Pour la 3D
-            List<Segment3D> segments3D = build3DSegments(symbols, config);
-            update3D(segments3D);
+            if (mode3D) {
+                List<Segment3D> segments3D = build3DSegments(symbols, config);
+                update3D(segments3D);
+            }
         });
 
         //Ajout de composants dans le sous Panel correspondant
@@ -602,6 +606,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         VueLsystem vue,
         History history
     ) {
+        profiler.start();
         JDialog loading = new JDialog(this, "Chargement", true);
         loading.setLayout(new BorderLayout());
         loading.add(
@@ -619,6 +624,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         );
 
         new Thread(() -> {
+            profiler.lap("initialisation");
             int n = 2;
             try {
                 if (!step.isEmpty()) n = Integer.parseInt(step);
@@ -640,11 +646,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 temp.step();
                 history.addState(new State(temp.getCurrentGeneration()));
             }
-
+            profiler.lap("generations");
             List<Segment> finalSegments = tortue.interpreter(
                 temp.getCurrentGeneration()
             );
-
+            profiler.lap("interpretation");
             List<Segment> finalSegments2D = build2DSegments(
                 temp.getCurrentGeneration(),
                 0,
@@ -652,13 +658,15 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 configTortue
             );
             update2D(finalSegments2D);
-
-            // --- Gestion3D pour random------------
-            List<Segment3D> finalSegments3D = build3DSegments(
-                temp.getCurrentGeneration(),
-                configTortue
-            );
-            update3D(finalSegments3D);
+            profiler.lap("dessin");
+            if (mode3D) {
+                // --- Gestion3D pour random------------
+                List<Segment3D> finalSegments3D = build3DSegments(
+                    temp.getCurrentGeneration(),
+                    configTortue
+                );
+                update3D(finalSegments3D);
+            }
 
             SwingUtilities.invokeLater(() -> {
                 this.display.setSegments(finalSegments);
@@ -673,6 +681,15 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 this.display.revalidate();
                 this.display.repaint();
             });
+
+            for (Lap lap : profiler.getLaps()) {
+                System.err.println(
+                    lap.getName() + " : " + lap.getDuration().toString()
+                );
+            }
+            System.err.println(
+                String.format("%d segments generated", finalSegments.size())
+            );
         })
             .start();
         loading.setVisible(true);
