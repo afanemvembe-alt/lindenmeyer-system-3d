@@ -9,11 +9,6 @@ public class Main {
         // Création de la factory de symboles
         SymbolFactory factory = new SymbolFactory();
 
-        // Symboles utilisés
-        // Symbol F = factory.getSymbol('F');
-        // Symbol plus = factory.getSymbol('+');
-        // Symbol minus = factory.getSymbol('-');
-
         // Axiome de départ (flocon de Koch)
         LSystem koch = new LSystem(new Axiom("F+F--F+F"), new RuleSet(), factory);
 

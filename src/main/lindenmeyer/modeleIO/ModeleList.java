@@ -6,22 +6,27 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import lindenmeyer.lsystem.LSystem;
-import lindenmeyer.ui.ConfigLsystem;
-
 import java.util.Iterator;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 
+/**
+ * Cette classe permet de collectionner un ensemble des modèles Lindenmeyer {@link ModeleIO}.
+ * Elle contient les méthodes pour faciliter le chargement et enregistre des modèles
+ * dans le format JSON
+ */
 public class ModeleList implements Iterable<ModeleIO>
 {
     private List<ModeleIO> modeles = new ArrayList<>();
 
     public ModeleList() {}
 
+    /**
+     * Construire une liste des modèles à partir d'un fichier JSON
+     * @param pathString    le chemin du fichier JSON
+     */
     public ModeleList(String pathString)
     {
         Path path = Path.of(pathString);
@@ -64,10 +69,18 @@ public class ModeleList implements Iterable<ModeleIO>
         }
     }
 
+    /**
+     * Ajoute un modele
+     * @param modeleIO  le modèle à ajouter
+     */
     public void add(ModeleIO modeleIO) { this.modeles.add(modeleIO); }
 
     public List<ModeleIO> getModeles() { return this.modeles; }
 
+    /**
+     * Enregistre un modèle au chemin prédéfini.
+     * @return  Renvoie true si l'enregistrement est réussi. false sinon.
+     */
     public boolean save()
     {
         String savePathString = System.getProperty("user.home").concat("/saves.json");

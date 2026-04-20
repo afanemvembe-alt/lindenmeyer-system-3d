@@ -1,9 +1,5 @@
 package lindenmeyer.modeleIO;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import lindenmeyer.axiom.Axiom;
@@ -13,12 +9,23 @@ import lindenmeyer.rules.RuleSet;
 import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.ui.ConfigLsystem;
 
+/**
+ * La classe abstraite representante un système Lindenmeyer {@link LSystem}
+ * et les configurations d'affichage {@link ConfigLsystem}dans l'interface utlisateur.
+ * Cette classe facilite le chargement et enregistrement des système Lindenmeyer.
+ */
 public abstract class ModeleIO
 {
     protected String name;
     protected ConfigLsystem config;
     protected LSystem lSystem;
 
+    /**
+     * Initialise un modèle avec son nom, ses configuraitons et son système Lindenmyer
+     * @param name      le nom du système Lindenmyer
+     * @param config    les configurations d'affichage
+     * @param lSystem   le système Lindenmyer
+     */
     public ModeleIO(String name, ConfigLsystem config, LSystem lSystem)
     {
         this.name = name;
@@ -26,6 +33,10 @@ public abstract class ModeleIO
         this.lSystem = lSystem;
     }
 
+    /**
+     * Constructeur qui initialise un modèle à partir d'un objet JSON
+     * @param object    l'objet JSON
+     */
     public ModeleIO(JSONObject object)
     {
         // System.out.println(object.toString());
@@ -63,18 +74,10 @@ public abstract class ModeleIO
         }
     }
 
-    public String getName() { return this.name; }
-
-    public void setName(String name) { this.name = name; }
-
-    public ConfigLsystem getConfig() { return this.config; }
-
-    public void setConfig(ConfigLsystem config) { this.config = config; }
-
-    public LSystem getLSystem() { return this.lSystem; }
-
-    public void setLSystem(LSystem lSys) { this.lSystem = lSys; }
-
+    /**
+     * Retourne un objet JSON representant le modèle Lindenmyer
+     * @return  L'objet JSON
+     */
     public JSONObject toJSON()
     {
         JSONObject object = new JSONObject();
@@ -102,18 +105,18 @@ public abstract class ModeleIO
 
         return object;
     }
-    /**
-    @Override
-    public boolean pathExists(String pathString) 
-    {
-        return Files.exists(Path.of(pathString));
-    }
 
-    @Override
-    public abstract JSONArray loadFrom(Path path);
+    // Getters et setters
 
-    @Override
-    public abstract boolean saveTo(Path path);
+    public String getName() { return this.name; }
 
-    */
+    public void setName(String name) { this.name = name; }
+
+    public ConfigLsystem getConfig() { return this.config; }
+
+    public void setConfig(ConfigLsystem config) { this.config = config; }
+
+    public LSystem getLSystem() { return this.lSystem; }
+
+    public void setLSystem(LSystem lSys) { this.lSystem = lSys; }
 }

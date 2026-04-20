@@ -1,12 +1,5 @@
 package lindenmeyer.ui;
-
-import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.nio.file.Path;
-
-import java.util.ArrayList;
-import java.time.LocalDateTime;
 
 import javax.swing.*;
 
@@ -14,15 +7,6 @@ import lindenmeyer.lsystem.LSystem;
 import lindenmeyer.modeleIO.Custom;
 import lindenmeyer.modeleIO.ModeleIO;
 import lindenmeyer.modeleIO.ModeleList;
-import lindenmeyer.modeleIO.Preset;
-
-import java.nio.file.Files;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-// import netscape.javascript.JSObject;
 
 
 public class MenubarLsystem extends JMenuBar implements ActionListener
@@ -72,9 +56,8 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         configMenuItem.addActionListener(this);
 
         // affichage menu items
-        // for this you need access to the VueLSystem and JFrame
         coulourMenuItem.addActionListener(this);
-        zoomInMenuItem.addActionListener(this); // add keyboard shortcut
+        zoomInMenuItem.addActionListener(this);
         zoomOutMenuItem.addActionListener(this);
 
 
@@ -104,8 +87,6 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
         {
             presetMenu.add(createMenuItem(preset));
         }
-
-
 
         // affichage menu
         viewMenu.add(coulourMenuItem);
@@ -145,7 +126,6 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
             if (dialog.isConfirmed()) 
             {
                 name = dialog.getName();
-                // config.setDescription(dialog.getDescription());
             }
 
             ModeleIO newSave = new Custom(name, config, lSystem);
@@ -154,26 +134,10 @@ public class MenubarLsystem extends JMenuBar implements ActionListener
 
             savedArray.add(newSave);
             savedArray.save();
-
-            /**
-            try 
-            {
-                Files.writeString(Path.of("src/main/lindenmeyer/ui/saves.json"), savedArray.toString(2));
-            } 
-            catch (JSONException error) 
-            {
-                error.printStackTrace();
-            } 
-            catch (IOException error) 
-            {
-                error.printStackTrace();
-            }
-                 */
         }
 
         else if (source == exitMenuItem)
         {
-            // dispose();
             interfaceLsystem.dispose();
         }
 

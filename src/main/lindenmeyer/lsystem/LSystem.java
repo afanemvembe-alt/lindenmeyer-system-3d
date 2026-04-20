@@ -9,25 +9,40 @@ import lindenmeyer.symbols.SymbolFactory;
 import lindenmeyer.symbols.SymbolList;
 import org.json.JSONObject;
 
+/**
+ * Classe representante un système Lindenmeyer avec son axiome et ses règles
+ */
 public class LSystem extends AbstractLsystemListenable {
-
     private Axiom axiome;
     private RuleSet regles;
     private SymbolList currentGeneration;
     private SymbolFactory symbolFactory;
 
+    /**
+     * Initialise un système Lindenmeyer.
+     * @param axiome l'axiome du système
+     * @param regles les règles du système
+     * @param currentGeneration la génération courrante
+     * @param symbolFactory un instance de {@link SymbolFactory}
+     */
     public LSystem(
         Axiom axiome,
         RuleSet regles,
         SymbolList currentGeneration,
-        SymbolFactory symbolFactory
-    ) {
+        SymbolFactory symbolFactory) 
+    {
         this.axiome = axiome;
         this.regles = regles;
         this.currentGeneration = currentGeneration;
         this.symbolFactory = symbolFactory;
     }
 
+    /**
+     * Constructeur permettant d'initialiser un système Lindenmeyer.
+     * @param axiome l'axiome du système
+     * @param regles les règles du système
+     * @param symbolFactory un instance de {@link SymbolFactory}
+     */
     public LSystem(Axiom axiome, RuleSet regles, SymbolFactory symbolFactory) {
         this.axiome = axiome;
         this.regles = regles;
@@ -35,10 +50,20 @@ public class LSystem extends AbstractLsystemListenable {
         resetGeneration();
     }
 
+    /**
+     * Constructeur permettant d'initialiser un système Lindenmeyr.
+     * à partir d'une anxiome et un ensemble des règles {@link RuleSet} vide.
+     * @param axiome l'axiome
+     */
     public LSystem(Axiom axiome) {
         this(axiome, new RuleSet(), new SymbolFactory());
     }
 
+    /**
+     * Constructeur permettant d'intialiser un système Lindenmeyer.
+     * à partir d'un objet JSON
+     * @param obj l'objet JSON
+     */
     public LSystem(JSONObject obj) {
         this(
             new Axiom(obj.getString("axiom")),
@@ -59,6 +84,9 @@ public class LSystem extends AbstractLsystemListenable {
         }
     }
 
+    /**
+     * Reinitialise une génération du système.
+     */
     private void resetGeneration() {
         this.currentGeneration = new SymbolList(this.symbolFactory);
         for (int i = 0; i < axiome.getContent().length(); i++) {
@@ -68,6 +96,11 @@ public class LSystem extends AbstractLsystemListenable {
         }
     }
 
+    /**
+     * Ajoute une règle au système. Cette méthode crée un {@link Symbol}.
+     * @param symbole       un charactère representant un symbole
+     * @param remplacement  le {@link SymbolList} representant le successeur
+     */
     public void ajouterRegle(char symbole, String remplacement) {
         Symbol pred = symbolFactory.getSymbol(symbole);
         SymbolList succ = new SymbolList(symbolFactory);
@@ -78,15 +111,26 @@ public class LSystem extends AbstractLsystemListenable {
         this.lsystemChange();
     }
 
+    /**
+     * Ajoute une règle au système.
+     * @param regle la règle
+     */
     public void ajouterRegle(GenericRule regle) {
         regles.add(regle);
         this.lsystemChange();
     }
 
+    /**
+     * Initialise un compter pour itérer la liste des génération du sysème.
+     */
     public void step() {
         step(1);
     }
 
+    /**
+     * Itérer la liste des générations du système
+     * @param n le nombre de génération
+     */
     public void step(int n) {
         for (int i = 0; i < n; i++) {
             SymbolList nextGen = new SymbolList(symbolFactory);
@@ -122,12 +166,21 @@ public class LSystem extends AbstractLsystemListenable {
         lsystemChange();
     }
 
+    /**
+     * Génère n nombre de générations
+     * @param n le nombre de générations
+     * @return le string representante la génération n
+     */
     public String generer(int n) {
         resetGeneration(); // On repart de l'axiome pour une nouvelle génération
         step(n);
         return currentGeneration.toString();
     }
 
+    /**
+     * Modifie l'axiome du système.
+     * @param axiome la nouvelle axiome
+     */
     public void setAxiome(Axiom axiome) {
         this.axiome = axiome;
         resetGeneration(); // TRÈS IMPORTANT : vide la génération actuelle

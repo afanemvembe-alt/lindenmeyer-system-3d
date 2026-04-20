@@ -2,6 +2,10 @@ package lindenmeyer.symbols;
 
 import java.util.*;
 
+/**
+ * La classe representante l'ensemble de tous les symboles qui existent
+ * dans un système {@link LSystem}
+ */
 public class Alphabet{
 	
 	private Set<Symbol> alphabet;
