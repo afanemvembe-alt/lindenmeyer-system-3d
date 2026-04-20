@@ -139,18 +139,23 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
     private SymbolList currentSymbols;
 
     private Profiler profiler;
-    
+
     // Globals pour creer les systemes
     private LSystemFactory lSystemFactory;
+    private RuleSetFactory ruleSetFactory;
+    private SymbolFactory symbolFactory;
 
     public InterfaceLsystem() {
         super("LSystem");
         MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
-        
+
         this.colorPicker = new ColorPicker(this);
-      
-        lSystemFactory = new LSystemFactory(',', '>');
+
+        symbolFactory = new SymbolFactory();
+        ruleSetFactory = new RuleSetFactory(symbolFactory);
+        // lSystemFactory = new LSystemFactory(',', '>');
+        lSystemFactory = new LSystemFactory(ruleSetFactory);
 
         this.commands = new JPanel();
         Color bg = new Color(245, 245, 245);
@@ -762,7 +767,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                         );
                         return;
                     }
-                    this.display.getLSystem().setAxiome(new Axiom(text));
+                    // this.display.getLSystem().setAxiome(new Axiom(text));
+                    lsystem.setAxiome(new Axiom(text));
                     resetField(modifAxiom);
                 }
 
@@ -776,18 +782,20 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 } else {
                     try {
                         // On récupère la SymbolFactory existante du LSystem
-                        lindenmeyer.symbols.SymbolFactory sf =
-                            this.display.getLSystem().getSymbolFactory();
+                        // lindenmeyer.symbols.SymbolFactory sf =
+                        //     this.display.getLSystem().getSymbolFactory();
 
                         // On crée une RuleSetFactory pour parser la chaîne complexe (stochastique/contextuelle)
                         // On utilise ',' pour séparer les règles et '>' pour le prédécesseur/successeur
-                        lindenmeyer.rules.RuleSetFactory rsf =
-                            new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
+                        // lindenmeyer.rules.RuleSetFactory rsf =
+                        //     new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
 
                         // On parse et on met à jour les règles du LSystem
-                        this.display.getLSystem().setRegles(
-                            rsf.parseString(regle)
-                        );
+                        // this.display.getLSystem().setRegles(
+                        //     rsf.parseString(regle)
+                        // );
+
+                        lsystem.setRegles(ruleSetFactory.parseString(regle));
 
                         resetField(rule); // On vide le champ après succès
                     } catch (Exception ex) {
@@ -800,17 +808,17 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     }
                 }
 
-                try {
-                    lindenmeyer.symbols.SymbolFactory sf =
-                        this.display.getLSystem().getSymbolFactory();
-                    lindenmeyer.rules.RuleSetFactory rsf =
-                        new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
-                    this.display.getLSystem().setRegles(rsf.parseString(regle));
-                    System.err.println(display.getLSystem().getRegles().toString());
-                    resetField(rule);
-                } catch (Exception ex) {
-                    showError(this.rule, "Erreur dans le format des règles.");
-                }
+                // try {
+                //     this.display.getLSystem().setRegles(
+                //         ruleSetFactory.parseString(regle)
+                //     );
+                //     System.err.println(
+                //         display.getLSystem().getRegles().toString()
+                //     );
+                //     resetField(rule);
+                // } catch (Exception ex) {
+                //     showError(this.rule, "Erreur dans le format des règles.");
+                // }
 
                 // On force le rafraîchissement de l'affichage
                 this.display.repaint();
@@ -858,17 +866,33 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     case "Custom..." -> {
                         colorPicker.setVisible(true);
                         List<Color> awtColors = colorPicker.getColors();
-                        List<javafx.scene.paint.Color> fxColors = awtListToFxList(
-                            awtColors
-                        );
+                        List<javafx.scene.paint.Color> fxColors =
+                            awtListToFxList(awtColors);
                         if (!fxColors.isEmpty()) {
                             customColorFactory3D = new ColorFactory(fxColors);
                             this.selectedColor = null;
                             refreshCurrent3DWithCustomColors();
                         }
-                        return;
+                        // return;
                     }
                 }
+
+                List<Segment> current = this.display.getSegments();
+                if (current != null && !current.isEmpty()) {
+                    this.display.setDrawColor(selectedColor);
+                    this.display.repaint();
+                }
+                Platform.runLater(() -> {
+                    if (this.vue3D != null) {
+                        if (selectedColor == null) {
+                            this.vue3D.resetDrawColor();
+                        } else {
+                            this.vue3D.setDrawColor(
+                                awtToFxColor(selectedColor)
+                            );
+                        }
+                    }
+                });
             }
             case "clear" -> {
                 clear2D();
@@ -902,7 +926,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             }
             case "random" -> {
                 int pos = (int) (Math.random() *
-                    (this.presets.getModeles().size() - 1));
+                    (this.presets.getModeles().size()));
                 ModeleIO chosen = this.presets.getModeles().get(pos);
 
                 draw(
