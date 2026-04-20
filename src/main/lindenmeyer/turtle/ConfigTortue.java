@@ -12,16 +12,29 @@ public class ConfigTortue {
     // Dictionnaire qui associe un caractère à une action
     private Map<Character, CommandeTortue> commandes = new HashMap<>();
 
+    /**
+     * Initialise les configurations de la Tortue
+     * @param pas           longeur du segment
+     * @param angleRotation angle entre deux segements
+     */
     public ConfigTortue(double pas, double angleRotation) {
         this.pas = pas;
         this.angleRotation = angleRotation;
         this.colorFactory = new ColorFactory(Arrays.asList(ColorFactory.BASE_COLORS));
     }
 
+    /**
+     * Initialisation par defaut
+     */
     public ConfigTortue() {
         this(10, 60);
     }
 
+    /**
+     * Ajouter une {@link lindenmeyer.turtle.CommandeTortue} pour un symbole associé
+     * @param symbole   le symbole
+     * @param commande  la commande associée
+     */
     public void ajouterCommande(char symbole, CommandeTortue commande) {
         commandes.put(symbole, commande);
     }
