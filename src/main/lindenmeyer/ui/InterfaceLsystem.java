@@ -498,6 +498,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         return fxColors;
     }
 
+    /**
+     * Afficher un Dialog d'erreur
+     * @param field     field de texte
+     * @param message   message à afficher
+     */
     public void showError(JTextField field, String message) {
         field.setBorder(BorderFactory.createLineBorder(Color.RED));
         JOptionPane.showMessageDialog(
@@ -508,17 +513,27 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         );
     }
 
-    //Clear 2D et 3D
+    /**
+     * Vide la liste des segments 2D
+     */
     private void clear2D() {
         this.display.clearSegments();
         this.display.repaint();
     }
 
+    /**
+     * Vide la liste des segments 3D
+     */
     private void clear3D() {
         update3D(new ArrayList<>());
     }
 
-    //Nombre d'étapes
+    /**
+     * Retourne la nombre de génération Lindenmeyer
+     * @param stepText      nombre en string
+     * @param defaultValue  valeur par defaut
+     * @return
+     */
     private int getStepCount(String stepText, int defaultValue) {
         int n = defaultValue;
         try {
@@ -536,7 +551,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         return n;
     }
 
-    //Copie d'un LSystem
+    /**
+     * Copie un systeme lindenmeyer
+     * @param source    source systeme
+     * @return          la copie
+     */
     private LSystem copyLSystem(LSystem source) {
         return new LSystem(
             new Axiom(source.getAxiome().getContent()),
@@ -545,30 +564,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         );
     }
 
-    public void resetField(JTextField field) {
-        field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-    }
-
-    public LSystem getLSystem() {
-        return this.lsystem;
-    }
-
-    public void setLSystem(LSystem lSystem) {
-        this.lsystem = lSystem;
-    }
-
-    public ConfigLsystem getInterfaceConfig() {
-        return this.config;
-    }
-
-    public void setInterfaceConfig(ConfigLsystem config) {
-        this.config = config;
-    }
-
-    public VueLsystem getVueLsystem() {
-        return this.display;
-    }
-
+    /**
+     * Affiche un système lindenmeyer en fonctionne de ses configurations.
+     * @param step      nombre de générations qu'on souhaite
+     * @param lSystem   le système Lindenmeyer
+     * @param config    les configurations du systèmes
+     * @param vue       le component JPanel où se trouve la Tortue
+     * @param history   l'historique des générations
+     */
     public void draw(
         String step,
         LSystem lSystem,
@@ -691,6 +694,12 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         return tortue.interpreter(symbols);
     }
 
+    /**
+     * Générer les segments 3D
+     * @param symbols   la liste de symboles
+     * @param config    les configurations
+     * @return          la liste de segments 3D
+     */
     private List<Segment3D> build3DSegments(
         SymbolList symbols,
         ConfigTortue config
@@ -702,12 +711,19 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         return tortue3D.getSegments();
     }
 
-    //Mise à jour et nettoyage des vues 2D/3D
+    /**
+     * Met à jours les segments 2D
+     * @param segments  la liste de segments
+     */
     private void update2D(List<Segment> segments) {
         this.display.setSegments(segments);
         this.display.repaint();
     }
 
+    /**
+     * Met à jours les segments 3D
+     * @param segments  la liste de segments
+     */
     private void update3D(List<Segment3D> segments) {
         Platform.runLater(() -> {
             if (this.vue3D != null) {
@@ -1020,6 +1036,30 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
     public void setAngleRotation(int a) {
         this.config.setAngle(a);
+    }
+
+    public void resetField(JTextField field) {
+        field.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    }
+
+    public LSystem getLSystem() {
+        return this.lsystem;
+    }
+
+    public void setLSystem(LSystem lSystem) {
+        this.lsystem = lSystem;
+    }
+
+    public ConfigLsystem getInterfaceConfig() {
+        return this.config;
+    }
+
+    public void setInterfaceConfig(ConfigLsystem config) {
+        this.config = config;
+    }
+
+    public VueLsystem getVueLsystem() {
+        return this.display;
     }
 
     public static void main(String[] args) {
