@@ -22,4 +22,12 @@ public class Lap {
     public String getName() {
         return name;
     }
+    
+    public Instant getStart() {
+        return start;
+    }
+    
+    public Instant getEnd() {
+        return end;
+    }
 }

@@ -6,11 +6,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -339,7 +344,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.centerLayout = new CardLayout();
         this.centerPanel = new JPanel(this.centerLayout);
         this.setLayout(new BorderLayout());
-        this.display.setPreferredSize(new Dimension(2000, 2000));
+        this.display.setPreferredSize(new Dimension(0, 0));
         this.scroll2D = new JScrollPane(display);
         // panneau commun pour la zone centrale + slider
         this.dessin = new JPanel(new BorderLayout());
@@ -655,6 +660,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             System.err.println(
                 String.format("%d segments generated", finalSegments.size())
             );
+            List<Lap> laps = profiler.getLaps();
+            System.err.println(
+                "Total: " +
+                    Duration.between(
+                        laps.get(0).getStart(),
+                        laps.get(laps.size() - 1).getEnd()
+                    ).toString()
+            );
         })
             .start();
         loading.setVisible(true);
@@ -904,14 +917,16 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 int pos = (int) (Math.random() *
                     (this.presets.getModeles().size()));
                 ModeleIO chosen = this.presets.getModeles().get(pos);
-
-                draw(
-                    step,
-                    chosen.getLSystem(),
-                    chosen.getConfig(),
-                    display,
-                    history
+                lsystem.setRegles(
+                    new RuleSet(chosen.getLSystem().getRegles().getRules())
                 );
+                lsystem.setAxiome(
+                    new Axiom(chosen.getLSystem().getAxiome().getContent())
+                );
+                config.setAngle(chosen.getConfig().getAngle());
+                config.setPas(chosen.getConfig().getPas());
+
+                draw(step, lsystem, chosen.getConfig(), display, history);
             }
             case "play" -> {
                 if (playing) {
