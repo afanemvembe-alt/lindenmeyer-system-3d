@@ -40,10 +40,19 @@ import javax.swing.WindowConstants;
 import lindenmeyer.axiom.Axiom;
 import lindenmeyer.axiom.Axiom;
 import lindenmeyer.lsystem.LSystem;
+import lindenmeyer.lsystem.LSystemFactory;
 import lindenmeyer.lsystem.history.History;
 import lindenmeyer.lsystem.history.State;
 import lindenmeyer.modeleIO.ModeleIO;
 import lindenmeyer.modeleIO.ModeleList;
+import lindenmeyer.modeleIO.Preset;
+import lindenmeyer.profiling.Lap;
+import lindenmeyer.profiling.Profiler;
+import lindenmeyer.rules.GenericRule;
+import lindenmeyer.rules.RuleSet;
+import lindenmeyer.rules.RuleSet;
+import lindenmeyer.rules.RuleSetFactory;
+import lindenmeyer.rules.RuleSetFactory;
 import lindenmeyer.symbols.Symbol;
 import lindenmeyer.symbols.SymbolList;
 import lindenmeyer.turtle.ColorFactory;
@@ -122,10 +131,25 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
 
     private SymbolList currentSymbols;
 
+    private Profiler profiler;
+
+    // Globals pour creer les systemes
+    private LSystemFactory lSystemFactory;
+    private RuleSetFactory ruleSetFactory;
+    private SymbolFactory symbolFactory;
+
     public InterfaceLsystem() {
         super("LSystem");
         MenubarLsystem menuBar = new MenubarLsystem(this);
         this.setJMenuBar(menuBar);
+        profiler = new Profiler();
+
+        this.colorPicker = new ColorPicker(this);
+
+        symbolFactory = new SymbolFactory();
+        ruleSetFactory = new RuleSetFactory(symbolFactory);
+        // lSystemFactory = new LSystemFactory(',', '>');
+        lSystemFactory = new LSystemFactory(ruleSetFactory);
 
         this.commands = new JPanel();
         Color bg = new Color(245, 245, 245);
@@ -269,16 +293,13 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             );
             applyCustom3DColors(config);
             // Pour la 2D
-            List<Segment> segments2D = build2DSegments(
-                symbols,
-                0,
-                0,
-                config
-            );
+            List<Segment> segments2D = build2DSegments(symbols, 0, 0, config);
             update2D(segments2D);
             // Pour la 3D
-            List<Segment3D> segments3D = build3DSegments(symbols, config);
-            update3D(segments3D);
+            if (mode3D) {
+                List<Segment3D> segments3D = build3DSegments(symbols, config);
+                update3D(segments3D);
+            }
         });
 
         //Ajout de composants dans le sous Panel correspondant
@@ -549,6 +570,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         VueLsystem vue,
         History history
     ) {
+        profiler.start();
         JDialog loading = new JDialog(this, "Chargement", true);
         loading.setLayout(new BorderLayout());
         loading.add(
@@ -566,6 +588,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         );
 
         new Thread(() -> {
+            profiler.lap("initialisation");
             int n = 2;
             try {
                 if (!step.isEmpty()) n = Integer.parseInt(step);
@@ -576,12 +599,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 n = this.maxStep;
             }
 
-            Tortue tortue = new Tortue(
-                0,
-                0,
-                -90,
-                configTortue
-            );
+            Tortue tortue = new Tortue(0, 0, -90, configTortue);
 
             // why create a new lsystem?
             LSystem temp = copyLSystem(lSystem);
@@ -592,11 +610,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 temp.step();
                 history.addState(new State(temp.getCurrentGeneration()));
             }
-
+            profiler.lap("generations");
             List<Segment> finalSegments = tortue.interpreter(
                 temp.getCurrentGeneration()
             );
-
+            profiler.lap("interpretation");
             List<Segment> finalSegments2D = build2DSegments(
                 temp.getCurrentGeneration(),
                 0,
@@ -604,13 +622,15 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 configTortue
             );
             update2D(finalSegments2D);
-
-            // --- Gestion3D pour random------------
-            List<Segment3D> finalSegments3D = build3DSegments(
-                temp.getCurrentGeneration(),
-                configTortue
-            );
-            update3D(finalSegments3D);
+            profiler.lap("dessin");
+            if (mode3D) {
+                // --- Gestion3D pour random------------
+                List<Segment3D> finalSegments3D = build3DSegments(
+                    temp.getCurrentGeneration(),
+                    configTortue
+                );
+                update3D(finalSegments3D);
+            }
 
             SwingUtilities.invokeLater(() -> {
                 this.display.setSegments(finalSegments);
@@ -625,6 +645,15 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 this.display.revalidate();
                 this.display.repaint();
             });
+
+            for (Lap lap : profiler.getLaps()) {
+                System.err.println(
+                    lap.getName() + " : " + lap.getDuration().toString()
+                );
+            }
+            System.err.println(
+                String.format("%d segments generated", finalSegments.size())
+            );
         })
             .start();
         loading.setVisible(true);
@@ -713,7 +742,8 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                         );
                         return;
                     }
-                    this.display.getLSystem().setAxiome(new Axiom(text));
+                    // this.display.getLSystem().setAxiome(new Axiom(text));
+                    lsystem.setAxiome(new Axiom(text));
                     resetField(modifAxiom);
                 }
 
@@ -727,18 +757,20 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 } else {
                     try {
                         // On récupère la SymbolFactory existante du LSystem
-                        lindenmeyer.symbols.SymbolFactory sf =
-                            this.display.getLSystem().getSymbolFactory();
+                        // lindenmeyer.symbols.SymbolFactory sf =
+                        //     this.display.getLSystem().getSymbolFactory();
 
                         // On crée une RuleSetFactory pour parser la chaîne complexe (stochastique/contextuelle)
                         // On utilise ',' pour séparer les règles et '>' pour le prédécesseur/successeur
-                        lindenmeyer.rules.RuleSetFactory rsf =
-                            new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
+                        // lindenmeyer.rules.RuleSetFactory rsf =
+                        //     new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
 
                         // On parse et on met à jour les règles du LSystem
-                        this.display.getLSystem().setRegles(
-                            rsf.parseString(regle)
-                        );
+                        // this.display.getLSystem().setRegles(
+                        //     rsf.parseString(regle)
+                        // );
+
+                        lsystem.setRegles(ruleSetFactory.parseString(regle));
 
                         resetField(rule); // On vide le champ après succès
                     } catch (Exception ex) {
@@ -751,16 +783,17 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     }
                 }
 
-                try {
-                    lindenmeyer.symbols.SymbolFactory sf =
-                        this.display.getLSystem().getSymbolFactory();
-                    lindenmeyer.rules.RuleSetFactory rsf =
-                        new lindenmeyer.rules.RuleSetFactory(',', '>', sf);
-                    this.display.getLSystem().setRegles(rsf.parseString(regle));
-                    resetField(rule);
-                } catch (Exception ex) {
-                    showError(this.rule, "Erreur dans le format des règles.");
-                }
+                // try {
+                //     this.display.getLSystem().setRegles(
+                //         ruleSetFactory.parseString(regle)
+                //     );
+                //     System.err.println(
+                //         display.getLSystem().getRegles().toString()
+                //     );
+                //     resetField(rule);
+                // } catch (Exception ex) {
+                //     showError(this.rule, "Erreur dans le format des règles.");
+                // }
 
                 // On force le rafraîchissement de l'affichage
                 this.display.repaint();
@@ -806,30 +839,35 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                     case "Rose" -> this.selectedColor = Color.PINK;
                     case "Gris" -> this.selectedColor = Color.GRAY;
                     case "Custom..." -> {
-                        this.selectedColor = JColorChooser.showDialog(
-                            this,
-                            "Selection de couleur",
-                            selectedColor
-                        );
-
-                        List<Segment> current = this.display.getSegments();
-                        if (current != null && !current.isEmpty()) {
-                            this.display.setDrawColor(selectedColor);
-                            this.display.repaint();
+                        colorPicker.setVisible(true);
+                        List<Color> awtColors = colorPicker.getColors();
+                        List<javafx.scene.paint.Color> fxColors =
+                            awtListToFxList(awtColors);
+                        if (!fxColors.isEmpty()) {
+                            customColorFactory3D = new ColorFactory(fxColors);
+                            this.selectedColor = null;
+                            refreshCurrent3DWithCustomColors();
                         }
-                        Platform.runLater(() -> {
-                            if (this.vue3D != null) {
-                                if (selectedColor == null) {
-                                    this.vue3D.resetDrawColor();
-                                } else {
-                                    this.vue3D.setDrawColor(
-                                        awtToFxColor(selectedColor)
-                                    );
-                                }
-                            }
-                        });
+                        // return;
                     }
                 }
+
+                List<Segment> current = this.display.getSegments();
+                if (current != null && !current.isEmpty()) {
+                    this.display.setDrawColor(selectedColor);
+                    this.display.repaint();
+                }
+                Platform.runLater(() -> {
+                    if (this.vue3D != null) {
+                        if (selectedColor == null) {
+                            this.vue3D.resetDrawColor();
+                        } else {
+                            this.vue3D.setDrawColor(
+                                awtToFxColor(selectedColor)
+                            );
+                        }
+                    }
+                });
             }
             case "clear" -> {
                 clear2D();
@@ -863,7 +901,7 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             }
             case "random" -> {
                 int pos = (int) (Math.random() *
-                    (this.presets.getModeles().size() - 1));
+                    (this.presets.getModeles().size()));
                 ModeleIO chosen = this.presets.getModeles().get(pos);
 
                 draw(
