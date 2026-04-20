@@ -11,7 +11,8 @@ import lindenmeyer.ui.ConfigLsystem;
 
 /**
  * La classe abstraite representante un système Lindenmeyer {@link LSystem}
- * et les configurations d'affichage {@link ConfigLsystem}dans l'interface utlisateur
+ * et les configurations d'affichage {@link ConfigLsystem}dans l'interface utlisateur.
+ * Cette classe facilite le chargement et enregistrement des système Lindenmeyer.
  */
 public abstract class ModeleIO
 {

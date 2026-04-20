@@ -156,9 +156,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         ligneStep.add(new JLabel("Etapes : "));
         ligneStep.add(this.nbStep);
 
-        // Dimension boutonSize = new Dimension(130, 30);
-        // Button.setDefaultDimension(boutonSize);
-
         Button.setBaseFont(uiFont);
 
         //Definition des boutons
@@ -176,31 +173,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.generate.setBackground(new Color(120, 200, 120));
         this.random.setBackground(new Color(120, 170, 240));
         this.clear.setBackground(new Color(240, 120, 120));
-
-        //Definition de la taille des boutons
-        // Dimension boutonSize = new Dimension(130, 20);
-        // Button.updateDimension(boutonSize);
-        // this.defineLsystem.setPreferredSize(boutonSize);
-        // this.generate.setPreferredSize(boutonSize);
-        // this.random.setPreferredSize(boutonSize);
-        // this.clear.setPreferredSize(boutonSize);
-        // this.zoomP.setPreferredSize(boutonSize);
-        // this.zoomM.setPreferredSize(boutonSize);
-        // this.settings.setPreferredSize(boutonSize);
-        // this.play.setPreferredSize(boutonSize);
-        // this.switch3D.setPreferredSize(boutonSize);
-        // this.colorSelectButton.setPreferredSize(boutonSize);
-
-        //Definition de la police des boutons
-        // this.defineLsystem.setFont(uiFont);
-        // this.generate.setFont(uiFont);
-        // this.random.setFont(uiFont);
-        // this.clear.setFont(uiFont);
-        // this.zoomP.setFont(uiFont);
-        // this.zoomM.setFont(uiFont);
-        // this.settings.setFont(uiFont);
-        // this.play.setFont(uiFont);
-        // this.switch3D.setFont(uiFont);
 
         //Action des boutons
         this.defineLsystem.addActionListener(this);
@@ -467,7 +439,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
-    //Conversion de couleurs AWT to JFX
+    /**
+     * Conversion de couleurs AWT to JFX
+     * @param c la coleur en AWT
+     * @return  la même coleur en JFX
+     */
     private javafx.scene.paint.Color awtToFxColor(Color c) {
         if (c == null) return null;
         return javafx.scene.paint.Color.rgb(
@@ -478,6 +454,11 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         );
     }
 
+    /**
+     * Convertir une liste des coleurs en AWT en JFX
+     * @param awtColors la liste des coleurs en AWT
+     * @return          la liste des mêmes coleurs en JFX
+     */
     private List<javafx.scene.paint.Color> awtListToFxList(
         List<Color> awtColors
     ) {
@@ -488,15 +469,6 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
             }
         }
         return fxColors;
-    }
-
-    //Configuration et validation de l'interface
-    public void setLongeur(int l) {
-        this.config.setPas(l);
-    }
-
-    public void setAngleRotation(int a) {
-        this.config.setAngle(a);
     }
 
     public void showError(JTextField field, String message) {
@@ -658,7 +630,14 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         loading.setVisible(true);
     }
 
-    //Construction des segments 2D/3D à partir des symboles
+    /**
+     * Construction des segments 2D/3D à partir d'une {@link SymbolList}.
+     * @param symbols   la liste des symboles
+     * @param startX    la coordonnée X de la position de départ de la Tortue
+     * @param startY    la coordonnée Y de la position de départ de la Tortue
+     * @param config    les configurations de l'affichage
+     * @return          la liste des segements {@link Segement}
+     */
     private List<Segment> build2DSegments(
         SymbolList symbols,
         double startX,
@@ -975,8 +954,18 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
         }
     }
 
+    // Getters et setters pour ce JFrame
+
     public ModeleList getPresets() {
         return this.presets;
+    }
+
+    public void setLongeur(int l) {
+        this.config.setPas(l);
+    }
+
+    public void setAngleRotation(int a) {
+        this.config.setAngle(a);
     }
 
     public static void main(String[] args) {
