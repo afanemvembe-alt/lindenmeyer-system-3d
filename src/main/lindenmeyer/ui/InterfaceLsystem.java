@@ -945,14 +945,16 @@ public class InterfaceLsystem extends JFrame implements ActionListener {
                 int pos = (int) (Math.random() *
                     (this.presets.getModeles().size()));
                 ModeleIO chosen = this.presets.getModeles().get(pos);
-
-                draw(
-                    step,
-                    chosen.getLSystem(),
-                    chosen.getConfig(),
-                    display,
-                    history
+                lsystem.setRegles(
+                    new RuleSet(chosen.getLSystem().getRegles().getRules())
                 );
+                lsystem.setAxiome(
+                    new Axiom(chosen.getLSystem().getAxiome().getContent())
+                );
+                config.setAngle(chosen.getConfig().getAngle());
+                config.setPas(chosen.getConfig().getPas());
+
+                draw(step, lsystem, chosen.getConfig(), display, history);
             }
             case "play" -> {
                 if (playing) {
