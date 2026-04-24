@@ -26,7 +26,7 @@ public class SymbolFactory {
     public Symbol getSymbol(char c) {
         // 1. Si on ne l'a pas encore, on le crée
         if (!inventory.containsKey(c)) {
-            if ("-+*/[]".contains(String.valueOf(c))) {
+            if ("[]+-&^\\/*]".contains(String.valueOf(c))) {
                 inventory.put(c, new Constante(c));
             } else {
                 inventory.put(c, new Symbol(c));
